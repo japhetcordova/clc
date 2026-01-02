@@ -29,7 +29,7 @@ export default function DigitalIDCard({ user, qrValue }: DigitalIDCardProps) {
 
             {/* Header */}
             <div className="relative z-10 w-full flex flex-col items-center gap-2">
-                <h1 className="text-2xl font-black tracking-tighter uppercase italic text-slate-950" style={{ color: '#020617' }}>CLC Community</h1>
+                <h1 className="text-2xl font-black tracking-tighter uppercase italic text-slate-950" style={{ color: '#020617' }}>Christian Life Center</h1>
                 <div className="h-1.5 w-16 bg-indigo-600 rounded-full" />
             </div>
 

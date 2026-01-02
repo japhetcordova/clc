@@ -12,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Edit3, Save, X, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { ClusterSelect, NetworkSelect, MinistrySelect } from "@/components/ChurchFormFields";
 
 const formSchema = z.object({
     firstName: z.string().min(2, "First name is required"),
@@ -81,7 +82,7 @@ export default function EditProfile({ user }: EditProfileProps) {
                 <div className="p-8">
                     <DialogHeader className="mb-6">
                         <DialogTitle className="text-2xl font-black uppercase italic tracking-tighter">Edit Member Profile</DialogTitle>
-                        <DialogDescription className="text-muted-foreground">Keep your community information up to date.</DialogDescription>
+                        <DialogDescription className="text-muted-foreground">Keep your church profile information up to date.</DialogDescription>
                     </DialogHeader>
 
                     <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
@@ -112,53 +113,31 @@ export default function EditProfile({ user }: EditProfileProps) {
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
                                 <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Cluster</Label>
-                                <Select defaultValue={watch("cluster")} onValueChange={(v) => { setValue("cluster", v); setValue("network", ""); }}>
-                                    <SelectTrigger className="bg-background/50">
-                                        <SelectValue placeholder="Cluster" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="Cluster 1">Cluster 1</SelectItem>
-                                        <SelectItem value="Cluster 2">Cluster 2</SelectItem>
-                                    </SelectContent>
-                                </Select>
+                                <ClusterSelect
+                                    value={watch("cluster")}
+                                    onValueChange={(v) => { setValue("cluster", v); setValue("network", ""); }}
+                                    className="h-10 rounded-lg"
+                                />
                             </div>
                             <div className="space-y-2">
                                 <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Network</Label>
-                                <Select value={watch("network")} onValueChange={(v) => setValue("network", v)}>
-                                    <SelectTrigger className="bg-background/50">
-                                        <SelectValue placeholder="Select network" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {watch("cluster") === "Cluster 1" && watch("gender") === "Male" && ["Grenadier", "Better You", "Overcomers", "Kingdom Souldiers", "Light-bearers"].map(n => <SelectItem key={n} value={n}>{n}</SelectItem>)}
-                                        {watch("cluster") === "Cluster 1" && watch("gender") === "Female" && ["WOW", "Loved", "Phoenix", "Conquerors", "Pearls", "Dauntless", "Royalties"].map(n => <SelectItem key={n} value={n}>{n}</SelectItem>)}
-                                        {watch("cluster") === "Cluster 2" && watch("gender") === "Male" && ["Bravehearts", "Astig", "Transformer", "Invincible", "Generals", "Champs", "Unbreakable multiplier"].map(n => <SelectItem key={n} value={n}>{n}</SelectItem>)}
-                                        {watch("cluster") === "Cluster 2" && watch("gender") === "Female" && ["Exemplary", "Gems", "Diamonds", "Bride", "Fab", "Triumphant", "Visionary"].map(n => <SelectItem key={n} value={n}>{n}</SelectItem>)}
-                                    </SelectContent>
-                                </Select>
+                                <NetworkSelect
+                                    cluster={watch("cluster")}
+                                    gender={watch("gender")}
+                                    value={watch("network")}
+                                    onValueChange={(v) => setValue("network", v)}
+                                    className="h-10 rounded-lg"
+                                />
                             </div>
                         </div>
 
                         <div className="space-y-2">
                             <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Ministry Involvement</Label>
-                            <Select defaultValue={watch("ministry")} onValueChange={(v) => setValue("ministry", v)}>
-                                <SelectTrigger className="bg-background/50">
-                                    <SelectValue placeholder="Ministry" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="Worship Team">Worship Team</SelectItem>
-                                    <SelectItem value="Media">Media</SelectItem>
-                                    <SelectItem value="Usher">Usher</SelectItem>
-                                    <SelectItem value="Marshal">Marshal</SelectItem>
-                                    <SelectItem value="Production">Production</SelectItem>
-                                    <SelectItem value="Kid's Church">Kid's Church</SelectItem>
-                                    <SelectItem value="Technical">Technical</SelectItem>
-                                    <SelectItem value="PA">PA</SelectItem>
-                                    <SelectItem value="Finance">Finance</SelectItem>
-                                    <SelectItem value="Arete">Arete</SelectItem>
-                                    <SelectItem value="Hosting">Hosting</SelectItem>
-                                    <SelectItem value="Writers">Writers</SelectItem>
-                                </SelectContent>
-                            </Select>
+                            <MinistrySelect
+                                value={watch("ministry")}
+                                onValueChange={(v) => setValue("ministry", v)}
+                                className="h-10 rounded-lg"
+                            />
                         </div>
 
                         <div className="space-y-2">

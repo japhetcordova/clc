@@ -79,7 +79,7 @@ export default async function AdminDashboard({
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
                     <h1 className="text-4xl font-black tracking-tight text-foreground">Admin Dashboard</h1>
-                    <p className="text-muted-foreground font-medium">Global community attendance and member engagement records.</p>
+                    <p className="text-muted-foreground font-medium">Global church attendance and member engagement records.</p>
                 </div>
                 <div className="flex items-center gap-4">
                     <div className="bg-primary/5 px-4 py-2.5 rounded-2xl flex items-center gap-2 border border-primary/10 ring-1 ring-primary/5 shadow-inner">
@@ -98,7 +98,7 @@ export default async function AdminDashboard({
                     </CardHeader>
                     <CardContent>
                         <div className="text-4xl font-black text-foreground">{totalUsers.value}</div>
-                        <p className="text-[10px] font-bold text-muted-foreground uppercase mt-1 tracking-tighter">Community Members</p>
+                        <p className="text-[10px] font-bold text-muted-foreground uppercase mt-1 tracking-tighter">Church Members</p>
                     </CardContent>
                 </Card>
 
@@ -269,7 +269,7 @@ export default async function AdminDashboard({
                             <h4 className="text-xs font-black uppercase tracking-widest text-primary">Insights</h4>
                         </div>
                         <p className="text-xs font-medium text-muted-foreground leading-relaxed">
-                            Participation is currently at <span className="text-foreground font-black">{attendanceToday.value > 0 ? ((attendanceToday.value / totalUsers.value) * 100).toFixed(1) : 0}%</span> of the total registered community.
+                            Participation is currently at <span className="text-foreground font-black">{attendanceToday.value > 0 ? ((attendanceToday.value / totalUsers.value) * 100).toFixed(1) : 0}%</span> of the total registered church family.
                         </p>
                     </div>
                 </div>

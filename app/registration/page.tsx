@@ -19,6 +19,8 @@ import jsPDF from "jspdf";
 import { toPng } from "html-to-image";
 import DigitalIDCard from "@/components/DigitalIDCard";
 import { useRouter } from "next/navigation";
+import ConcernNote from "@/components/ConcernNote";
+import { ClusterSelect, NetworkSelect, MinistrySelect } from "@/components/ChurchFormFields";
 
 const formSchema = z.object({
     firstName: z.string().min(2, "First name is required"),
@@ -141,7 +143,7 @@ export default function RegistrationPage() {
                                 <CheckCircle2 className="w-10 h-10 text-emerald-500" />
                             </div>
                             <CardTitle className="text-3xl font-black text-foreground">Registration Complete!</CardTitle>
-                            <CardDescription className="text-muted-foreground font-medium">Welcome to the CLC Community, {registeredUser.firstName}!</CardDescription>
+                            <CardDescription className="text-muted-foreground font-medium">Welcome to Christian Life Center, {registeredUser.firstName}!</CardDescription>
                         </CardHeader>
 
                         <CardContent className="flex flex-col items-center space-y-8 pt-6">
@@ -213,10 +215,10 @@ export default function RegistrationPage() {
 
                         <div className="text-center space-y-1">
                             <CardTitle className="text-4xl font-black tracking-tighter text-foreground uppercase italic leading-none">
-                                {activeTab === "register" ? "Join Community" : "Welcome Back"}
+                                {activeTab === "register" ? "Join Christian Life Center" : "Welcome Back"}
                             </CardTitle>
                             <CardDescription className="text-muted-foreground font-medium">
-                                {activeTab === "register" ? "Create your official CLC digital profile." : "Enter your name to access your Digital ID."}
+                                {activeTab === "register" ? "Create your official Christian Life Center digital profile." : "Enter your name to access your Digital ID."}
                             </CardDescription>
                         </div>
                     </CardHeader>
@@ -268,54 +270,23 @@ export default function RegistrationPage() {
                                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 pt-2">
                                                 <div className="space-y-2.5">
                                                     <Label className="text-foreground font-bold ml-1">Cluster</Label>
-                                                    <Select onValueChange={(v) => { setValue("cluster", v); setValue("network", ""); }}>
-                                                        <SelectTrigger className="h-12 bg-background/50 border-border text-foreground rounded-xl">
-                                                            <SelectValue placeholder="Select Cluster" />
-                                                        </SelectTrigger>
-                                                        <SelectContent className="bg-popover border-border text-popover-foreground">
-                                                            <SelectItem value="Cluster 1">Cluster 1</SelectItem>
-                                                            <SelectItem value="Cluster 2">Cluster 2</SelectItem>
-                                                        </SelectContent>
-                                                    </Select>
+                                                    <ClusterSelect value={watch("cluster")} onValueChange={(v) => { setValue("cluster", v); setValue("network", ""); }} />
                                                 </div>
 
                                                 <div className="space-y-2.5">
                                                     <Label className="text-foreground font-bold ml-1">Network</Label>
-                                                    <Select onValueChange={(v) => setValue("network", v)} disabled={!watch("cluster")}>
-                                                        <SelectTrigger className="h-12 bg-background/50 border-border text-foreground rounded-xl">
-                                                            <SelectValue placeholder={watch("cluster") ? "Select network" : "Choose cluster first"} />
-                                                        </SelectTrigger>
-                                                        <SelectContent className="bg-popover border-border text-popover-foreground">
-                                                            {watch("cluster") === "Cluster 1" && watch("gender") === "Male" && ["Grenadier", "Better You", "Overcomers", "Kingdom Souldiers", "Light-bearers"].map(n => <SelectItem key={n} value={n}>{n}</SelectItem>)}
-                                                            {watch("cluster") === "Cluster 1" && watch("gender") === "Female" && ["WOW", "Loved", "Phoenix", "Conquerors", "Pearls", "Dauntless", "Royalties"].map(n => <SelectItem key={n} value={n}>{n}</SelectItem>)}
-                                                            {watch("cluster") === "Cluster 2" && watch("gender") === "Male" && ["Bravehearts", "Astig", "Transformer", "Invincible", "Generals", "Champs", "Unbreakable multiplier"].map(n => <SelectItem key={n} value={n}>{n}</SelectItem>)}
-                                                            {watch("cluster") === "Cluster 2" && watch("gender") === "Female" && ["Exemplary", "Gems", "Diamonds", "Bride", "Fab", "Triumphant", "Visionary"].map(n => <SelectItem key={n} value={n}>{n}</SelectItem>)}
-                                                        </SelectContent>
-                                                    </Select>
+                                                    <NetworkSelect
+                                                        cluster={watch("cluster")}
+                                                        gender={watch("gender")}
+                                                        value={watch("network")}
+                                                        onValueChange={(v) => setValue("network", v)}
+                                                    />
                                                 </div>
                                             </div>
 
                                             <div className="space-y-2.5">
                                                 <Label className="text-foreground font-bold ml-1">Ministry Involvement</Label>
-                                                <Select onValueChange={(v) => setValue("ministry", v)}>
-                                                    <SelectTrigger className="h-12 bg-background/50 border-border text-foreground rounded-xl">
-                                                        <SelectValue placeholder="Select ministry" />
-                                                    </SelectTrigger>
-                                                    <SelectContent className="bg-popover border-border text-popover-foreground">
-                                                        <SelectItem value="Worship Team">Worship Team</SelectItem>
-                                                        <SelectItem value="Media">Media</SelectItem>
-                                                        <SelectItem value="Usher">Usher</SelectItem>
-                                                        <SelectItem value="Marshal">Marshal</SelectItem>
-                                                        <SelectItem value="Production">Production</SelectItem>
-                                                        <SelectItem value="Kid's Church">Kid's Church</SelectItem>
-                                                        <SelectItem value="Technical">Technical</SelectItem>
-                                                        <SelectItem value="PA">PA</SelectItem>
-                                                        <SelectItem value="Finance">Finance</SelectItem>
-                                                        <SelectItem value="Arete">Arete</SelectItem>
-                                                        <SelectItem value="Hosting">Hosting</SelectItem>
-                                                        <SelectItem value="Writer">Writer</SelectItem>
-                                                    </SelectContent>
-                                                </Select>
+                                                <MinistrySelect value={watch("ministry")} onValueChange={(v) => setValue("ministry", v)} />
                                             </div>
 
                                             <div className="space-y-2.5">
@@ -329,6 +300,8 @@ export default function RegistrationPage() {
                                                     {isSubmitting ? <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1, ease: "linear" }} className="w-6 h-6 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full" /> : "Complete Registration"}
                                                 </Button>
                                             </div>
+
+                                            <ConcernNote />
                                         </motion.div>
                                     )}
                                 </AnimatePresence>
@@ -362,9 +335,12 @@ export default function RegistrationPage() {
                                         )}
                                     </Button>
 
-                                    <div className="p-4 bg-primary/5 rounded-2xl border border-primary/10 flex items-start gap-3">
-                                        <Sparkles className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-                                        <p className="text-xs font-medium text-muted-foreground leading-relaxed">Forgot your ID? No problem. Simply enter your registered name to retrieve your official CLC digital profile.</p>
+                                    <div className="p-4 bg-primary/5 rounded-2xl border border-primary/10 flex flex-col gap-2">
+                                        <div className="flex items-start gap-3">
+                                            <Sparkles className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                                            <p className="text-xs font-medium text-muted-foreground leading-relaxed">Forgot your ID? No problem. Simply enter your registered name to retrieve your official Christian Life Center digital profile.</p>
+                                        </div>
+                                        <ConcernNote variant="primary" />
                                     </div>
                                 </motion.div>
                             </form>
@@ -372,10 +348,6 @@ export default function RegistrationPage() {
                     </CardContent>
                 </Card>
 
-                <div className="mt-8 flex items-center justify-center gap-2 text-muted-foreground">
-                    <Heart className="w-4 h-4 fill-muted-foreground" />
-                    <span className="text-xs font-bold uppercase tracking-wider italic">Designed for CLC Life</span>
-                </div>
             </motion.div>
         </div>
     );

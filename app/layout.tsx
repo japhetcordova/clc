@@ -13,10 +13,11 @@ const geistMono = Geist_Mono({
 });
 
 import { Toaster } from "sonner";
+import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
-  title: "CLC Registration & Attendance",
-  description: "A premium, frictionless QR-based registration and attendance system for church communities.",
+  title: "Christian Life Center | Registration & Attendance",
+  description: "Official registration and attendance system for Christian Life Center Tagum City.",
 };
 
 export default function RootLayout({
@@ -27,9 +28,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}
       >
-        {children}
+        <main className="flex-1">
+          {children}
+        </main>
+        <Footer />
         <Toaster position="top-center" richColors />
       </body>
     </html>
