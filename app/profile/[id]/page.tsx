@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { QRCodeSVG } from "qrcode.react";
 import { User, Phone, Mail, Building2, Users as UsersIcon, MapPin } from "lucide-react";
 import ProfileClient from "@/app/profile/[id]/profile-client"; // Client component for QR generation
+import EditProfile from "./edit-profile";
 
 export default async function ProfilePage({ params }: { params: { id: string } }) {
     const { id } = await params;
@@ -81,12 +82,15 @@ export default async function ProfilePage({ params }: { params: { id: string } }
                             )}
                         </div>
 
-                        <div className="text-center pb-4 pt-2">
-                            <div className="inline-flex items-center gap-2 px-3 py-1 bg-muted/50 rounded-full ring-1 ring-border">
-                                <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-                                <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
-                                    Member since {new Date(user.createdAt).toLocaleDateString()}
-                                </p>
+                        <div className="space-y-4 pt-4">
+                            <EditProfile user={user} />
+                            <div className="text-center pb-4 pt-2">
+                                <div className="inline-flex items-center gap-2 px-3 py-1 bg-muted/50 rounded-full ring-1 ring-border">
+                                    <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
+                                    <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                                        Member since {new Date(user.createdAt).toLocaleDateString()}
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </CardContent>

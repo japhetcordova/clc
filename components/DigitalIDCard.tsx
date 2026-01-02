@@ -19,23 +19,24 @@ export default function DigitalIDCard({ user, qrValue }: DigitalIDCardProps) {
         <div
             id="digital-id-card"
             className="w-[400px] h-[600px] bg-white text-slate-950 relative overflow-hidden font-sans p-8 flex flex-col items-center justify-between border border-slate-200"
+            style={{ backgroundColor: '#ffffff' }}
         >
             {/* Decorative background branding */}
-            <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
-                <div className="absolute -top-20 -left-20 w-64 h-64 bg-indigo-600 rounded-full blur-[100px]" />
-                <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-purple-600 rounded-full blur-[100px]" />
+            <div className="absolute top-0 left-0 w-full h-full opacity-5 pointer-events-none">
+                <div className="absolute -top-20 -left-20 w-64 h-64 bg-indigo-500 rounded-full blur-[120px]" />
+                <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-purple-500 rounded-full blur-[120px]" />
             </div>
 
             {/* Header */}
             <div className="relative z-10 w-full flex flex-col items-center gap-2">
-                <h1 className="text-2xl font-black tracking-tighter uppercase italic text-slate-900/90">CLC Community</h1>
-                <div className="h-1 w-12 bg-indigo-600 rounded-full" />
+                <h1 className="text-2xl font-black tracking-tighter uppercase italic text-slate-950" style={{ color: '#020617' }}>CLC Community</h1>
+                <div className="h-1.5 w-16 bg-indigo-600 rounded-full" />
             </div>
 
             {/* Member Info */}
             <div className="relative z-10 text-center space-y-2">
-                <h2 className="text-4xl font-black tracking-tight text-slate-900">{user.firstName} {user.lastName}</h2>
-                <p className="text-indigo-700 font-bold uppercase tracking-[0.2em] text-[10px] px-5 py-2 bg-indigo-50 rounded-full inline-block border border-indigo-100">
+                <h2 className="text-4xl font-black tracking-tight text-slate-950" style={{ color: '#020617' }}>{user.firstName} {user.lastName}</h2>
+                <p className="text-indigo-800 font-black uppercase tracking-[0.2em] text-[10px] px-6 py-2.5 bg-indigo-50 rounded-full inline-block border-2 border-indigo-100">
                     {user.ministry}
                 </p>
             </div>

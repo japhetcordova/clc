@@ -17,6 +17,18 @@ export async function registerUser(formData: {
     ministry: string;
 }) {
     try {
+        // Check for existing user (Name or Contact Number)
+        const [existingUser] = await db.select().from(users).where(
+            and(
+                eq(users.firstName, formData.firstName),
+                eq(users.lastName, formData.lastName)
+            )
+        ).limit(1);
+
+        if (existingUser) {
+            return { success: true, user: existingUser, alreadyExists: true };
+        }
+
         // Generate a secure QR code ID
         const qrCodeId = randomBytes(8).toString('hex');
 
@@ -25,10 +37,52 @@ export async function registerUser(formData: {
             qrCodeId,
         }).returning();
 
-        return { success: true, user: newUser };
+        return { success: true, user: newUser, alreadyExists: false };
     } catch (error) {
         console.error("Registration error:", error);
         return { success: false, error: "Failed to register user." };
+    }
+}
+
+export async function updateUser(qrCodeId: string, formData: Partial<{
+    firstName: string;
+    lastName: string;
+    gender: string;
+    network: string;
+    cluster: string;
+    contactNumber: string;
+    email?: string;
+    ministry: string;
+}>) {
+    try {
+        const [updatedUser] = await db.update(users)
+            .set(formData)
+            .where(eq(users.qrCodeId, qrCodeId))
+            .returning();
+
+        revalidatePath(`/profile/${qrCodeId}`);
+        return { success: true, user: updatedUser };
+    } catch (error) {
+        console.error("Update error:", error);
+        return { success: false, error: "Failed to update profile." };
+    }
+}
+
+export async function findUser(firstName: string, lastName: string) {
+    try {
+        const [user] = await db.select().from(users).where(
+            and(
+                eq(users.firstName, firstName),
+                eq(users.lastName, lastName)
+            )
+        ).limit(1);
+
+        if (user) {
+            return { success: true, user };
+        }
+        return { success: false, error: "No profile found with this name." };
+    } catch (error) {
+        return { success: false, error: "Search failed." };
     }
 }
 
