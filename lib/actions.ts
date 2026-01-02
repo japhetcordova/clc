@@ -120,3 +120,14 @@ export async function markAttendance(qrCodeId: string) {
         return { success: false, error: "Failed to record attendance." };
     }
 }
+
+export async function verifyAdminPassword(password: string) {
+    const adminPass = process.env.ADMIN_PASSWORD;
+    if (!adminPass) {
+        return { success: false, error: "Admin password not configured in environment." };
+    }
+    if (password === adminPass) {
+        return { success: true };
+    }
+    return { success: false, error: "Invalid administrator password." };
+}

@@ -6,11 +6,13 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Lock, ShieldCheck, ArrowRight, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { verifyAdminPassword } from "@/lib/actions";
 
 export default function AdminAuthGate({ children }: { children: React.ReactNode }) {
     const [password, setPassword] = useState("");
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
+    const [isVerifying, setIsVerifying] = useState(false);
     const [error, setError] = useState("");
 
     useEffect(() => {
@@ -21,16 +23,23 @@ export default function AdminAuthGate({ children }: { children: React.ReactNode 
         setIsLoading(false);
     }, []);
 
-    const handleLogin = (e: React.FormEvent) => {
+    const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
-        // A simple hardcoded password as requested for quick setup. 
-        // In a real app, this should be an env variable checked via server action.
-        if (password === "clcadmin2026") {
-            localStorage.setItem("clc_admin_auth", "true");
-            setIsAuthenticated(true);
-            setError("");
-        } else {
-            setError("Invalid administrator password.");
+        setIsVerifying(true);
+        setError("");
+
+        try {
+            const result = await verifyAdminPassword(password);
+            if (result.success) {
+                localStorage.setItem("clc_admin_auth", "true");
+                setIsAuthenticated(true);
+            } else {
+                setError(result.error || "Invalid administrator password.");
+            }
+        } catch (err) {
+            setError("Security check failed. Please try again.");
+        } finally {
+            setIsVerifying(false);
         }
     };
 
@@ -78,10 +87,17 @@ export default function AdminAuthGate({ children }: { children: React.ReactNode 
                                 </div>
                                 <Button
                                     type="submit"
+                                    disabled={isVerifying}
                                     className="w-full h-14 rounded-2xl bg-primary text-primary-foreground font-black text-lg shadow-lg shadow-primary/20 hover:scale-[1.02] transition-all"
                                 >
-                                    Access Dashboard
-                                    <ArrowRight className="ml-2 w-5 h-5" />
+                                    {isVerifying ? (
+                                        <Loader2 className="w-6 h-6 animate-spin" />
+                                    ) : (
+                                        <>
+                                            Access Dashboard
+                                            <ArrowRight className="ml-2 w-5 h-5" />
+                                        </>
+                                    )}
                                 </Button>
                             </form>
                             <div className="mt-8 flex items-center justify-center gap-2 px-4 py-2 bg-muted/30 rounded-full w-fit mx-auto ring-1 ring-border">
