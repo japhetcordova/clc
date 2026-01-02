@@ -6,6 +6,7 @@ export const users = pgTable("users", {
     lastName: text("last_name").notNull(),
     gender: text("gender").notNull(), // Male, Female
     network: text("network").notNull(), // Transformers, WOW, Gems, etc.
+    cluster: text("cluster").notNull(), // Cluster 1, Cluster 2
     contactNumber: text("contact_number").notNull(),
     email: text("email"),
     ministry: text("ministry").notNull(), // Worship Team, Media, etc.

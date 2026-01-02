@@ -24,6 +24,7 @@ const formSchema = z.object({
     lastName: z.string().min(2, "Last name is required"),
     gender: z.string().min(1, "Gender is required"),
     network: z.string().min(1, "Network is required"),
+    cluster: z.string().min(1, "Cluster is required"),
     contactNumber: z.string().min(10, "Valid contact number is required"),
     email: z.string().email("Invalid email").optional().or(z.literal("")),
     ministry: z.string().min(1, "Ministry is required"),
@@ -45,13 +46,17 @@ export default function RegistrationPage() {
         formState: { errors },
     } = useForm<FormValues>({
         resolver: zodResolver(formSchema),
+        defaultValues: {
+            cluster: "",
+            network: "",
+        },
         mode: "onChange",
     });
 
     const nextStep = async () => {
         const fieldsToValidate = step === 1
             ? ["firstName", "lastName", "gender", "contactNumber"]
-            : ["network", "ministry"];
+            : ["cluster", "network", "ministry"];
 
         const isValid = await trigger(fieldsToValidate as any);
         if (isValid) setStep((s) => s + 1);
@@ -296,23 +301,53 @@ export default function RegistrationPage() {
                                         exit={{ opacity: 0, x: -20 }}
                                         className="space-y-5"
                                     >
-                                        <div className="space-y-2.5">
-                                            <Label className="text-foreground font-bold ml-1">Choose your Network</Label>
-                                            <Select onValueChange={(v) => setValue("network", v)}>
-                                                <SelectTrigger className="h-12 bg-background/50 border-border text-foreground rounded-xl">
-                                                    <SelectValue placeholder="Select network" />
-                                                </SelectTrigger>
-                                                <SelectContent className="bg-popover border-border text-popover-foreground">
-                                                    <SelectItem value="Transformers">Transformers</SelectItem>
-                                                    <SelectItem value="WOW">WOW</SelectItem>
-                                                    <SelectItem value="Gems">Gems</SelectItem>
-                                                    <SelectItem value="Kingdom Soldiers">Kingdom Soldiers</SelectItem>
-                                                    <SelectItem value="Grenadiers">Grenadiers</SelectItem>
-                                                    <SelectItem value="Invincible">Invincible</SelectItem>
-                                                </SelectContent>
-                                            </Select>
-                                            {errors.network && <p className="text-xs font-bold text-destructive ml-1">{errors.network.message}</p>}
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 pt-2">
+                                            <div className="space-y-2.5">
+                                                <Label className="text-foreground font-bold ml-1">Cluster</Label>
+                                                <Select onValueChange={(v) => {
+                                                    setValue("cluster", v);
+                                                    setValue("network", ""); // Reset network when cluster changes
+                                                }}>
+                                                    <SelectTrigger className="h-12 bg-background/50 border-border text-foreground rounded-xl">
+                                                        <SelectValue placeholder="Select Cluster" />
+                                                    </SelectTrigger>
+                                                    <SelectContent className="bg-popover border-border text-popover-foreground">
+                                                        <SelectItem value="Cluster 1">Cluster 1</SelectItem>
+                                                        <SelectItem value="Cluster 2">Cluster 2</SelectItem>
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
+
+                                            <div className="space-y-2.5">
+                                                <Label className="text-foreground font-bold ml-1">Choose your Network</Label>
+                                                <Select
+                                                    onValueChange={(v) => setValue("network", v)}
+                                                    disabled={!watch("cluster")}
+                                                >
+                                                    <SelectTrigger className="h-12 bg-background/50 border-border text-foreground rounded-xl">
+                                                        <SelectValue placeholder={watch("cluster") ? "Select network" : "Choose cluster first"} />
+                                                    </SelectTrigger>
+                                                    <SelectContent className="bg-popover border-border text-popover-foreground">
+                                                        {watch("cluster") === "Cluster 1" && watch("gender") === "Male" && [
+                                                            "Grenadier", "Better You", "Overcomers", "Kingdom Souldiers", "Light-bearers"
+                                                        ].map(n => <SelectItem key={n} value={n}>{n}</SelectItem>)}
+
+                                                        {watch("cluster") === "Cluster 1" && watch("gender") === "Female" && [
+                                                            "WOW", "Loved", "Phoenix", "Conquerors", "Pearls", "Dauntless", "Royalties"
+                                                        ].map(n => <SelectItem key={n} value={n}>{n}</SelectItem>)}
+
+                                                        {watch("cluster") === "Cluster 2" && watch("gender") === "Male" && [
+                                                            "Bravehearts", "Astig", "Transformer", "Invincible", "Generals", "Champs", "Unbreakable multiplier"
+                                                        ].map(n => <SelectItem key={n} value={n}>{n}</SelectItem>)}
+
+                                                        {watch("cluster") === "Cluster 2" && watch("gender") === "Female" && [
+                                                            "Exemplary", "Gems", "Diamonds", "Bride", "Fab", "Triumphant", "Visionary"
+                                                        ].map(n => <SelectItem key={n} value={n}>{n}</SelectItem>)}
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
                                         </div>
+                                        {errors.network && <p className="text-xs font-bold text-destructive ml-1">{errors.network.message}</p>}
 
                                         <div className="space-y-2.5 text-white">
                                             <Label className="text-foreground font-bold ml-1">Ministry Involvement</Label>

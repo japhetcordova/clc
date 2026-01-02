@@ -10,6 +10,7 @@ import { FileDown, Calendar as CalendarIcon } from "lucide-react";
 interface AdminClientProps {
     initialMinistry: string;
     initialNetwork: string;
+    initialCluster: string;
     initialGender: string;
     initialDate: string;
 }
@@ -17,6 +18,7 @@ interface AdminClientProps {
 export default function AdminClient({
     initialMinistry,
     initialNetwork,
+    initialCluster,
     initialGender,
     initialDate,
 }: AdminClientProps) {
@@ -34,7 +36,7 @@ export default function AdminClient({
     };
 
     const handleExport = () => {
-        window.print(); // Quick way to "export" for now, or could generate CSV
+        window.print();
     };
 
     return (
@@ -67,6 +69,20 @@ export default function AdminClient({
             </div>
 
             <div className="space-y-1.5 min-w-[140px]">
+                <Label className="text-[10px] uppercase tracking-wider font-bold text-muted-foreground">Cluster</Label>
+                <Select value={initialCluster} onValueChange={(v) => updateFilters("cluster", v)}>
+                    <SelectTrigger className="bg-background">
+                        <SelectValue placeholder="Cluster" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="all">All Clusters</SelectItem>
+                        <SelectItem value="Cluster 1">Cluster 1</SelectItem>
+                        <SelectItem value="Cluster 2">Cluster 2</SelectItem>
+                    </SelectContent>
+                </Select>
+            </div>
+
+            <div className="space-y-1.5 min-w-[140px]">
                 <Label className="text-[10px] uppercase tracking-wider font-bold text-muted-foreground">Network</Label>
                 <Select value={initialNetwork} onValueChange={(v) => updateFilters("network", v)}>
                     <SelectTrigger className="bg-background">
@@ -74,12 +90,32 @@ export default function AdminClient({
                     </SelectTrigger>
                     <SelectContent>
                         <SelectItem value="all">All Networks</SelectItem>
-                        <SelectItem value="Transformers">Transformers</SelectItem>
+                        <SelectItem value="Grenadier">Grenadier</SelectItem>
+                        <SelectItem value="Better You">Better You</SelectItem>
+                        <SelectItem value="Overcomers">Overcomers</SelectItem>
+                        <SelectItem value="Kingdom Souldiers">Kingdom Souldiers</SelectItem>
+                        <SelectItem value="Light-bearers">Light-bearers</SelectItem>
                         <SelectItem value="WOW">WOW</SelectItem>
-                        <SelectItem value="Gems">Gems</SelectItem>
-                        <SelectItem value="Kingdom Soldiers">Kingdom Soldiers</SelectItem>
-                        <SelectItem value="Grenadiers">Grenadiers</SelectItem>
+                        <SelectItem value="Loved">Loved</SelectItem>
+                        <SelectItem value="Phoenix">Phoenix</SelectItem>
+                        <SelectItem value="Conquerors">Conquerors</SelectItem>
+                        <SelectItem value="Pearls">Pearls</SelectItem>
+                        <SelectItem value="Dauntless">Dauntless</SelectItem>
+                        <SelectItem value="Royalties">Royalties</SelectItem>
+                        <SelectItem value="Bravehearts">Bravehearts</SelectItem>
+                        <SelectItem value="Astig">Astig</SelectItem>
+                        <SelectItem value="Transformer">Transformer</SelectItem>
                         <SelectItem value="Invincible">Invincible</SelectItem>
+                        <SelectItem value="Generals">Generals</SelectItem>
+                        <SelectItem value="Champs">Champs</SelectItem>
+                        <SelectItem value="Unbreakable multiplier">Unbreakable multiplier</SelectItem>
+                        <SelectItem value="Exemplary">Exemplary</SelectItem>
+                        <SelectItem value="Gems">Gems</SelectItem>
+                        <SelectItem value="Diamonds">Diamonds</SelectItem>
+                        <SelectItem value="Bride">Bride</SelectItem>
+                        <SelectItem value="Fab">Fab</SelectItem>
+                        <SelectItem value="Triumphant">Triumphant</SelectItem>
+                        <SelectItem value="Visionary">Visionary</SelectItem>
                     </SelectContent>
                 </Select>
             </div>

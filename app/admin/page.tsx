@@ -6,12 +6,13 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Users, UserCheck, Calendar, Filter, TrendingUp, Award } from "lucide-react";
 import AdminClient from "@/app/admin/admin-client";
+import AdminLogout from "@/app/admin/logout-button";
 import { motion } from "framer-motion";
 
 export default async function AdminDashboard({
     searchParams,
 }: {
-    searchParams: { date?: string; ministry?: string; network?: string; gender?: string };
+    searchParams: { date?: string; ministry?: string; network?: string; gender?: string; cluster?: string };
 }) {
     const params = await searchParams;
     const filterDate = params.date || new Date().toISOString().split("T")[0];
@@ -33,6 +34,9 @@ export default async function AdminDashboard({
     if (params.gender && params.gender !== "all") {
         filters.push(eq(users.gender, params.gender));
     }
+    if (params.cluster && params.cluster !== "all") {
+        filters.push(eq(users.cluster, params.cluster));
+    }
 
     const attendanceList = await db.select({
         id: attendance.id,
@@ -42,6 +46,7 @@ export default async function AdminDashboard({
             lastName: users.lastName,
             ministry: users.ministry,
             network: users.network,
+            cluster: users.cluster,
             gender: users.gender,
         }
     })
@@ -50,14 +55,14 @@ export default async function AdminDashboard({
         .where(and(...filters))
         .orderBy(sql`${attendance.scannedAt} DESC`);
 
-    // Simple aggregation for charts (this would typically be a separate grouped query)
+    // aggregation for charts (Filtered)
     const ministryStats = await db.select({
         name: users.ministry,
         count: count(),
     })
         .from(attendance)
         .innerJoin(users, eq(attendance.userId, users.id))
-        .where(eq(attendance.scanDate, filterDate))
+        .where(and(...filters))
         .groupBy(users.ministry);
 
     const networkStats = await db.select({
@@ -66,7 +71,7 @@ export default async function AdminDashboard({
     })
         .from(attendance)
         .innerJoin(users, eq(attendance.userId, users.id))
-        .where(eq(attendance.scanDate, filterDate))
+        .where(and(...filters))
         .groupBy(users.network);
 
     return (
@@ -76,11 +81,12 @@ export default async function AdminDashboard({
                     <h1 className="text-4xl font-black tracking-tight text-foreground">Admin Dashboard</h1>
                     <p className="text-muted-foreground font-medium">Global community attendance and member engagement records.</p>
                 </div>
-                <div className="flex gap-4">
+                <div className="flex items-center gap-4">
                     <div className="bg-primary/5 px-4 py-2.5 rounded-2xl flex items-center gap-2 border border-primary/10 ring-1 ring-primary/5 shadow-inner">
                         <Calendar className="w-4 h-4 text-primary" />
                         <span className="font-bold text-sm text-foreground">{filterDate}</span>
                     </div>
+                    <AdminLogout />
                 </div>
             </div>
 
@@ -149,6 +155,7 @@ export default async function AdminDashboard({
                             <AdminClient
                                 initialMinistry={params.ministry || "all"}
                                 initialNetwork={params.network || "all"}
+                                initialCluster={params.cluster || "all"}
                                 initialGender={params.gender || "all"}
                                 initialDate={filterDate}
                             />
@@ -159,6 +166,7 @@ export default async function AdminDashboard({
                                         <TableRow className="border-border hover:bg-transparent">
                                             <TableHead className="text-xs font-black uppercase tracking-widest h-12">Time</TableHead>
                                             <TableHead className="text-xs font-black uppercase tracking-widest h-12">Member</TableHead>
+                                            <TableHead className="text-xs font-black uppercase tracking-widest h-12">Cluster</TableHead>
                                             <TableHead className="text-xs font-black uppercase tracking-widest h-12">Ministry</TableHead>
                                             <TableHead className="text-xs font-black uppercase tracking-widest h-12">Network</TableHead>
                                             <TableHead className="text-xs font-black uppercase tracking-widest h-12 text-right pr-6">Gender</TableHead>
@@ -167,7 +175,7 @@ export default async function AdminDashboard({
                                     <TableBody>
                                         {attendanceList.length === 0 ? (
                                             <TableRow>
-                                                <TableCell colSpan={5} className="h-32 text-center text-muted-foreground font-bold">
+                                                <TableCell colSpan={6} className="h-32 text-center text-muted-foreground font-bold">
                                                     No scans found for the selected criteria.
                                                 </TableCell>
                                             </TableRow>
@@ -180,6 +188,7 @@ export default async function AdminDashboard({
                                                     <TableCell className="font-black text-foreground">
                                                         {record.user.firstName} {record.user.lastName}
                                                     </TableCell>
+                                                    <TableCell className="text-xs font-bold text-muted-foreground">{record.user.cluster}</TableCell>
                                                     <TableCell>
                                                         <span className="px-3 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-black uppercase tracking-wider ring-1 ring-primary/20">
                                                             {record.user.ministry}

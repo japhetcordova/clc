@@ -11,6 +11,7 @@ export async function registerUser(formData: {
     lastName: string;
     gender: string;
     network: string;
+    cluster: string;
     contactNumber: string;
     email?: string;
     ministry: string;
