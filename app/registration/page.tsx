@@ -307,6 +307,10 @@ export default function RegistrationPage() {
                                                         <SelectItem value="Usher">Usher</SelectItem>
                                                         <SelectItem value="Marshal">Marshal</SelectItem>
                                                         <SelectItem value="Director">Director</SelectItem>
+                                                        <SelectItem value="Kid's Church">Kid's Church</SelectItem>
+                                                        <SelectItem value="Technical">Technical</SelectItem>
+                                                        <SelectItem value="PA">PA</SelectItem>
+                                                        <SelectItem value="Finance">Finance</SelectItem>
                                                     </SelectContent>
                                                 </Select>
                                             </div>

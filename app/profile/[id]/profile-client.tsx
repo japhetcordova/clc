@@ -32,7 +32,7 @@ export default function ProfileClient({ user, qrValue }: ProfileClientProps) {
             const dataUrl = await toPng(element, {
                 quality: 1.0,
                 pixelRatio: 3,
-                backgroundColor: '#020617'
+                backgroundColor: '#ffffff'
             });
 
             const pdf = new jsPDF({
