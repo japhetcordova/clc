@@ -306,11 +306,14 @@ export default function RegistrationPage() {
                                                         <SelectItem value="Media">Media</SelectItem>
                                                         <SelectItem value="Usher">Usher</SelectItem>
                                                         <SelectItem value="Marshal">Marshal</SelectItem>
-                                                        <SelectItem value="Director">Director</SelectItem>
+                                                        <SelectItem value="Production">Production</SelectItem>
                                                         <SelectItem value="Kid's Church">Kid's Church</SelectItem>
                                                         <SelectItem value="Technical">Technical</SelectItem>
                                                         <SelectItem value="PA">PA</SelectItem>
                                                         <SelectItem value="Finance">Finance</SelectItem>
+                                                        <SelectItem value="Arete">Arete</SelectItem>
+                                                        <SelectItem value="Hosting">Hosting</SelectItem>
+                                                        <SelectItem value="Writer">Writer</SelectItem>
                                                     </SelectContent>
                                                 </Select>
                                             </div>
