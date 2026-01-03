@@ -88,8 +88,13 @@ export default function AdminClient({
                     </SelectTrigger>
                     <SelectContent>
                         <SelectItem value="all">All Networks</SelectItem>
-                        {/* Show all networks combined from all clusters */}
-                        {[...NETWORKS["Cluster 1"].Male, ...NETWORKS["Cluster 1"].Female, ...NETWORKS["Cluster 2"].Male, ...NETWORKS["Cluster 2"].Female].sort().map(n => (
+                        {/* Show all networks combined from all clusters, unique and sorted */}
+                        {Array.from(new Set([
+                            ...NETWORKS["Cluster 1"].Male,
+                            ...NETWORKS["Cluster 1"].Female,
+                            ...NETWORKS["Cluster 2"].Male,
+                            ...NETWORKS["Cluster 2"].Female
+                        ])).sort().map(n => (
                             <SelectItem key={n} value={n}>{n}</SelectItem>
                         ))}
                     </SelectContent>

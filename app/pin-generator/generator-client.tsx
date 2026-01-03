@@ -94,14 +94,14 @@ export default function PinGeneratorClient({ initialPin }: PinGeneratorClientPro
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-lg">
                 <Card className="border-none shadow-2xl bg-card/60 backdrop-blur-xl ring-1 ring-border overflow-hidden">
                     <div className="h-1.5 bg-linear-to-r from-amber-500 via-orange-500 to-amber-500" />
-                    <CardHeader className="text-center pb-2">
+                    <CardHeader className="text-center pb-2 pt-6 sm:pt-8">
                         <div className="flex justify-center mb-2">
                             <div className="p-2 bg-amber-500/10 rounded-xl ring-1 ring-amber-500/20">
                                 <ShieldCheck className="w-6 h-6 text-amber-600" />
                             </div>
                         </div>
-                        <CardTitle className="text-2xl font-black tracking-tight uppercase italic">Daily Access Control</CardTitle>
-                        <CardDescription className="font-bold flex items-center justify-center gap-2 text-amber-700/80">
+                        <CardTitle className="text-xl sm:text-2xl font-black tracking-tight uppercase italic px-4">Daily Access Control</CardTitle>
+                        <CardDescription className="text-xs sm:text-sm font-bold flex items-center justify-center gap-2 text-amber-700/80">
                             <Calendar className="w-4 h-4" />
                             {today}
                         </CardDescription>
@@ -117,16 +117,18 @@ export default function PinGeneratorClient({ initialPin }: PinGeneratorClientPro
                                     exit={{ opacity: 0, scale: 0.9 }}
                                     className="space-y-6"
                                 >
-                                    <div className="bg-amber-500/5 rounded-3xl p-8 border border-amber-500/10 text-center relative overflow-hidden group">
-                                        <div className="absolute top-0 right-0 p-4 opacity-10">
-                                            <RefreshCw className="w-12 h-12" />
+                                    <div className="bg-amber-500/5 rounded-3xl p-5 sm:p-8 border border-amber-500/10 text-center relative overflow-hidden group">
+                                        <div className="absolute -top-4 -right-4 p-4 opacity-5 pointer-events-none">
+                                            <RefreshCw className="w-24 h-24 sm:w-32 sm:h-32" />
                                         </div>
-                                        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-amber-700/60 mb-2">Active Scanner PIN</p>
+                                        <p className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.3em] text-amber-700/60 mb-2">Active Scanner PIN</p>
                                         <div
-                                            className="text-6xl font-black tracking-[0.2em] text-amber-900 font-mono cursor-pointer hover:scale-110 transition-transform active:scale-95 group-hover:text-amber-600"
+                                            className="text-4xl sm:text-6xl font-black tracking-[0.05em] sm:tracking-[0.2em] text-amber-900 font-mono cursor-pointer hover:scale-105 transition-all active:scale-95 group-hover:text-amber-600 px-1 relative z-10"
                                             onClick={() => {
-                                                navigator.clipboard.writeText(activePin.pin);
-                                                toast.success("PIN copied to clipboard!");
+                                                if (activePin) {
+                                                    navigator.clipboard.writeText(activePin.pin);
+                                                    toast.success("PIN copied to clipboard!");
+                                                }
                                             }}
                                             title="Click to copy"
                                         >
@@ -141,26 +143,26 @@ export default function PinGeneratorClient({ initialPin }: PinGeneratorClientPro
                                             {timeLeft && (
                                                 <div className="mt-4 pt-4 border-t border-amber-500/10 w-full">
                                                     <p className="text-[9px] font-black uppercase tracking-widest text-amber-700/50 mb-3">Expires in</p>
-                                                    <div className="flex justify-center gap-4">
+                                                    <div className="flex justify-center gap-2 sm:gap-4">
                                                         <div className="flex flex-col items-center">
-                                                            <div className="text-2xl font-black text-amber-900 tabular-nums">
+                                                            <div className="text-xl sm:text-2xl font-black text-amber-900 tabular-nums">
                                                                 {formatNumber(timeLeft.hours)}
                                                             </div>
-                                                            <span className="text-[8px] font-bold text-amber-700/60 uppercase">Hours</span>
+                                                            <span className="text-[7px] sm:text-[8px] font-bold text-amber-700/60 uppercase">Hours</span>
                                                         </div>
-                                                        <div className="text-2xl font-light text-amber-300 self-start mt-[-2px]">:</div>
+                                                        <div className="text-xl sm:text-2xl font-light text-amber-300 self-start mt-[-2px]">:</div>
                                                         <div className="flex flex-col items-center">
-                                                            <div className="text-2xl font-black text-amber-900 tabular-nums">
+                                                            <div className="text-xl sm:text-2xl font-black text-amber-900 tabular-nums">
                                                                 {formatNumber(timeLeft.minutes)}
                                                             </div>
-                                                            <span className="text-[8px] font-bold text-amber-700/60 uppercase">Mins</span>
+                                                            <span className="text-[7px] sm:text-[8px] font-bold text-amber-700/60 uppercase">Mins</span>
                                                         </div>
-                                                        <div className="text-2xl font-light text-amber-300 self-start mt-[-2px]">:</div>
+                                                        <div className="text-xl sm:text-2xl font-light text-amber-300 self-start mt-[-2px]">:</div>
                                                         <div className="flex flex-col items-center">
-                                                            <div className="text-2xl font-black text-amber-700 tabular-nums">
+                                                            <div className="text-xl sm:text-2xl font-black text-amber-700 tabular-nums">
                                                                 {formatNumber(timeLeft.seconds)}
                                                             </div>
-                                                            <span className="text-[8px] font-bold text-amber-700/60 uppercase">Secs</span>
+                                                            <span className="text-[7px] sm:text-[8px] font-bold text-amber-700/60 uppercase">Secs</span>
                                                         </div>
                                                     </div>
                                                 </div>
