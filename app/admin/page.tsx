@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Users, UserCheck, Calendar, Filter, TrendingUp, Award } from "lucide-react";
 import AdminClient from "@/app/admin/admin-client";
 import AdminLogout from "@/app/admin/logout-button";
+import PaginationControls from "@/app/admin/pagination-controls";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LayoutDashboard, Users2, PieChart, BarChart3, Map, Heart } from "lucide-react";
 
@@ -15,7 +16,7 @@ import { getTodayString } from "@/lib/date-utils";
 export default async function AdminDashboard({
     searchParams,
 }: {
-    searchParams: { date?: string; ministry?: string; network?: string; gender?: string; cluster?: string };
+    searchParams: { date?: string; ministry?: string; network?: string; gender?: string; cluster?: string; page?: string };
 }) {
     const params = await searchParams;
     const filterDate = params.date || getTodayString();
@@ -57,6 +58,13 @@ export default async function AdminDashboard({
         .innerJoin(users, eq(attendance.userId, users.id))
         .where(and(...filters))
         .orderBy(sql`${attendance.scannedAt} DESC`);
+
+    // Pagination Logic
+    const page = Number(params.page) || 1;
+    const pageSize = 15;
+    const totalRecords = attendanceList.length;
+    const totalPages = Math.ceil(totalRecords / pageSize);
+    const paginatedList = attendanceList.slice((page - 1) * pageSize, page * pageSize);
 
     // aggregation for charts (Filtered)
     const ministryStats = await db.select({
@@ -220,6 +228,7 @@ export default async function AdminDashboard({
                                             initialCluster={params.cluster || "all"}
                                             initialGender={params.gender || "all"}
                                             initialDate={filterDate}
+                                            attendanceData={attendanceList}
                                         />
                                     </div>
 
@@ -234,14 +243,14 @@ export default async function AdminDashboard({
                                                 </TableRow>
                                             </TableHeader>
                                             <TableBody>
-                                                {attendanceList.length === 0 ? (
+                                                {paginatedList.length === 0 ? (
                                                     <TableRow>
                                                         <TableCell colSpan={4} className="h-40 text-center text-muted-foreground font-bold italic">
                                                             Waiting for scans...
                                                         </TableCell>
                                                     </TableRow>
                                                 ) : (
-                                                    attendanceList.map((record) => (
+                                                    paginatedList.map((record) => (
                                                         <TableRow key={record.id} className="border-border hover:bg-primary/5 transition-colors group">
                                                             <TableCell className="pl-4 sm:pl-8 py-4">
                                                                 <div className="flex flex-col gap-0.5">
@@ -278,6 +287,7 @@ export default async function AdminDashboard({
                                             </TableBody>
                                         </Table>
                                     </div>
+                                    <PaginationControls currentPage={page} totalPages={totalPages} />
                                 </CardContent>
                             </Card>
                         </div>
