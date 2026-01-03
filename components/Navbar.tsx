@@ -54,6 +54,7 @@ export default function Navbar() {
                     <div className="hidden md:flex items-center gap-8 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
                         <Link href="/about" className={`hover:text-primary transition-colors ${pathname === '/about' ? 'text-primary' : ''}`}>About</Link>
                         <Link href="/services" className={`hover:text-primary transition-colors ${pathname === '/services' ? 'text-primary' : ''}`}>Services</Link>
+                        <Link href="/locations" className={`hover:text-primary transition-colors ${pathname === '/locations' ? 'text-primary' : ''}`}>Locations</Link>
                         <Link href="/ministries" className={`hover:text-primary transition-colors ${pathname === '/ministries' ? 'text-primary' : ''}`}>Ministries</Link>
                         <Link href="/giving" className={`hover:text-primary transition-colors ${pathname === '/giving' ? 'text-primary' : ''}`}>Giving</Link>
                         <Link href="/events" className={`hover:text-primary transition-colors ${pathname === '/events' ? 'text-primary' : ''}`}>Events</Link>

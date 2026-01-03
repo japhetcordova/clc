@@ -57,6 +57,7 @@ export default function Footer() {
                             {[
                                 { name: "About CLC", href: "/about" },
                                 { name: "Our Services", href: "/services" },
+                                { name: "Our Locations", href: "/locations" },
                                 { name: "Ministries", href: "/ministries" },
                                 { name: "Giving", href: "/giving" },
                                 { name: "News & Events", href: "/events" }
