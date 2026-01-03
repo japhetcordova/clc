@@ -30,8 +30,23 @@ export const dailyPins = pgTable("daily_pins", {
     createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+export const events = pgTable("events", {
+    id: uuid("id").primaryKey().defaultRandom(),
+    title: text("title").notNull(),
+    description: text("description").notNull(),
+    date: date("date").notNull(),
+    time: text("time").notNull(),
+    location: text("location").notNull(),
+    category: text("category").notNull(), // special, regular, leadership
+    tag: text("tag").notNull(),
+    image: text("image"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
 export type Attendance = typeof attendance.$inferSelect;
 export type NewAttendance = typeof attendance.$inferInsert;
 export type DailyPin = typeof dailyPins.$inferSelect;
+export type ChurchEvent = typeof events.$inferSelect;
+export type NewChurchEvent = typeof events.$inferInsert;

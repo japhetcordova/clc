@@ -1,0 +1,128 @@
+import { db } from "@/db";
+import { events } from "@/db/schema";
+import { desc } from "drizzle-orm";
+import {
+    Bell,
+    ArrowUpRight,
+    Megaphone
+} from "lucide-react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import Image from "next/image";
+import EventsGrid from "./events-grid";
+
+export default async function EventsPage() {
+    // Fetch events from DB
+    const allEvents = await db.select().from(events).orderBy(desc(events.date));
+
+    // Fallback Mock Events if DB is empty to prevent empty screen on first load
+    const MOCK_EVENTS = [
+        {
+            id: "1",
+            title: "Super Sunday: Vision Day",
+            date: "Jan 12, 2026",
+            time: "08:00 AM & 10:30 AM",
+            location: "Tagum HQ Main Sanctuary",
+            category: "special",
+            description: "A special service where we unveil the roadmap and theme for the entire year. Don't miss this prophetic moment!",
+            tag: "High Priority",
+            createdAt: new Date()
+        },
+        {
+            id: "2",
+            title: "Mid-week Breakthrough",
+            date: "Every Wednesday",
+            time: "05:00 PM",
+            location: "Tagum HQ",
+            category: "regular",
+            description: "Corporate prayer and worship to refuel your spiritual fire mid-week.",
+            tag: "Weekly",
+            createdAt: new Date()
+        }
+    ];
+
+    const displayEvents = allEvents.length > 0 ? allEvents : MOCK_EVENTS;
+
+    return (
+        <div className="flex flex-col min-h-screen bg-background">
+            {/* HEADER */}
+            <section className="relative pt-32 pb-20 overflow-hidden">
+                <div className="absolute inset-0 z-0 opacity-10">
+                    <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-rose-500 rounded-full blur-[150px]" />
+                </div>
+
+                <div className="relative z-10 max-w-7xl mx-auto px-6 space-y-8">
+                    <div className="text-center space-y-6">
+                        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-rose-500/10 border border-rose-500/20 backdrop-blur-md mb-4">
+                            <Bell className="w-4 h-4 text-rose-500 animate-bounce" />
+                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-rose-500">Stay Updated</span>
+                        </div>
+                        <h1 className="text-5xl md:text-7xl font-black tracking-tighter uppercase italic leading-none">
+                            News <span className="text-rose-500 underline decoration-rose-500/20 underline-offset-8">&</span> Events
+                        </h1>
+                        <p className="max-w-2xl mx-auto text-muted-foreground font-medium text-lg leading-relaxed">
+                            Be part of what God is doing. Explore our upcoming gatherings, announcements, and special events.
+                        </p>
+                    </div>
+
+                    <EventsGrid initialEvents={displayEvents as any} />
+                </div>
+            </section>
+
+            {/* ANNOUNCEMENT BOARD */}
+            <section className="py-24 px-6 bg-muted/20">
+                <div className="max-w-7xl mx-auto space-y-16">
+                    <div className="flex items-end justify-between gap-8">
+                        <div className="space-y-4">
+                            <h2 className="text-4xl font-black uppercase italic tracking-tight">Recent <span className="text-rose-500">Updates</span></h2>
+                            <p className="text-muted-foreground font-medium italic">Latest announcements and church news.</p>
+                        </div>
+                        <Button variant="outline" className="rounded-2xl h-12 px-8 border-border font-black uppercase text-[10px] tracking-widest bg-background">
+                            View All Archive
+                        </Button>
+                    </div>
+
+                    <div className="grid md:grid-cols-3 gap-8">
+                        {[
+                            { title: "Cluster Reorganization", date: "Jan 01, 2026", type: "Admin" },
+                            { title: "Missions Fund Goal Reached", date: "Dec 28, 2025", type: "News" },
+                            { title: "New Cell Network Opening", date: "Dec 20, 2025", type: "Community" }
+                        ].map((post, i) => (
+                            <div key={i} className="p-8 rounded-[2rem] bg-card border border-border space-y-4 hover:border-rose-500/30 transition-all cursor-pointer group">
+                                <div className="flex justify-between items-center">
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-rose-500/60">{post.type}</span>
+                                    <span className="text-[10px] font-bold text-muted-foreground">{post.date}</span>
+                                </div>
+                                <h4 className="text-xl font-black uppercase italic tracking-tight leading-none group-hover:translate-x-1 transition-transform">{post.title}</h4>
+                                <div className="flex items-center gap-2 text-rose-500 font-black text-[10px] uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
+                                    Read Article <ArrowUpRight className="w-3 h-3" />
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* NEWSLETTER CTA */}
+            <section className="py-24 px-6 bg-rose-500 text-white">
+                <div className="max-w-4xl mx-auto text-center space-y-8">
+                    <Megaphone className="w-12 h-12 mx-auto rotate-[-15deg] opacity-50" />
+                    <h2 className="text-4xl md:text-5xl font-black uppercase italic tracking-tighter">Never Miss a Moment</h2>
+                    <p className="font-medium opacity-80 max-w-xl mx-auto">
+                        Subscribe to our digital bulletin and receive weekly updates, event invitations, and spiritual encouragement directly to your inbox.
+                    </p>
+                    <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
+                        <input
+                            type="email"
+                            placeholder="your@email.com"
+                            className="h-14 px-8 rounded-2xl bg-white/10 border border-white/20 placeholder:text-white/40 focus:outline-none focus:ring-2 ring-white/50 w-full sm:w-96 font-medium"
+                        />
+                        <Button className="h-14 px-10 rounded-2xl bg-white text-rose-600 font-black uppercase text-[10px] tracking-widest hover:bg-slate-100 transition-all shrink-0">
+                            Notify Me
+                        </Button>
+                    </div>
+                </div>
+            </section>
+        </div>
+    );
+}

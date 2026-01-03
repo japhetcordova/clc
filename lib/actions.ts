@@ -1,7 +1,8 @@
 "use server";
 
 import { db } from "@/db";
-import { users, attendance, dailyPins } from "@/db/schema";
+import { users, attendance, dailyPins, events } from "@/db/schema";
+import type { NewChurchEvent } from "@/db/schema";
 import { eq, and, desc } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { randomBytes } from "node:crypto";
@@ -231,4 +232,45 @@ export async function validateScannerPin(pin: string) {
 export async function isScannerAuthorized() {
     const cookieStore = await cookies();
     return cookieStore.get("clc_scanner_session")?.value === "authorized";
+}
+
+// EVENT ACTIONS
+export async function createEvent(data: NewChurchEvent) {
+    try {
+        const [newEvent] = await db.insert(events).values(data).returning();
+        revalidatePath("/admin/events");
+        revalidatePath("/events");
+        return { success: true, event: newEvent };
+    } catch (error) {
+        console.error("Create event error:", error);
+        return { success: false, error: "Failed to create event." };
+    }
+}
+
+export async function updateEvent(id: string, data: Partial<NewChurchEvent>) {
+    try {
+        const [updatedEvent] = await db.update(events)
+            .set(data)
+            .where(eq(events.id, id))
+            .returning();
+        revalidatePath("/admin/events");
+        revalidatePath(`/events/${id}`);
+        revalidatePath("/events");
+        return { success: true, event: updatedEvent };
+    } catch (error) {
+        console.error("Update event error:", error);
+        return { success: false, error: "Failed to update event." };
+    }
+}
+
+export async function deleteEvent(id: string) {
+    try {
+        await db.delete(events).where(eq(events.id, id));
+        revalidatePath("/admin/events");
+        revalidatePath("/events");
+        return { success: true };
+    } catch (error) {
+        console.error("Delete event error:", error);
+        return { success: false, error: "Failed to delete event." };
+    }
 }

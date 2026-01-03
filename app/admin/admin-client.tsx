@@ -117,6 +117,12 @@ export default function AdminClient({
                         Daily PIN
                     </Button>
                 </Link>
+                <Link href="/admin/events">
+                    <Button variant="outline" size="sm" className="gap-2 border-primary/50 hover:bg-primary/10 text-primary">
+                        <CalendarIcon className="w-4 h-4" />
+                        Events
+                    </Button>
+                </Link>
                 <Button variant="outline" size="sm" onClick={handleExport} className="gap-2">
                     <FileDown className="w-4 h-4" />
                     Export Report

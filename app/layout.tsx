@@ -13,7 +13,6 @@ const geistMono = Geist_Mono({
 });
 
 import { Toaster } from "sonner";
-import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
   title: "Christian Life Center | Registration & Attendance",
@@ -33,7 +32,6 @@ export default function RootLayout({
         <main className="flex-1">
           {children}
         </main>
-        <Footer />
         <Toaster position="top-center" richColors />
       </body>
     </html>
