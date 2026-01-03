@@ -46,7 +46,6 @@ export default function ProfileClient({ user, qrValue }: ProfileClientProps) {
 
             toast.success("Digital ID Ready!", { id: "pdf-gen-profile" });
         } catch (err) {
-            console.error("PDF generation error:", err);
             toast.error("Failed to generate PDF.", { id: "pdf-gen-profile" });
         }
     };

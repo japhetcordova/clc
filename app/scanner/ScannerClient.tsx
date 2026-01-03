@@ -109,7 +109,6 @@ export default function ScannerClient() {
             setIsScannerReady(true);
             setActiveCameraId(cameraId);
         } catch (err) {
-            console.error("Error starting scanner", err);
             toast.error("Failed to start camera.");
         }
     };

@@ -7,6 +7,7 @@ import { eq, and, desc } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { randomBytes } from "node:crypto";
 import { cookies } from "next/headers";
+import { getTodayString, getManilaMidnight } from "./date-utils";
 
 export async function registerUser(formData: {
     firstName: string;
@@ -41,7 +42,6 @@ export async function registerUser(formData: {
 
         return { success: true, user: newUser, alreadyExists: false };
     } catch (error) {
-        console.error("Registration error:", error);
         return { success: false, error: "Failed to register user." };
     }
 }
@@ -65,7 +65,6 @@ export async function updateUser(qrCodeId: string, formData: Partial<{
         revalidatePath(`/profile/${qrCodeId}`);
         return { success: true, user: updatedUser };
     } catch (error) {
-        console.error("Update error:", error);
         return { success: false, error: "Failed to update profile." };
     }
 }
@@ -97,7 +96,7 @@ export async function markAttendance(qrCodeId: string) {
             return { success: false, error: "User not found." };
         }
 
-        const today = new Date().toISOString().split("T")[0];
+        const today = getTodayString();
 
         // Check if already marked for today
         const [existing] = await db.select()
@@ -118,7 +117,6 @@ export async function markAttendance(qrCodeId: string) {
         revalidatePath("/admin");
         return { success: true, user };
     } catch (error) {
-        console.error("Attendance error:", error);
         return { success: false, error: "Failed to record attendance." };
     }
 }
@@ -147,7 +145,7 @@ export async function verifyPinGeneratorPassword(password: string) {
 
 export async function getActiveDailyPin() {
     try {
-        const today = new Date().toISOString().split("T")[0];
+        const today = getTodayString();
         const [existingPin] = await db.select()
             .from(dailyPins)
             .where(eq(dailyPins.date, today))
@@ -155,7 +153,6 @@ export async function getActiveDailyPin() {
 
         return { success: true, pin: existingPin || null };
     } catch (error) {
-        console.error("Error fetching PIN:", error);
         return { success: false, error: "Failed to retrieve today's security status." };
     }
 }
@@ -165,7 +162,7 @@ export async function generateDailyPin(password: string) {
     if (!auth.success) return auth;
 
     try {
-        const today = new Date().toISOString().split("T")[0];
+        const today = getTodayString();
 
         // Re-check if already exists to avoid race conditions
         const [existing] = await db.select()
@@ -185,18 +182,17 @@ export async function generateDailyPin(password: string) {
             date: today,
         }).returning();
 
-        console.info(`[SECURITY] New daily PIN generated for ${today}`);
         revalidatePath("/pin-generator");
         return { success: true, pin: newPin };
     } catch (error) {
-        console.error("PIN generation error:", error);
         return { success: false, error: "Failed to generate security PIN." };
     }
 }
 
 export async function validateScannerPin(pin: string) {
     try {
-        const today = new Date().toISOString().split("T")[0];
+        const today = getTodayString();
+
         const [activePin] = await db.select()
             .from(dailyPins)
             .where(eq(dailyPins.date, today))
@@ -207,11 +203,7 @@ export async function validateScannerPin(pin: string) {
         }
 
         if (activePin.pin === pin) {
-            // Set session cookie (standard cookie name clc_scanner_session)
-            // No expiration set means it's a session cookie
-            // Set session cookie to expire at midnight tonight
-            const midnight = new Date();
-            midnight.setHours(24, 0, 0, 0);
+            const expiryDate = getManilaMidnight();
 
             const cookieStore = await cookies();
             cookieStore.set("clc_scanner_session", "authorized", {
@@ -219,17 +211,14 @@ export async function validateScannerPin(pin: string) {
                 secure: process.env.NODE_ENV === "production",
                 sameSite: "strict",
                 path: "/",
-                expires: midnight,
+                expires: expiryDate,
             });
 
-            console.info(`[SECURITY] Successful scanner access for session`);
             return { success: true };
         }
 
-        console.warn(`[SECURITY] Failed PIN attempt for scanner access`);
         return { success: false, error: "Invalid security PIN entered." };
     } catch (error) {
-        console.error("PIN validation error:", error);
         return { success: false, error: "Security check failed." };
     }
 }
@@ -253,7 +242,6 @@ export async function createEvent(data: NewChurchEvent) {
         revalidatePath("/events");
         return { success: true, event: newEvent };
     } catch (error) {
-        console.error("Create event error:", error);
         return { success: false, error: "Failed to create event." };
     }
 }
@@ -269,7 +257,6 @@ export async function updateEvent(id: string, data: Partial<NewChurchEvent>) {
         revalidatePath("/events");
         return { success: true, event: updatedEvent };
     } catch (error) {
-        console.error("Update event error:", error);
         return { success: false, error: "Failed to update event." };
     }
 }
@@ -281,7 +268,6 @@ export async function deleteEvent(id: string) {
         revalidatePath("/events");
         return { success: true };
     } catch (error) {
-        console.error("Delete event error:", error);
         return { success: false, error: "Failed to delete event." };
     }
 }

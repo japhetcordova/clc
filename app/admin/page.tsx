@@ -10,13 +10,15 @@ import AdminLogout from "@/app/admin/logout-button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LayoutDashboard, Users2, PieChart, BarChart3, Map, Heart } from "lucide-react";
 
+import { getTodayString } from "@/lib/date-utils";
+
 export default async function AdminDashboard({
     searchParams,
 }: {
     searchParams: { date?: string; ministry?: string; network?: string; gender?: string; cluster?: string };
 }) {
     const params = await searchParams;
-    const filterDate = params.date || new Date().toISOString().split("T")[0];
+    const filterDate = params.date || getTodayString();
 
     // Fetch Stats
     const [totalUsers] = await db.select({ value: count() }).from(users);

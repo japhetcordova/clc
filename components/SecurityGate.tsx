@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { InputOTP, InputOTPGroup, InputOTPSlot, InputOTPSeparator } from "@/components/ui/input-otp";
 import { motion } from "framer-motion";
 import { Loader2, ArrowRight } from "lucide-react";
+import { getTodayString } from "@/lib/date-utils";
 
 interface SecurityGateProps {
     children: React.ReactNode;
@@ -47,14 +48,12 @@ export function SecurityGate({
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState("");
 
-    const getToday = () => new Date().toISOString().split("T")[0];
-
     // Initial Auth Check
     useEffect(() => {
         if (initialAuthorized) {
             setAuthorized(true);
         } else if (storageKey) {
-            const today = getToday();
+            const today = getTodayString();
             const stored = localStorage.getItem(storageKey);
             const storedDate = localStorage.getItem(`${storageKey}_date`);
 
@@ -104,7 +103,7 @@ export function SecurityGate({
             if (result.success) {
                 if (storageKey) {
                     localStorage.setItem(storageKey, storageValue);
-                    localStorage.setItem(`${storageKey}_date`, getToday());
+                    localStorage.setItem(`${storageKey}_date`, getTodayString());
                 }
                 onAuthorized();
                 setAuthorized(true);
