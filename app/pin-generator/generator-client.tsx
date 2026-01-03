@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { RefreshCw, ShieldCheck, Calendar, Clock, AlertCircle, KeyRound } from "lucide-react";
+import { RefreshCw, ShieldCheck, Calendar, Clock, AlertCircle, KeyRound, Timer } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { generateDailyPin } from "@/lib/actions";
 import { toast } from "sonner";
@@ -24,6 +24,39 @@ export default function PinGeneratorClient({ initialPin }: PinGeneratorClientPro
     const [isGenerating, setIsGenerating] = useState(false);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [securityKey, setSecurityKey] = useState("");
+    const [timeLeft, setTimeLeft] = useState<{ hours: number; minutes: number; seconds: number } | null>(null);
+
+    useEffect(() => {
+        if (!activePin) {
+            setTimeLeft(null);
+            return;
+        }
+
+        const updateTimer = () => {
+            const now = new Date();
+            const midnight = new Date();
+            midnight.setHours(24, 0, 0, 0);
+
+            const diff = midnight.getTime() - now.getTime();
+
+            if (diff <= 0) {
+                setTimeLeft({ hours: 0, minutes: 0, seconds: 0 });
+                setActivePin(null);
+                return;
+            }
+
+            const h = Math.floor(diff / (1000 * 60 * 60));
+            const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const s = Math.floor((diff % (1000 * 60)) / 1000);
+
+            setTimeLeft({ hours: h, minutes: m, seconds: s });
+        };
+
+        updateTimer();
+        const timer = setInterval(updateTimer, 1000);
+
+        return () => clearInterval(timer);
+    }, [activePin]);
 
     const handleGenerate = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -53,6 +86,8 @@ export default function PinGeneratorClient({ initialPin }: PinGeneratorClientPro
         month: 'long',
         day: 'numeric'
     });
+
+    const formatNumber = (num: number) => num.toString().padStart(2, '0');
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-linear-to-b from-background via-amber-500/5 to-background p-4">
@@ -87,20 +122,57 @@ export default function PinGeneratorClient({ initialPin }: PinGeneratorClientPro
                                             <RefreshCw className="w-12 h-12" />
                                         </div>
                                         <p className="text-[10px] font-black uppercase tracking-[0.3em] text-amber-700/60 mb-2">Active Scanner PIN</p>
-                                        <div className="text-6xl font-black tracking-[0.2em] text-amber-900 font-mono">
+                                        <div
+                                            className="text-6xl font-black tracking-[0.2em] text-amber-900 font-mono cursor-pointer hover:scale-110 transition-transform active:scale-95 group-hover:text-amber-600"
+                                            onClick={() => {
+                                                navigator.clipboard.writeText(activePin.pin);
+                                                toast.success("PIN copied to clipboard!");
+                                            }}
+                                            title="Click to copy"
+                                        >
                                             {activePin.pin}
                                         </div>
-                                        <div className="mt-4 flex items-center justify-center gap-2 text-[10px] font-bold text-amber-600/80 uppercase">
-                                            <Clock className="w-3.5 h-3.5" />
-                                            Generated at {new Date(activePin.createdAt).toLocaleTimeString()}
+                                        <div className="mt-4 flex flex-col items-center gap-2">
+                                            <div className="flex items-center gap-2 text-[10px] font-bold text-amber-600/80 uppercase">
+                                                <Clock className="w-3.5 h-3.5" />
+                                                Generated at {new Date(activePin.createdAt).toLocaleTimeString()}
+                                            </div>
+
+                                            {timeLeft && (
+                                                <div className="mt-4 pt-4 border-t border-amber-500/10 w-full">
+                                                    <p className="text-[9px] font-black uppercase tracking-widest text-amber-700/50 mb-3">Expires in</p>
+                                                    <div className="flex justify-center gap-4">
+                                                        <div className="flex flex-col items-center">
+                                                            <div className="text-2xl font-black text-amber-900 tabular-nums">
+                                                                {formatNumber(timeLeft.hours)}
+                                                            </div>
+                                                            <span className="text-[8px] font-bold text-amber-700/60 uppercase">Hours</span>
+                                                        </div>
+                                                        <div className="text-2xl font-light text-amber-300 self-start mt-[-2px]">:</div>
+                                                        <div className="flex flex-col items-center">
+                                                            <div className="text-2xl font-black text-amber-900 tabular-nums">
+                                                                {formatNumber(timeLeft.minutes)}
+                                                            </div>
+                                                            <span className="text-[8px] font-bold text-amber-700/60 uppercase">Mins</span>
+                                                        </div>
+                                                        <div className="text-2xl font-light text-amber-300 self-start mt-[-2px]">:</div>
+                                                        <div className="flex flex-col items-center">
+                                                            <div className="text-2xl font-black text-amber-700 tabular-nums">
+                                                                {formatNumber(timeLeft.seconds)}
+                                                            </div>
+                                                            <span className="text-[8px] font-bold text-amber-700/60 uppercase">Secs</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
 
                                     <div className="p-4 bg-blue-500/5 rounded-2xl border border-blue-500/10 flex items-start gap-3">
-                                        <AlertCircle className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
+                                        <Timer className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
                                         <p className="text-[11px] font-medium text-blue-900/70 leading-relaxed">
-                                            Share this PIN only with authorized scanners for today.
-                                            This code will expire at midnight and a new one must be generated.
+                                            This security code is temporary and will automatically expire at midnight.
+                                            Ensure all scanners are synchronized with this active PIN.
                                         </p>
                                     </div>
                                 </motion.div>
