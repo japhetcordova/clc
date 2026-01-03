@@ -61,9 +61,9 @@ export default function AdminClient({
         const pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
         const pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
 
-        // sort oldest to newest
+        // sort alphabetically by Name
         const sortedData = [...attendanceData].sort((a, b) =>
-            new Date(a.scannedAt).getTime() - new Date(b.scannedAt).getTime()
+            a.user.lastName.localeCompare(b.user.lastName) || a.user.firstName.localeCompare(b.user.firstName)
         );
 
         // Service Name determination
@@ -97,7 +97,7 @@ export default function AdminClient({
         };
 
         const tableBody = sortedData.map(record => [
-            toTitleCase(`${record.user.firstName} ${record.user.lastName}`),
+            toTitleCase(`${record.user.lastName}, ${record.user.firstName}`),
             new Date(record.scannedAt).toLocaleTimeString("en-US", { hour: '2-digit', minute: '2-digit', timeZone: "Asia/Manila" }),
             record.user.ministry, // Preserve original casing per user request
             toTitleCase(record.user.network),

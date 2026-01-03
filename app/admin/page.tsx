@@ -292,8 +292,8 @@ export default async function AdminDashboard({
                             </Card>
                         </div>
 
-                        <div className="space-y-8">
-                            <Card className="bg-card shadow-xl border-border">
+                        <div className="flex flex-col gap-6 sm:gap-8 h-full">
+                            <Card className="bg-card shadow-xl border-border shrink-0">
                                 <CardHeader className="border-b border-border mb-4">
                                     <CardTitle className="text-xs font-black uppercase tracking-widest text-muted-foreground">Ministry Breakdown</CardTitle>
                                 </CardHeader>
@@ -319,11 +319,11 @@ export default async function AdminDashboard({
                                 </CardContent>
                             </Card>
 
-                            <Card className="bg-card shadow-xl border-border">
+                            <Card className="bg-card shadow-xl border-border flex-1 flex flex-col min-h-0">
                                 <CardHeader className="border-b border-border mb-4">
                                     <CardTitle className="text-xs font-black uppercase tracking-widest text-muted-foreground">Network Participation</CardTitle>
                                 </CardHeader>
-                                <CardContent className="space-y-6">
+                                <CardContent className="space-y-6 flex-1 overflow-auto">
                                     {networkStats.length === 0 ? (
                                         <p className="text-xs text-muted-foreground font-bold text-center py-4">No activity recorded</p>
                                     ) : (
@@ -345,7 +345,7 @@ export default async function AdminDashboard({
                                 </CardContent>
                             </Card>
 
-                            <div className="p-6 bg-primary/5 rounded-3xl border border-primary/10 space-y-3">
+                            <div className="p-6 bg-primary/5 rounded-3xl border border-primary/10 space-y-3 shrink-0">
                                 <div className="flex items-center gap-2">
                                     <TrendingUp className="w-4 h-4 text-primary" />
                                     <h4 className="text-xs font-black uppercase tracking-widest text-primary">Insights</h4>
