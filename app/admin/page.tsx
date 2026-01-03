@@ -21,13 +21,6 @@ export default async function AdminDashboard({
     const params = await searchParams;
     const filterDate = params.date || getTodayString();
 
-    // Fetch Stats
-    const [totalUsers] = await db.select({ value: count() }).from(users);
-    const [attendanceToday] = await db.select({ value: count() })
-        .from(attendance)
-        .where(eq(attendance.scanDate, filterDate));
-
-    // Fetch Attendance Records for the table
     const filters = [eq(attendance.scanDate, filterDate)];
     if (params.ministry && params.ministry !== "all") {
         filters.push(eq(users.ministry, params.ministry));
@@ -42,22 +35,97 @@ export default async function AdminDashboard({
         filters.push(eq(users.cluster, params.cluster));
     }
 
-    const attendanceList = await db.select({
-        id: attendance.id,
-        scannedAt: attendance.scannedAt,
-        user: {
-            firstName: users.firstName,
-            lastName: users.lastName,
-            ministry: users.ministry,
-            network: users.network,
-            cluster: users.cluster,
-            gender: users.gender,
-        }
-    })
-        .from(attendance)
-        .innerJoin(users, eq(attendance.userId, users.id))
-        .where(and(...filters))
-        .orderBy(sql`${attendance.scannedAt} DESC`);
+    const [
+        [totalUsers],
+        [attendanceToday],
+        attendanceList,
+        ministryStats,
+        networkStats,
+        totalMinistryStats,
+        totalNetworkStats,
+        totalGenderStats,
+        totalClusterStats
+    ] = await Promise.all([
+        // 1. Total Users
+        db.select({ value: count() }).from(users),
+
+        // 2. Attendance Today
+        db.select({ value: count() })
+            .from(attendance)
+            .where(eq(attendance.scanDate, filterDate)),
+
+        // 3. Attendance List
+        db.select({
+            id: attendance.id,
+            scannedAt: attendance.scannedAt,
+            user: {
+                firstName: users.firstName,
+                lastName: users.lastName,
+                ministry: users.ministry,
+                network: users.network,
+                cluster: users.cluster,
+                gender: users.gender,
+            }
+        })
+            .from(attendance)
+            .innerJoin(users, eq(attendance.userId, users.id))
+            .where(and(...filters))
+            .orderBy(sql`${attendance.scannedAt} DESC`),
+
+        // 4. Ministry Stats (Filtered)
+        db.select({
+            name: users.ministry,
+            count: count(),
+        })
+            .from(attendance)
+            .innerJoin(users, eq(attendance.userId, users.id))
+            .where(and(...filters))
+            .groupBy(users.ministry),
+
+        // 5. Network Stats (Filtered)
+        db.select({
+            name: users.network,
+            count: count(),
+        })
+            .from(attendance)
+            .innerJoin(users, eq(attendance.userId, users.id))
+            .where(and(...filters))
+            .groupBy(users.network),
+
+        // 6. Total Ministry Stats (Demographics)
+        db.select({
+            name: users.ministry,
+            count: count(),
+        })
+            .from(users)
+            .groupBy(users.ministry)
+            .orderBy(desc(count())),
+
+        // 7. Total Network Stats (Demographics)
+        db.select({
+            name: users.network,
+            count: count(),
+        })
+            .from(users)
+            .groupBy(users.network)
+            .orderBy(desc(count())),
+
+        // 8. Total Gender Stats
+        db.select({
+            name: users.gender,
+            count: count(),
+        })
+            .from(users)
+            .groupBy(users.gender),
+
+        // 9. Total Cluster Stats
+        db.select({
+            name: users.cluster,
+            count: count(),
+        })
+            .from(users)
+            .groupBy(users.cluster)
+    ]);
 
     // Pagination Logic
     const page = Number(params.page) || 1;
@@ -65,56 +133,6 @@ export default async function AdminDashboard({
     const totalRecords = attendanceList.length;
     const totalPages = Math.ceil(totalRecords / pageSize);
     const paginatedList = attendanceList.slice((page - 1) * pageSize, page * pageSize);
-
-    // aggregation for charts (Filtered)
-    const ministryStats = await db.select({
-        name: users.ministry,
-        count: count(),
-    })
-        .from(attendance)
-        .innerJoin(users, eq(attendance.userId, users.id))
-        .where(and(...filters))
-        .groupBy(users.ministry);
-
-    const networkStats = await db.select({
-        name: users.network,
-        count: count(),
-    })
-        .from(attendance)
-        .innerJoin(users, eq(attendance.userId, users.id))
-        .where(and(...filters))
-        .groupBy(users.network);
-
-    // --- NEW: TOTAL REGISTRATION STATS (Demographics) ---
-    const totalMinistryStats = await db.select({
-        name: users.ministry,
-        count: count(),
-    })
-        .from(users)
-        .groupBy(users.ministry)
-        .orderBy(desc(count()));
-
-    const totalNetworkStats = await db.select({
-        name: users.network,
-        count: count(),
-    })
-        .from(users)
-        .groupBy(users.network)
-        .orderBy(desc(count()));
-
-    const totalGenderStats = await db.select({
-        name: users.gender,
-        count: count(),
-    })
-        .from(users)
-        .groupBy(users.gender);
-
-    const totalClusterStats = await db.select({
-        name: users.cluster,
-        count: count(),
-    })
-        .from(users)
-        .groupBy(users.cluster);
 
     return (
         <div className="p-4 sm:p-6 space-y-6 sm:space-y-8 max-w-7xl mx-auto min-h-screen bg-background text-foreground transition-colors duration-300">
