@@ -208,7 +208,7 @@ export default async function AdminDashboard({
                         </Card>
                     </div>
 
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8 pb-10">
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8 pb-10 items-start">
                         <div className="lg:col-span-2 space-y-6">
                             <Card className="shadow-2xl border-border bg-card/50 backdrop-blur-xl rounded-[2rem] overflow-hidden">
                                 <CardHeader className="flex flex-row items-center justify-between border-b border-border/50 py-4 sm:py-6 px-4 sm:px-8">
@@ -292,7 +292,7 @@ export default async function AdminDashboard({
                             </Card>
                         </div>
 
-                        <div className="flex flex-col gap-6 sm:gap-8 h-full">
+                        <div className="flex flex-col gap-6 sm:gap-8">
                             <Card className="bg-card shadow-xl border-border shrink-0">
                                 <CardHeader className="border-b border-border mb-4">
                                     <CardTitle className="text-xs font-black uppercase tracking-widest text-muted-foreground">Ministry Breakdown</CardTitle>
@@ -319,7 +319,7 @@ export default async function AdminDashboard({
                                 </CardContent>
                             </Card>
 
-                            <Card className="bg-card shadow-xl border-border h-[34%] flex flex-col min-h-0">
+                            <Card className="bg-card shadow-xl border-border flex flex-col max-h-[500px]">
                                 <CardHeader className="border-b border-border mb-4">
                                     <CardTitle className="text-xs font-black uppercase tracking-widest text-muted-foreground">Network Participation</CardTitle>
                                 </CardHeader>
