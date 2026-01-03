@@ -47,6 +47,6 @@
 - [x] Fix library breaking changes in `Resizable` component for production build
 
 ## 🧪 Testing & Validation
-- [ ] Test registration flow (< 60s)
-- [ ] Verify attendance rules (No duplicates, automatic sheets)
-- [ ] Validate Admin filters
+- [x] Test registration flow (< 60s)
+- [x] Verify attendance rules (No duplicates, automatic sheets)
+- [x] Validate Admin filters

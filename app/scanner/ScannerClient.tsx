@@ -48,6 +48,7 @@ export default function ScannerClient() {
         try {
             const result = await markAttendance(qrCodeId);
             setLastScan(result);
+            setIsProcessing(false); // Stop loading spinner immediately
 
             if (result.success && result.user) {
                 toast.success(`Check-in successful!`, {
@@ -63,10 +64,11 @@ export default function ScannerClient() {
                 });
             }
         } catch (err) {
+            setIsProcessing(false);
             toast.error("Network Error", { description: "Failed to reach server." });
         }
 
-        // 5. Cooldown: Keep the UI blocked for 3 seconds so the user can see the result
+        // 5. Cooldown: Keep the UI blocked for 750ms (reduced from 3000ms) for rapid scanning
         setTimeout(async () => {
             // Resume scanner
             if (html5QrCodeRef.current?.isScanning) {
@@ -75,17 +77,17 @@ export default function ScannerClient() {
 
             // Release locks
             processingRef.current = false;
-            setIsProcessing(false);
+            // setIsProcessing(false); // Already handled above
             setLastScan(null);
 
-            // 6. Memory cleanup: Allow the same ID to be scanned again after another 5 seconds 
+            // 6. Memory cleanup: Allow the same ID to be scanned again after another 2 seconds
             // (in case a different admin needs to scan them or they came back later)
             setTimeout(() => {
                 if (lastScannedId.current === qrCodeId) {
                     lastScannedId.current = null;
                 }
-            }, 5000);
-        }, 3000);
+            }, 2000);
+        }, 750);
     };
 
     const startScanner = async (cameraId: string) => {

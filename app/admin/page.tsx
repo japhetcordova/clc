@@ -250,7 +250,7 @@ export default async function AdminDashboard({
                                                                     </span>
                                                                     <span className="font-mono text-[9px] font-bold text-muted-foreground uppercase flex items-center gap-1">
                                                                         <Calendar className="w-2.5 h-2.5" />
-                                                                        {new Date(record.scannedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                                        {new Date(record.scannedAt).toLocaleTimeString("en-US", { hour: '2-digit', minute: '2-digit', timeZone: "Asia/Manila" })}
                                                                     </span>
                                                                 </div>
                                                             </TableCell>
