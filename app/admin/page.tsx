@@ -319,7 +319,7 @@ export default async function AdminDashboard({
                                 </CardContent>
                             </Card>
 
-                            <Card className="bg-card shadow-xl border-border flex-1 flex flex-col min-h-0">
+                            <Card className="bg-card shadow-xl border-border h-[34%] flex flex-col min-h-0">
                                 <CardHeader className="border-b border-border mb-4">
                                     <CardTitle className="text-xs font-black uppercase tracking-widest text-muted-foreground">Network Participation</CardTitle>
                                 </CardHeader>
