@@ -23,7 +23,15 @@ export const attendance = pgTable("attendance", {
     unique().on(t.userId, t.scanDate),
 ]);
 
+export const dailyPins = pgTable("daily_pins", {
+    id: uuid("id").primaryKey().defaultRandom(),
+    pin: text("pin").notNull(),
+    date: date("date").notNull().unique(), // One pin per day
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
 export type Attendance = typeof attendance.$inferSelect;
 export type NewAttendance = typeof attendance.$inferInsert;
+export type DailyPin = typeof dailyPins.$inferSelect;

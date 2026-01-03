@@ -1,10 +1,11 @@
 "use server";
 
 import { db } from "@/db";
-import { users, attendance } from "@/db/schema";
-import { eq, and } from "drizzle-orm";
+import { users, attendance, dailyPins } from "@/db/schema";
+import { eq, and, desc } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { randomBytes } from "node:crypto";
+import { cookies } from "next/headers";
 
 export async function registerUser(formData: {
     firstName: string;
@@ -130,4 +131,104 @@ export async function verifyAdminPassword(password: string) {
         return { success: true };
     }
     return { success: false, error: "Invalid administrator password." };
+}
+
+export async function verifyPinGeneratorPassword(password: string) {
+    const generatorPass = process.env.PIN_GENERATOR_PASSWORD || process.env.ADMIN_PASSWORD;
+    if (!generatorPass) {
+        return { success: false, error: "Security password not configured." };
+    }
+    if (password === generatorPass) {
+        return { success: true };
+    }
+    return { success: false, error: "Invalid security password." };
+}
+
+export async function getActiveDailyPin() {
+    try {
+        const today = new Date().toISOString().split("T")[0];
+        const [existingPin] = await db.select()
+            .from(dailyPins)
+            .where(eq(dailyPins.date, today))
+            .limit(1);
+
+        return { success: true, pin: existingPin || null };
+    } catch (error) {
+        console.error("Error fetching PIN:", error);
+        return { success: false, error: "Failed to retrieve today's security status." };
+    }
+}
+
+export async function generateDailyPin(password: string) {
+    const auth = await verifyPinGeneratorPassword(password);
+    if (!auth.success) return auth;
+
+    try {
+        const today = new Date().toISOString().split("T")[0];
+
+        // Re-check if already exists to avoid race conditions
+        const [existing] = await db.select()
+            .from(dailyPins)
+            .where(eq(dailyPins.date, today))
+            .limit(1);
+
+        if (existing) {
+            return { success: true, pin: existing, message: "Today's PIN is already active." };
+        }
+
+        // Generate a random 6-digit PIN
+        const pin = Math.floor(100000 + Math.random() * 900000).toString();
+
+        const [newPin] = await db.insert(dailyPins).values({
+            pin,
+            date: today,
+        }).returning();
+
+        console.info(`[SECURITY] New daily PIN generated for ${today}`);
+        revalidatePath("/pin-generator");
+        return { success: true, pin: newPin };
+    } catch (error) {
+        console.error("PIN generation error:", error);
+        return { success: false, error: "Failed to generate security PIN." };
+    }
+}
+
+export async function validateScannerPin(pin: string) {
+    try {
+        const today = new Date().toISOString().split("T")[0];
+        const [activePin] = await db.select()
+            .from(dailyPins)
+            .where(eq(dailyPins.date, today))
+            .limit(1);
+
+        if (!activePin) {
+            return { success: false, error: "No active PIN for today. Please contact an administrator." };
+        }
+
+        if (activePin.pin === pin) {
+            // Set session cookie (standard cookie name clc_scanner_session)
+            // No expiration set means it's a session cookie
+            const cookieStore = await cookies();
+            cookieStore.set("clc_scanner_session", "authorized", {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === "production",
+                sameSite: "strict",
+                path: "/",
+            });
+
+            console.info(`[SECURITY] Successful scanner access for session`);
+            return { success: true };
+        }
+
+        console.warn(`[SECURITY] Failed PIN attempt for scanner access`);
+        return { success: false, error: "Invalid security PIN entered." };
+    } catch (error) {
+        console.error("PIN validation error:", error);
+        return { success: false, error: "Security check failed." };
+    }
+}
+
+export async function isScannerAuthorized() {
+    const cookieStore = await cookies();
+    return cookieStore.get("clc_scanner_session")?.value === "authorized";
 }

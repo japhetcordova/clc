@@ -5,7 +5,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { FileDown, Calendar as CalendarIcon } from "lucide-react";
+import { FileDown, Calendar as CalendarIcon, Key } from "lucide-react";
+import Link from "next/link";
+import { MINISTRIES, NETWORKS } from "@/lib/church-data";
 
 interface AdminClientProps {
     initialMinistry: string;
@@ -59,18 +61,7 @@ export default function AdminClient({
                     </SelectTrigger>
                     <SelectContent>
                         <SelectItem value="all">All Ministries</SelectItem>
-                        <SelectItem value="Worship Team">Worship Team</SelectItem>
-                        <SelectItem value="Media">Media</SelectItem>
-                        <SelectItem value="Usher">Usher</SelectItem>
-                        <SelectItem value="Marshal">Marshal</SelectItem>
-                        <SelectItem value="Production">Production</SelectItem>
-                        <SelectItem value="Kid's Church">Kid's Church</SelectItem>
-                        <SelectItem value="Technical">Technical</SelectItem>
-                        <SelectItem value="PA">PA</SelectItem>
-                        <SelectItem value="Finance">Finance</SelectItem>
-                        <SelectItem value="Arete">Arete</SelectItem>
-                        <SelectItem value="Hosting">Hosting</SelectItem>
-                        <SelectItem value="Writers">Writers</SelectItem>
+                        {MINISTRIES.map(m => <SelectItem key={m} value={m}>{m}</SelectItem>)}
                     </SelectContent>
                 </Select>
             </div>
@@ -97,32 +88,10 @@ export default function AdminClient({
                     </SelectTrigger>
                     <SelectContent>
                         <SelectItem value="all">All Networks</SelectItem>
-                        <SelectItem value="Grenadier">Grenadier</SelectItem>
-                        <SelectItem value="Better You">Better You</SelectItem>
-                        <SelectItem value="Overcomers">Overcomers</SelectItem>
-                        <SelectItem value="Kingdom Souldiers">Kingdom Souldiers</SelectItem>
-                        <SelectItem value="Light-bearers">Light-bearers</SelectItem>
-                        <SelectItem value="WOW">WOW</SelectItem>
-                        <SelectItem value="Loved">Loved</SelectItem>
-                        <SelectItem value="Phoenix">Phoenix</SelectItem>
-                        <SelectItem value="Conquerors">Conquerors</SelectItem>
-                        <SelectItem value="Pearls">Pearls</SelectItem>
-                        <SelectItem value="Dauntless">Dauntless</SelectItem>
-                        <SelectItem value="Royalties">Royalties</SelectItem>
-                        <SelectItem value="Bravehearts">Bravehearts</SelectItem>
-                        <SelectItem value="Astig">Astig</SelectItem>
-                        <SelectItem value="Transformer">Transformer</SelectItem>
-                        <SelectItem value="Invincible">Invincible</SelectItem>
-                        <SelectItem value="Generals">Generals</SelectItem>
-                        <SelectItem value="Champs">Champs</SelectItem>
-                        <SelectItem value="Unbreakable multiplier">Unbreakable multiplier</SelectItem>
-                        <SelectItem value="Exemplary">Exemplary</SelectItem>
-                        <SelectItem value="Gems">Gems</SelectItem>
-                        <SelectItem value="Diamonds">Diamonds</SelectItem>
-                        <SelectItem value="Bride">Bride</SelectItem>
-                        <SelectItem value="Fab">Fab</SelectItem>
-                        <SelectItem value="Triumphant">Triumphant</SelectItem>
-                        <SelectItem value="Visionary">Visionary</SelectItem>
+                        {/* Show all networks combined from all clusters */}
+                        {[...NETWORKS["Cluster 1"].Male, ...NETWORKS["Cluster 1"].Female, ...NETWORKS["Cluster 2"].Male, ...NETWORKS["Cluster 2"].Female].sort().map(n => (
+                            <SelectItem key={n} value={n}>{n}</SelectItem>
+                        ))}
                     </SelectContent>
                 </Select>
             </div>
@@ -141,7 +110,13 @@ export default function AdminClient({
                 </Select>
             </div>
 
-            <div className="ml-auto">
+            <div className="flex gap-2 ml-auto">
+                <Link href="/pin-generator">
+                    <Button variant="outline" size="sm" className="gap-2 border-amber-500/50 hover:bg-amber-500/10 text-amber-700">
+                        <Key className="w-4 h-4" />
+                        Daily PIN
+                    </Button>
+                </Link>
                 <Button variant="outline" size="sm" onClick={handleExport} className="gap-2">
                     <FileDown className="w-4 h-4" />
                     Export Report
