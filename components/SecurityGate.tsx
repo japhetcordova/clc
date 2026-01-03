@@ -133,7 +133,7 @@ export function SecurityGate({
                 text: "text-amber-600",
                 ring: "ring-amber-500/20",
                 bg: "bg-amber-500/10",
-                btn: "bg-amber-600",
+                btn: "bg-slate-900",
                 focus: "focus:ring-amber-500"
             },
             primary: {
@@ -141,7 +141,7 @@ export function SecurityGate({
                 text: "text-primary",
                 ring: "ring-primary/20",
                 bg: "bg-primary/10",
-                btn: "bg-primary",
+                btn: "bg-slate-900",
                 focus: "focus:ring-primary"
             },
             emerald: {
@@ -149,7 +149,7 @@ export function SecurityGate({
                 text: "text-emerald-600",
                 ring: "ring-emerald-500/20",
                 bg: "bg-emerald-500/10",
-                btn: "bg-emerald-600",
+                btn: "bg-slate-900",
                 focus: "focus:ring-emerald-500"
             },
         };
