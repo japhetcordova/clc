@@ -128,44 +128,64 @@ export function SecurityGate({
 
     if (!authorized) {
         const colors = {
-            amber: "from-amber-500 via-orange-500 to-amber-500 text-amber-600 ring-amber-500/20 bg-amber-500/10 hover:bg-amber-700 bg-amber-600 focus:ring-amber-500",
-            primary: "from-primary via-accent to-primary text-primary ring-primary/20 bg-primary/10 hover:bg-primary/90 bg-primary focus:ring-primary",
-            emerald: "from-emerald-500 via-teal-500 to-emerald-500 text-emerald-600 ring-emerald-500/20 bg-emerald-500/10 hover:bg-emerald-700 bg-emerald-600 focus:ring-emerald-500",
+            amber: {
+                gradient: "from-amber-500 via-orange-500 to-amber-500",
+                text: "text-amber-600",
+                ring: "ring-amber-500/20",
+                bg: "bg-amber-500/10",
+                btn: "bg-amber-600",
+                focus: "focus:ring-amber-500"
+            },
+            primary: {
+                gradient: "from-primary via-accent to-primary",
+                text: "text-primary",
+                ring: "ring-primary/20",
+                bg: "bg-primary/10",
+                btn: "bg-primary",
+                focus: "focus:ring-primary"
+            },
+            emerald: {
+                gradient: "from-emerald-500 via-teal-500 to-emerald-500",
+                text: "text-emerald-600",
+                ring: "ring-emerald-500/20",
+                bg: "bg-emerald-500/10",
+                btn: "bg-emerald-600",
+                focus: "focus:ring-emerald-500"
+            },
         };
 
-        const colorSet = colors[accentColor];
-        const [gradient, textColor, ringColor, bgColor, btnHover, btnBg, focusRing] = colorSet.split(" ");
+        const config = colors[accentColor];
 
         return (
             <div className={`min-h-screen flex items-center justify-center bg-linear-to-br from-background via-${accentColor}-500/5 to-background p-4`}>
-                <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="w-full max-w-md">
+                <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} className="w-full max-w-md">
                     <Card className="border-none shadow-2xl bg-card/60 backdrop-blur-xl ring-1 ring-border overflow-hidden">
-                        <div className={`h-1.5 bg-linear-to-r ${gradient}`} />
-                        <CardHeader className="text-center pt-6 sm:pt-8 px-4">
-                            <div className="flex justify-center mb-4">
-                                <div className={`p-3 ${bgColor} rounded-2xl ring-1 ${ringColor}`}>
+                        <div className={`h-1.5 bg-linear-to-r ${config.gradient}`} />
+                        <CardHeader className="text-center pt-8 sm:pt-10 px-6">
+                            <div className="flex justify-center mb-5">
+                                <div className={`p-4 ${config.bg} rounded-2xl ring-1 ${config.ring}`}>
                                     {icon}
                                 </div>
                             </div>
-                            <CardTitle className="text-2xl sm:text-3xl font-black tracking-tight text-foreground uppercase italic leading-tight">{title}</CardTitle>
-                            <CardDescription className="text-xs sm:text-sm text-muted-foreground font-medium">{description}</CardDescription>
+                            <CardTitle className="text-2xl sm:text-3xl font-black tracking-tight text-foreground uppercase italic leading-tight mb-1">{title}</CardTitle>
+                            <CardDescription className="text-xs sm:text-sm text-muted-foreground font-semibold px-4">{description}</CardDescription>
                         </CardHeader>
-                        <CardContent className="pb-8 sm:pb-10 pt-4 px-4 sm:px-8">
+                        <CardContent className="pb-10 sm:pb-12 pt-4 px-6 sm:px-10">
                             <form onSubmit={handleVerify} className="space-y-6">
                                 <div className="space-y-2">
                                     {isOTP ? (
                                         <div className="flex justify-center">
                                             <InputOTP maxLength={6} value={pin} onChange={(v) => setPin(v)} autoFocus>
-                                                <InputOTPGroup className="gap-1 sm:gap-2">
-                                                    <InputOTPSlot index={0} className="w-9 h-14 sm:w-12 sm:h-16 text-xl sm:text-2xl font-black bg-background/50 border-2 rounded-lg sm:rounded-xl" />
-                                                    <InputOTPSlot index={1} className="w-9 h-14 sm:w-12 sm:h-16 text-xl sm:text-2xl font-black bg-background/50 border-2 rounded-lg sm:rounded-xl" />
-                                                    <InputOTPSlot index={2} className="w-9 h-14 sm:w-12 sm:h-16 text-xl sm:text-2xl font-black bg-background/50 border-2 rounded-lg sm:rounded-xl" />
+                                                <InputOTPGroup className="gap-1.5 sm:gap-3">
+                                                    <InputOTPSlot index={0} className="w-10 h-14 sm:w-12 sm:h-16 text-xl sm:text-2xl font-black bg-background/50 border-2 rounded-xl" />
+                                                    <InputOTPSlot index={1} className="w-10 h-14 sm:w-12 sm:h-16 text-xl sm:text-2xl font-black bg-background/50 border-2 rounded-xl" />
+                                                    <InputOTPSlot index={2} className="w-10 h-14 sm:w-12 sm:h-16 text-xl sm:text-2xl font-black bg-background/50 border-2 rounded-xl" />
                                                 </InputOTPGroup>
                                                 <InputOTPSeparator className="mx-1 sm:mx-2" />
-                                                <InputOTPGroup className="gap-1 sm:gap-2">
-                                                    <InputOTPSlot index={3} className="w-9 h-14 sm:w-12 sm:h-16 text-xl sm:text-2xl font-black bg-background/50 border-2 rounded-lg sm:rounded-xl" />
-                                                    <InputOTPSlot index={4} className="w-9 h-14 sm:w-12 sm:h-16 text-xl sm:text-2xl font-black bg-background/50 border-2 rounded-lg sm:rounded-xl" />
-                                                    <InputOTPSlot index={5} className="w-9 h-14 sm:w-12 sm:h-16 text-xl sm:text-2xl font-black bg-background/50 border-2 rounded-lg sm:rounded-xl" />
+                                                <InputOTPGroup className="gap-1.5 sm:gap-3">
+                                                    <InputOTPSlot index={3} className="w-10 h-14 sm:w-12 sm:h-16 text-xl sm:text-2xl font-black bg-background/50 border-2 rounded-xl" />
+                                                    <InputOTPSlot index={4} className="w-10 h-14 sm:w-12 sm:h-16 text-xl sm:text-2xl font-black bg-background/50 border-2 rounded-xl" />
+                                                    <InputOTPSlot index={5} className="w-10 h-14 sm:w-12 sm:h-16 text-xl sm:text-2xl font-black bg-background/50 border-2 rounded-xl" />
                                                 </InputOTPGroup>
                                             </InputOTP>
                                         </div>
@@ -173,29 +193,29 @@ export function SecurityGate({
                                         <Input
                                             type="password"
                                             placeholder="Enter Security Key"
-                                            className={`h-14 bg-background/50 border-border text-center text-lg font-bold tracking-[0.5em] rounded-2xl focus:ring-2 ${focusRing}`}
+                                            className={`h-14 sm:h-16 bg-background/50 border-border text-center text-lg font-bold tracking-[0.2em] sm:tracking-[0.5em] rounded-2xl focus:ring-2 ${config.focus}`}
                                             value={pin}
                                             onChange={(e) => setPin(e.target.value)}
                                             autoFocus
                                         />
                                     )}
-                                    {error && <p className="text-[10px] sm:text-xs font-bold text-destructive text-center mt-2">{error}</p>}
+                                    {error && <p className="text-xs font-black text-destructive text-center mt-3 animate-pulse uppercase tracking-wider">{error}</p>}
                                 </div>
                                 <Button
                                     type="submit"
                                     disabled={isVerifying}
-                                    className={`w-full h-14 sm:h-16 rounded-xl sm:rounded-2xl ${btnBg} ${btnHover} text-white font-black text-lg sm:text-xl shadow-xl hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2 sm:gap-3`}
+                                    className={`w-full h-14 sm:h-16 rounded-2xl ${config.btn} text-white font-black text-lg sm:text-xl shadow-xl active:scale-95 transition-all flex items-center justify-center gap-3 disabled:opacity-50`}
                                 >
-                                    {isVerifying ? <Loader2 className="w-5 h-5 sm:w-6 sm:h-6 animate-spin" /> : (
+                                    {isVerifying ? <Loader2 className="w-6 h-6 animate-spin" /> : (
                                         <>
                                             Unlock Access
-                                            <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6" />
+                                            <ArrowRight className="w-6 h-6" />
                                         </>
                                     )}
                                 </Button>
                             </form>
                             {footerNote && (
-                                <p className="mt-8 text-center text-[9px] sm:text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">
+                                <p className="mt-8 text-center text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">
                                     {footerNote}
                                 </p>
                             )}
