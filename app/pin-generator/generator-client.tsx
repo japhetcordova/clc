@@ -23,6 +23,11 @@ export default function PinGeneratorClient({ initialPin }: PinGeneratorClientPro
     const [activePin, setActivePin] = useState(initialPin);
     const [isGenerating, setIsGenerating] = useState(false);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+    // Sync state with props when server data refreshes
+    useEffect(() => {
+        setActivePin(initialPin);
+    }, [initialPin]);
     const [securityKey, setSecurityKey] = useState("");
     const [timeLeft, setTimeLeft] = useState<{ hours: number; minutes: number; seconds: number } | null>(null);
 

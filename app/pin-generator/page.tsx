@@ -1,4 +1,6 @@
+export const dynamic = "force-dynamic";
 import { getActiveDailyPin } from "@/lib/actions";
+
 import PinGeneratorAuthGate from "./auth-gate";
 import PinGeneratorClient from "./generator-client";
 
