@@ -209,12 +209,17 @@ export async function validateScannerPin(pin: string) {
         if (activePin.pin === pin) {
             // Set session cookie (standard cookie name clc_scanner_session)
             // No expiration set means it's a session cookie
+            // Set session cookie to expire at midnight tonight
+            const midnight = new Date();
+            midnight.setHours(24, 0, 0, 0);
+
             const cookieStore = await cookies();
             cookieStore.set("clc_scanner_session", "authorized", {
                 httpOnly: true,
                 secure: process.env.NODE_ENV === "production",
                 sameSite: "strict",
                 path: "/",
+                expires: midnight,
             });
 
             console.info(`[SECURITY] Successful scanner access for session`);
@@ -232,6 +237,12 @@ export async function validateScannerPin(pin: string) {
 export async function isScannerAuthorized() {
     const cookieStore = await cookies();
     return cookieStore.get("clc_scanner_session")?.value === "authorized";
+}
+
+export async function clearScannerSession() {
+    const cookieStore = await cookies();
+    cookieStore.delete("clc_scanner_session");
+    return { success: true };
 }
 
 // EVENT ACTIONS
