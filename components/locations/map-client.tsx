@@ -22,35 +22,36 @@ L.Marker.prototype.options.icon = DefaultIcon;
 interface MapClientProps {
     locations: Location[];
     activeLocationId?: string;
+    onLocationSelect?: (id: string) => void;
 }
 
-function ChangeView({ center, zoom }: { center: [number, number]; zoom: number }) {
+function MapUpdater({ locations, activeLocationId }: { locations: Location[]; activeLocationId?: string }) {
     const map = useMap();
-    useEffect(() => {
-        map.setView(center, zoom);
-    }, [center, zoom, map]);
-    return null;
-}
-
-export default function MapClient({ locations, activeLocationId }: MapClientProps) {
-    const [center, setCenter] = useState<[number, number]>(MAP_CONFIG.defaultCenter);
-    const [zoom, setZoom] = useState(MAP_CONFIG.defaultZoom);
 
     useEffect(() => {
         if (activeLocationId) {
             const loc = locations.find(l => l.id === activeLocationId);
             if (loc) {
-                setCenter([loc.lat, loc.lng]);
-                setZoom(MAP_CONFIG.activeZoom);
+                map.setView([loc.lat, loc.lng], MAP_CONFIG.activeZoom, {
+                    animate: true,
+                    duration: 1
+                });
             }
+        } else if (locations.length > 0) {
+            const bounds = L.latLngBounds(locations.map(loc => [loc.lat, loc.lng]));
+            map.fitBounds(bounds, { padding: [50, 50], animate: true, duration: 1 });
         }
-    }, [activeLocationId, locations]);
+    }, [activeLocationId, locations, map]);
 
+    return null;
+}
+
+export default function MapClient({ locations, activeLocationId, onLocationSelect }: MapClientProps) {
     return (
         <div className="w-full h-full min-h-[500px] rounded-[2.5rem] overflow-hidden shadow-2xl border border-border bg-muted/20 relative z-0">
             <MapContainer
-                center={center}
-                zoom={zoom}
+                center={MAP_CONFIG.defaultCenter}
+                zoom={MAP_CONFIG.defaultZoom}
                 scrollWheelZoom={false}
                 className="w-full h-full"
                 style={{ height: "100%", width: "100%" }}
@@ -59,9 +60,17 @@ export default function MapClient({ locations, activeLocationId }: MapClientProp
                     attribution={MAP_CONFIG.attribution}
                     url={MAP_CONFIG.tileLayer}
                 />
-                <ChangeView center={center} zoom={zoom} />
+                <MapUpdater locations={locations} activeLocationId={activeLocationId} />
                 {locations.map((loc) => (
-                    <Marker key={loc.id} position={[loc.lat, loc.lng]}>
+                    <Marker
+                        key={loc.id}
+                        position={[loc.lat, loc.lng]}
+                        eventHandlers={{
+                            click: () => {
+                                onLocationSelect?.(loc.id);
+                            },
+                        }}
+                    >
                         <Popup>
                             <div className="p-2">
                                 <h3 className="font-black uppercase italic text-sm tracking-tight">{loc.name}</h3>

@@ -145,6 +145,10 @@
     @apply border-border outline-ring/50;
   }
 
+  button {
+    @apply cursor-pointer;
+  }
+
   body {
     @apply bg-background text-foreground transition-all duration-500 font-sans antialiased;
     background-image: radial-gradient(circle at 0% 0%,

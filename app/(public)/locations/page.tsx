@@ -44,6 +44,16 @@ export default function LocationsPage() {
         return () => clearInterval(interval);
     }, []);
 
+    // Scroll into view when activeLocationId changes
+    useEffect(() => {
+        if (activeLocationId) {
+            const element = document.getElementById(`location-card-${activeLocationId}`);
+            if (element) {
+                element.scrollIntoView({ behavior: "smooth", block: "nearest" });
+            }
+        }
+    }, [activeLocationId]);
+
     const filteredLocations = locations.filter(loc =>
         loc.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         loc.address.toLowerCase().includes(searchQuery.toLowerCase())
@@ -102,12 +112,23 @@ export default function LocationsPage() {
                                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
                                 <Input
                                     placeholder="Search by district or hub name..."
-                                    className="pl-12 h-14 rounded-2xl bg-card/50 backdrop-blur-xl border-border focus:ring-primary/20 focus:border-primary/50 transition-all font-medium"
+                                    className="pl-12 pr-12 h-14 rounded-2xl bg-card/50 backdrop-blur-xl border-border focus:ring-primary/20 focus:border-primary/50 transition-all font-medium"
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
                                 />
                                 <AnimatePresence>
-                                    {isRefreshing && (
+                                    {searchQuery && (
+                                        <motion.button
+                                            initial={{ opacity: 0, scale: 0.8 }}
+                                            animate={{ opacity: 1, scale: 1 }}
+                                            exit={{ opacity: 0, scale: 0.8 }}
+                                            onClick={() => setSearchQuery("")}
+                                            className="absolute right-4 top-1/2 -translate-y-1/2 p-2 hover:bg-muted rounded-xl transition-all"
+                                        >
+                                            <span className="text-[10px] font-black uppercase text-muted-foreground">Clear</span>
+                                        </motion.button>
+                                    )}
+                                    {isRefreshing && !searchQuery && (
                                         <motion.div
                                             initial={{ opacity: 0 }}
                                             animate={{ opacity: 1 }}
@@ -120,6 +141,19 @@ export default function LocationsPage() {
                                 </AnimatePresence>
                             </div>
 
+                            <div className="flex flex-wrap gap-2">
+                                {["All", "Headquarters", "Community Center", "Outreach Center", "Small Group Hub"].map((category) => (
+                                    <Badge
+                                        key={category}
+                                        variant={searchQuery === category || (category === "All" && !searchQuery) ? "default" : "outline"}
+                                        className="cursor-pointer rounded-xl px-4 py-1.5 uppercase text-[9px] font-black tracking-widest transition-all hover:scale-105 active:scale-95"
+                                        onClick={() => setSearchQuery(category === "All" ? "" : category)}
+                                    >
+                                        {category}
+                                    </Badge>
+                                ))}
+                            </div>
+
                             <div className="space-y-4">
                                 <div className="flex items-center justify-between px-2">
                                     <h3 className="text-xs font-black uppercase tracking-widest text-muted-foreground">Nearby Communities</h3>
@@ -130,6 +164,7 @@ export default function LocationsPage() {
                                     {filteredLocations.map((loc) => (
                                         <Card
                                             key={loc.id}
+                                            id={`location-card-${loc.id}`}
                                             onClick={() => setActiveLocationId(loc.id)}
                                             className={`p-6 rounded-[2rem] border-border transition-all cursor-pointer group hover:shadow-xl hover:-translate-y-1 ${activeLocationId === loc.id ? 'bg-primary/5 ring-2 ring-primary/20' : 'bg-card/50 hover:bg-card'}`}
                                         >
@@ -204,15 +239,18 @@ export default function LocationsPage() {
                     >
                         <div className="w-full h-full relative">
                             <Map
-                                locations={locations as any}
+                                locations={filteredLocations}
                                 activeLocationId={activeLocationId || undefined}
+                                onLocationSelect={(id) => setActiveLocationId(id)}
                             />
 
                             {/* OVERLAY TOOLS */}
                             <div className="absolute top-6 left-6 space-y-2 z-10 pointer-events-none">
                                 <div className="pointer-events-auto p-2 bg-card/90 backdrop-blur-xl border border-border rounded-xl shadow-2xl flex items-center gap-3">
                                     <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                                    <span className="text-[10px] font-black uppercase tracking-widest">Live Updates Active</span>
+                                    <span className="text-[10px] font-black uppercase tracking-widest">
+                                        {searchQuery ? `Showing ${filteredLocations.length} results` : 'Live Updates Active'}
+                                    </span>
                                 </div>
                             </div>
 
@@ -220,7 +258,11 @@ export default function LocationsPage() {
                                 <Button
                                     size="icon"
                                     className="w-12 h-12 rounded-2xl bg-primary text-white shadow-2xl hover:scale-110 transition-all"
-                                    onClick={() => setActiveLocationId(null)}
+                                    onClick={() => {
+                                        setActiveLocationId(null);
+                                        setSearchQuery("");
+                                    }}
+                                    title="Reset View"
                                 >
                                     <LocateFixed className="w-5 h-5" />
                                 </Button>
@@ -228,6 +270,13 @@ export default function LocationsPage() {
                                     size="icon"
                                     variant="secondary"
                                     className="w-12 h-12 rounded-2xl bg-card text-muted-foreground shadow-2xl hover:scale-110 transition-all border border-border"
+                                    onClick={() => {
+                                        if (navigator.geolocation) {
+                                            navigator.geolocation.getCurrentPosition((pos) => {
+                                                // Center map on user location if needed
+                                            });
+                                        }
+                                    }}
                                 >
                                     <Navigation className="w-5 h-5" />
                                 </Button>

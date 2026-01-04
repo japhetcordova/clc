@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Location } from "@/config/locations";
 
 const MapClient = dynamic(() => import("./map-client"), {
     ssr: false,
@@ -21,19 +22,11 @@ const MapClient = dynamic(() => import("./map-client"), {
     )
 });
 
-interface Location {
-    id: string;
-    name: string;
-    lat: number;
-    lng: number;
-    address: string;
-    type: string;
-    lastUpdated: string;
-}
 
 interface MapProps {
     locations: Location[];
     activeLocationId?: string;
+    onLocationSelect?: (id: string) => void;
 }
 
 export default function Map(props: MapProps) {

@@ -101,11 +101,6 @@ export default function Footer() {
                                     Register Now
                                 </Button>
                             </Link>
-                            <Link href="/scanner">
-                                <Button variant="outline" className="w-full h-12 rounded-xl font-bold uppercase text-[10px] tracking-widest bg-background">
-                                    Admin Login
-                                </Button>
-                            </Link>
                         </div>
                     </div>
                 </div>
