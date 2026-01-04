@@ -56,14 +56,6 @@ export default function LandingContent() {
 
     return (
         <div className="flex flex-col min-h-screen bg-background relative selection:bg-primary/20">
-            {/* DYNAMIC BACKGROUND AURA */}
-            <div className="fixed inset-0 z-[-1] pointer-events-none overflow-hidden">
-                <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/10 rounded-full blur-[120px] animate-pulse" />
-                <div className="absolute bottom-[20%] right-[-5%] w-[30%] h-[50%] bg-indigo-500/10 rounded-full blur-[100px] animate-bounce-slow" />
-                <div className="absolute top-[40%] right-[10%] w-[20%] h-[20%] bg-amber-500/5 rounded-full blur-[80px]" />
-            </div>
-
-
             {/* HERO SECTION */}
             <section className="relative h-screen flex items-center justify-center overflow-hidden">
                 <div className="absolute inset-0 z-0">
@@ -181,6 +173,8 @@ export default function LandingContent() {
                         </div>
                     </motion.div>
                 </div>
+                {/* SMOOTH TRANSITION TO VISION */}
+                <div className="absolute bottom-0 left-0 right-0 h-48 bg-linear-to-b from-transparent to-muted/20 z-0 pointer-events-none" />
             </section>
 
             {/* VISION & GOALS SECTION */}
@@ -229,6 +223,8 @@ export default function LandingContent() {
                         ))}
                     </div>
                 </div>
+                {/* SMOOTH TRANSITION TO SERVICES */}
+                <div className="absolute bottom-0 left-0 right-0 h-48 bg-linear-to-b from-transparent to-background z-0 pointer-events-none" />
             </section>
 
             {/* SERVICES SECTION */}
@@ -351,6 +347,8 @@ export default function LandingContent() {
                         </div>
                     </div>
                 </div>
+                {/* SMOOTH TRANSITION TO LOCATION */}
+                <div className="absolute bottom-0 left-0 right-0 h-48 bg-linear-to-b from-transparent to-muted/10 z-0 pointer-events-none" />
             </section>
 
             {/* LOCATION SECTION */}

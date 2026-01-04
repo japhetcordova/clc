@@ -25,8 +25,8 @@ const MapClient = dynamic(() => import("./map-client"), {
 
 interface MapProps {
     locations: Location[];
-    activeLocationId?: string;
-    onLocationSelect?: (id: string) => void;
+    activeLocationId?: string | null;
+    onLocationSelect?: (id: string | null) => void;
 }
 
 export default function Map(props: MapProps) {

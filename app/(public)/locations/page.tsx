@@ -1,63 +1,45 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
     MapPin,
-    Navigation,
     Search,
-    Clock,
-    ChevronRight,
-    LocateFixed,
-    Activity,
     Compass,
-    Info,
-    ExternalLink
+    Activity,
+    Users,
+    ChevronRight,
+    Navigation,
+    ExternalLink,
+    Filter,
+    X
 } from "lucide-react";
-import Map from "@/components/locations/map";
-import { Button } from "@/components/ui/button";
+import { useState, useMemo, useEffect } from "react";
+import dynamic from "next/dynamic";
+import { DEFAULT_LOCATIONS } from "@/config/locations";
 import { Input } from "@/components/ui/input";
-import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
-import { DEFAULT_LOCATIONS, Location } from "@/config/locations";
+// Lazy load the Map component to improve initial page load performance
+const Map = dynamic(() => import("@/components/locations/map"), {
+    ssr: false,
+    loading: () => (
+        <div className="w-full h-full bg-muted/50 rounded-[2.5rem] flex items-center justify-center border border-border">
+            <div className="flex flex-col items-center gap-4">
+                <div className="w-12 h-12 rounded-full border-4 border-primary border-t-transparent animate-spin" />
+                <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Initializing Live Map...</p>
+            </div>
+        </div>
+    )
+});
 
 export default function LocationsPage() {
     const [searchQuery, setSearchQuery] = useState("");
     const [activeLocationId, setActiveLocationId] = useState<string | null>(null);
-    const [locations, setLocations] = useState<Location[]>(DEFAULT_LOCATIONS);
     const [isRefreshing, setIsRefreshing] = useState(false);
-
-    // Simulate real-time updates
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setIsRefreshing(true);
-            setTimeout(() => {
-                setLocations(prev => prev.map(loc => ({
-                    ...loc,
-                    attendees: loc.attendees + Math.floor(Math.random() * 5) - 2,
-                    lastUpdated: "Just now"
-                })));
-                setIsRefreshing(false);
-            }, 1000);
-        }, 10000);
-        return () => clearInterval(interval);
-    }, []);
-
-    // Scroll into view when activeLocationId changes
-    useEffect(() => {
-        if (activeLocationId) {
-            const element = document.getElementById(`location-card-${activeLocationId}`);
-            if (element) {
-                element.scrollIntoView({ behavior: "smooth", block: "nearest" });
-            }
-        }
-    }, [activeLocationId]);
-
-    const filteredLocations = locations.filter(loc =>
-        loc.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        loc.address.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    const [activeCategory, setActiveCategory] = useState("All");
 
     const fadeIn = {
         initial: { opacity: 0, y: 20 },
@@ -65,19 +47,44 @@ export default function LocationsPage() {
         transition: { duration: 0.6 }
     };
 
-    const handleGetDirections = (loc: Location) => {
+    // Filter locations based on search and category
+    const filteredLocations = useMemo(() => {
+        return DEFAULT_LOCATIONS.filter(loc => {
+            const matchesSearch = loc.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                loc.district.toLowerCase().includes(searchQuery.toLowerCase());
+            const matchesCategory = activeCategory === "All" || loc.type === activeCategory;
+            return matchesSearch && matchesCategory;
+        });
+    }, [searchQuery, activeCategory]);
+
+    // Update active location when map marker is clicked
+    const handleLocationSelect = (id: string | null) => {
+        setActiveLocationId(id);
+        if (id) {
+            // Scroll the selected card into view in the list
+            const element = document.getElementById(`location-card-${id}`);
+            if (element) {
+                element.scrollIntoView({ behavior: "smooth", block: "center" });
+            }
+        }
+    };
+
+    // Effect to handle "refreshing" animation when searching
+    useEffect(() => {
+        if (searchQuery) {
+            setIsRefreshing(true);
+            const timer = setTimeout(() => setIsRefreshing(false), 800);
+            return () => clearTimeout(timer);
+        }
+    }, [searchQuery]);
+
+    const handleGetDirections = (loc: typeof DEFAULT_LOCATIONS[0]) => {
         const url = `https://www.google.com/maps/dir/?api=1&destination=${loc.lat},${loc.lng}`;
         window.open(url, "_blank");
     };
 
     return (
         <div className="flex flex-col min-h-screen bg-background relative selection:bg-primary/20">
-            {/* DYNAMIC BACKGROUND AURA (Matching Landing) */}
-            <div className="fixed inset-0 z-[-1] pointer-events-none overflow-hidden">
-                <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/10 rounded-full blur-[120px] animate-pulse" />
-                <div className="absolute bottom-[20%] right-[-5%] w-[30%] h-[50%] bg-indigo-500/10 rounded-full blur-[100px]" />
-            </div>
-
             {/* HEADER SECTION */}
             <section className="relative pt-32 pb-12 overflow-hidden">
                 <div className="max-w-7xl mx-auto px-6">
@@ -94,6 +101,8 @@ export default function LocationsPage() {
                         </p>
                     </motion.div>
                 </div>
+                {/* BOTTOM GRADIENT FADE */}
+                <div className="absolute bottom-0 left-0 right-0 h-32 bg-linear-to-t from-background to-transparent z-0" />
             </section>
 
             {/* MAIN CONTENT */}
@@ -145,197 +154,149 @@ export default function LocationsPage() {
                                 {["All", "Headquarters", "Community Center", "Outreach Center", "Small Group Hub"].map((category) => (
                                     <Badge
                                         key={category}
-                                        variant={searchQuery === category || (category === "All" && !searchQuery) ? "default" : "outline"}
-                                        className="cursor-pointer rounded-xl px-4 py-1.5 uppercase text-[9px] font-black tracking-widest transition-all hover:scale-105 active:scale-95"
-                                        onClick={() => setSearchQuery(category === "All" ? "" : category)}
+                                        variant={activeCategory === category ? "default" : "outline"}
+                                        className={cn(
+                                            "cursor-pointer px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all",
+                                            activeCategory === category ? "bg-primary border-primary shadow-lg shadow-primary/25" : "hover:bg-muted"
+                                        )}
+                                        onClick={() => setActiveCategory(category)}
                                     >
                                         {category}
                                     </Badge>
                                 ))}
                             </div>
 
-                            <div className="space-y-4">
-                                <div className="flex items-center justify-between px-2">
-                                    <h3 className="text-xs font-black uppercase tracking-widest text-muted-foreground">Nearby Communities</h3>
-                                    <span className="text-[10px] font-bold text-primary/60">{filteredLocations.length} results</span>
-                                </div>
+                            <div className="h-[calc(100vh-450px)] min-h-[400px] overflow-y-auto pr-2 space-y-4 custom-scrollbar">
+                                <AnimatePresence mode="popLayout">
+                                    {filteredLocations.length > 0 ? (
+                                        filteredLocations.map((loc) => (
+                                            <motion.div
+                                                key={loc.id}
+                                                id={`location-card-${loc.id}`}
+                                                initial={{ opacity: 0, y: 10 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                exit={{ opacity: 0, scale: 0.95 }}
+                                                layout
+                                            >
+                                                <Card
+                                                    className={cn(
+                                                        "group cursor-pointer border-border hover:border-primary/30 transition-all overflow-hidden",
+                                                        activeLocationId === loc.id ? "ring-2 ring-primary border-primary/50 bg-primary/5" : "bg-card/50"
+                                                    )}
+                                                    onClick={() => setActiveLocationId(loc.id)}
+                                                >
+                                                    <CardContent className="p-6">
+                                                        <div className="flex justify-between items-start gap-4">
+                                                            <div className="space-y-2">
+                                                                <div className="flex flex-wrap gap-2">
+                                                                    <Badge variant="outline" className="text-[8px] font-black uppercase tracking-widest bg-background/50">
+                                                                        {loc.type}
+                                                                    </Badge>
+                                                                    {loc.status === "Active" && (
+                                                                        <Badge variant="outline" className="text-[8px] font-black uppercase tracking-widest text-emerald-500 border-emerald-500/20 bg-emerald-500/5">
+                                                                            Live Gathering
+                                                                        </Badge>
+                                                                    )}
+                                                                </div>
+                                                                <h3 className="text-xl font-black uppercase italic tracking-tighter group-hover:text-primary transition-colors">{loc.name}</h3>
+                                                                <p className="text-xs text-muted-foreground font-medium flex items-center gap-1.5">
+                                                                    <MapPin className="w-3 h-3 text-primary opacity-60" />
+                                                                    {loc.district} District
+                                                                </p>
+                                                            </div>
+                                                            <div className="p-2 bg-muted rounded-xl group-hover:bg-primary/10 transition-colors">
+                                                                <ChevronRight className={cn("w-5 h-5 transition-transform", activeLocationId === loc.id ? "rotate-90 text-primary" : "text-muted-foreground")} />
+                                                            </div>
+                                                        </div>
 
-                                <div className="space-y-3 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
-                                    {filteredLocations.map((loc) => (
-                                        <Card
-                                            key={loc.id}
-                                            id={`location-card-${loc.id}`}
-                                            onClick={() => setActiveLocationId(loc.id)}
-                                            className={`p-6 rounded-[2rem] border-border transition-all cursor-pointer group hover:shadow-xl hover:-translate-y-1 ${activeLocationId === loc.id ? 'bg-primary/5 ring-2 ring-primary/20' : 'bg-card/50 hover:bg-card'}`}
+                                                        {activeLocationId === loc.id && (
+                                                            <motion.div
+                                                                initial={{ opacity: 0, height: 0 }}
+                                                                animate={{ opacity: 1, height: "auto" }}
+                                                                className="pt-6 mt-6 border-t border-border/50 space-y-4 shadow-[0_-20px_40px_-20px_rgba(0,0,0,0.1)_inset]"
+                                                            >
+                                                                <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-widest">
+                                                                    <div className="flex items-center gap-2 text-muted-foreground">
+                                                                        <Users className="w-3 h-3" />
+                                                                        <span>Est. Attendance: {loc.attendees}</span>
+                                                                    </div>
+                                                                    <div className="text-primary">{loc.status} Now</div>
+                                                                </div>
+                                                                <div className="flex gap-2">
+                                                                    <Button
+                                                                        className="flex-1 rounded-xl h-10 text-[10px] font-black uppercase tracking-widest bg-primary"
+                                                                        onClick={(e) => {
+                                                                            e.stopPropagation();
+                                                                            handleGetDirections(loc);
+                                                                        }}
+                                                                    >
+                                                                        <Navigation className="w-3 h-3 mr-2" /> Directions
+                                                                    </Button>
+                                                                    <Button
+                                                                        variant="outline"
+                                                                        size="icon"
+                                                                        className="rounded-xl h-10 w-10 border-border bg-background"
+                                                                        onClick={(e) => {
+                                                                            e.stopPropagation();
+                                                                            window.open(`https://www.google.com/maps/search/?api=1&query=${loc.lat},${loc.lng}`, "_blank");
+                                                                        }}
+                                                                    >
+                                                                        <ExternalLink className="w-3 h-3" />
+                                                                    </Button>
+                                                                </div>
+                                                            </motion.div>
+                                                        )}
+                                                    </CardContent>
+                                                </Card>
+                                            </motion.div>
+                                        ))
+                                    ) : (
+                                        <motion.div
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                            className="text-center py-12 space-y-4"
                                         >
-                                            <div className="space-y-4">
-                                                <div className="flex justify-between items-start">
-                                                    <div className="p-3 bg-primary/10 rounded-2xl group-hover:scale-110 transition-transform">
-                                                        <MapPin className="w-5 h-5 text-primary" />
-                                                    </div>
-                                                    <Badge variant="outline" className="rounded-full bg-emerald-500/10 text-emerald-600 border-emerald-500/20 text-[9px] font-black uppercase tracking-widest">
-                                                        {loc.status}
-                                                    </Badge>
-                                                </div>
-
-                                                <div>
-                                                    <h4 className="text-xl font-black uppercase italic tracking-tight leading-none group-hover:text-primary transition-colors">{loc.name}</h4>
-                                                    <p className="text-xs text-muted-foreground font-medium mt-1 uppercase tracking-tight">{loc.address}</p>
-                                                </div>
-
-                                                <div className="pt-2 flex items-center justify-between border-t border-border/50">
-                                                    <div className="flex items-center gap-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">
-                                                        <div className="flex items-center gap-1.5">
-                                                            <Clock className="w-3 h-3" />
-                                                            {loc.lastUpdated}
-                                                        </div>
-                                                        <div className="flex items-center gap-1.5">
-                                                            <Activity className="w-3 h-3" />
-                                                            {loc.attendees} Gathered
-                                                        </div>
-                                                    </div>
-                                                    <div className="flex items-center gap-2">
-                                                        <AnimatePresence>
-                                                            {activeLocationId === loc.id && (
-                                                                <motion.button
-                                                                    initial={{ opacity: 0, scale: 0.8 }}
-                                                                    animate={{ opacity: 1, scale: 1 }}
-                                                                    exit={{ opacity: 0, scale: 0.8 }}
-                                                                    onClick={(e) => {
-                                                                        e.stopPropagation();
-                                                                        handleGetDirections(loc);
-                                                                    }}
-                                                                    className="p-2 rounded-lg bg-primary text-white hover:bg-primary/90 transition-all shadow-lg shadow-primary/20"
-                                                                    title="Get Directions"
-                                                                >
-                                                                    <Navigation className="w-3 h-3" />
-                                                                </motion.button>
-                                                            )}
-                                                        </AnimatePresence>
-                                                        <ChevronRight className={`w-4 h-4 transition-all ${activeLocationId === loc.id ? 'translate-x-1 text-primary' : 'text-muted-foreground/30 group-hover:translate-x-1'}`} />
-                                                    </div>
-                                                </div>
+                                            <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto">
+                                                <Search className="w-8 h-8 text-muted-foreground opacity-20" />
                                             </div>
-                                        </Card>
-                                    ))}
-
-                                    {filteredLocations.length === 0 && (
-                                        <div className="py-20 text-center space-y-4 bg-muted/20 rounded-[2rem] border border-dashed border-border">
-                                            <Info className="w-10 h-10 text-muted-foreground/30 mx-auto" />
-                                            <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">No locations found matching your search</p>
-                                        </div>
+                                            <div className="space-y-1">
+                                                <p className="font-black uppercase text-xs tracking-widest">No results found</p>
+                                                <p className="text-[10px] text-muted-foreground font-medium">Try adjusting your filters or search terms.</p>
+                                            </div>
+                                            <Button
+                                                variant="ghost"
+                                                className="text-[10px] font-black uppercase tracking-widest text-primary"
+                                                onClick={() => {
+                                                    setSearchQuery("");
+                                                    setActiveCategory("All");
+                                                }}
+                                            >
+                                                Reset All Filters
+                                            </Button>
+                                        </motion.div>
                                     )}
-                                </div>
+                                </AnimatePresence>
                             </div>
                         </div>
                     </motion.div>
 
                     {/* RIGHT PANEL: INTERACTIVE MAP */}
                     <motion.div
-                        initial={{ opacity: 0, scale: 0.95 }}
+                        initial={{ opacity: 0, scale: 0.98 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: 0.4, duration: 0.8 }}
-                        className="lg:col-span-8 h-[700px] sticky top-28"
+                        transition={{ delay: 0.3, duration: 0.8 }}
+                        className="lg:col-span-8 h-[700px] lg:h-[calc(100vh-180px)] sticky top-28"
                     >
-                        <div className="w-full h-full relative">
-                            <Map
-                                locations={filteredLocations}
-                                activeLocationId={activeLocationId || undefined}
-                                onLocationSelect={(id) => setActiveLocationId(id)}
-                            />
-
-                            {/* OVERLAY TOOLS */}
-                            <div className="absolute top-6 left-6 space-y-2 z-10 pointer-events-none">
-                                <div className="pointer-events-auto p-2 bg-card/90 backdrop-blur-xl border border-border rounded-xl shadow-2xl flex items-center gap-3">
-                                    <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                                    <span className="text-[10px] font-black uppercase tracking-widest">
-                                        {searchQuery ? `Showing ${filteredLocations.length} results` : 'Live Updates Active'}
-                                    </span>
-                                </div>
-                            </div>
-
-                            <div className="absolute bottom-10 right-10 flex flex-col gap-3 z-10">
-                                <Button
-                                    size="icon"
-                                    className="w-12 h-12 rounded-2xl bg-primary text-white shadow-2xl hover:scale-110 transition-all"
-                                    onClick={() => {
-                                        setActiveLocationId(null);
-                                        setSearchQuery("");
-                                    }}
-                                    title="Reset View"
-                                >
-                                    <LocateFixed className="w-5 h-5" />
-                                </Button>
-                                <Button
-                                    size="icon"
-                                    variant="secondary"
-                                    className="w-12 h-12 rounded-2xl bg-card text-muted-foreground shadow-2xl hover:scale-110 transition-all border border-border"
-                                    onClick={() => {
-                                        if (navigator.geolocation) {
-                                            navigator.geolocation.getCurrentPosition((pos) => {
-                                                // Center map on user location if needed
-                                            });
-                                        }
-                                    }}
-                                >
-                                    <Navigation className="w-5 h-5" />
-                                </Button>
-                            </div>
-                        </div>
+                        <Map
+                            locations={filteredLocations}
+                            activeLocationId={activeLocationId}
+                            onLocationSelect={handleLocationSelect}
+                        />
                     </motion.div>
+
                 </div>
             </section>
 
-            {/* INFO SECTION */}
-            <section className="py-24 px-6 bg-muted/20 relative overflow-hidden">
-                <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-16 items-center">
-                    <motion.div
-                        initial={{ opacity: 0, x: -20 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.8 }}
-                        className="space-y-6"
-                    >
-                        <h2 className="text-4xl font-black uppercase italic tracking-tight">Expanding <span className="text-primary font-black italic">Everywhere</span></h2>
-                        <p className="text-lg text-muted-foreground font-medium leading-relaxed">
-                            Our goal is to bring the Gospel to every corner of the city. If there's no CLC hub in your area, consider joining our digital community or start a cell network.
-                        </p>
-                        <div className="flex gap-4">
-                            <Button className="rounded-2xl h-14 px-8 bg-primary font-black uppercase text-sm tracking-widest shadow-xl shadow-primary/20">
-                                Propose a Hub
-                            </Button>
-                            <Button variant="outline" className="rounded-2xl h-14 px-8 border-border bg-background font-black uppercase text-sm tracking-widest">
-                                Learn More
-                            </Button>
-                        </div>
-                    </motion.div>
-
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        whileInView={{ opacity: 1, scale: 1 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.8 }}
-                        className="grid grid-cols-2 gap-4"
-                    >
-                        <div className="p-8 rounded-[2.5rem] bg-card border border-border space-y-2 text-center">
-                            <span className="text-4xl font-black italic text-primary">12+</span>
-                            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Active Hubs</p>
-                        </div>
-                        <div className="p-8 rounded-[2.5rem] bg-card border border-border space-y-2 text-center">
-                            <span className="text-4xl font-black italic text-indigo-500">2.5k+</span>
-                            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Weekly Visitors</p>
-                        </div>
-                        <div className="p-8 rounded-[2.5rem] bg-card border border-border space-y-2 text-center">
-                            <span className="text-4xl font-black italic text-emerald-500">24/7</span>
-                            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Prayer Support</p>
-                        </div>
-                        <div className="p-8 rounded-[2.5rem] bg-card border border-border space-y-2 text-center">
-                            <span className="text-4xl font-black italic text-amber-500">100%</span>
-                            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Community Driven</p>
-                        </div>
-                    </motion.div>
-                </div>
-            </section>
         </div>
     );
 }

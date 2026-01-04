@@ -27,11 +27,12 @@ export default function GivingPage() {
     };
 
     return (
-        <div className="flex flex-col min-h-screen bg-background">
+        <div className="flex flex-col min-h-screen bg-background relative overflow-hidden">
             {/* HEADER */}
             <section className="relative pt-32 pb-20 overflow-hidden bg-linear-to-b from-indigo-500/10 via-transparent to-transparent">
-                <div className="absolute inset-0 z-0">
-                    <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-primary/20 rounded-full blur-[150px] opacity-20" />
+                <div className="absolute inset-0 z-0 pointer-events-none">
+                    <div className="absolute top-0 right-1/4 w-[600px] h-[600px] bg-primary/20 rounded-full blur-[180px]" />
+                    <div className="absolute bottom-0 left-1/4 w-[400px] h-[400px] bg-indigo-500/10 rounded-full blur-[150px]" />
                 </div>
 
                 <div className="relative z-10 max-w-7xl mx-auto px-6 text-center space-y-6">
@@ -50,6 +51,8 @@ export default function GivingPage() {
                         Giving is an act of worship and a commitment to the work of the Kingdom. Your generosity fuels our mission to impact Tagum City and beyond.
                     </p>
                 </div>
+                {/* BOTTOM GRADIENT FADE */}
+                <div className="absolute bottom-0 left-0 right-0 h-40 bg-linear-to-t from-background to-transparent z-0" />
             </section>
 
             {/* GIVING OPTIONS */}
@@ -142,10 +145,12 @@ export default function GivingPage() {
                         </div>
                     </motion.div>
                 </div>
+                {/* BLEND INTO NEXT SECTION */}
+                <div className="absolute bottom-0 left-0 right-0 h-48 bg-linear-to-b from-transparent to-muted/20 z-0 pointer-events-none" />
             </section>
 
             {/* FAQ ON GIVING */}
-            <section className="py-24 px-6 bg-muted/20">
+            <section className="py-24 px-6 bg-muted/20 relative">
                 <div className="max-w-3xl mx-auto space-y-12 text-center">
                     <h2 className="text-3xl font-black uppercase italic tracking-tight italic">Giving <span className="text-primary">Questions</span></h2>
                     <div className="space-y-6 text-left">
@@ -161,6 +166,8 @@ export default function GivingPage() {
                         ))}
                     </div>
                 </div>
+                {/* BLEND INTO FINAL SECTION */}
+                <div className="absolute bottom-0 left-0 right-0 h-48 bg-linear-to-b from-transparent to-background z-0 pointer-events-none" />
             </section>
 
             {/* FINAL THOUGHT */}

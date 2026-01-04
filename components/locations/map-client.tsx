@@ -21,11 +21,11 @@ L.Marker.prototype.options.icon = DefaultIcon;
 
 interface MapClientProps {
     locations: Location[];
-    activeLocationId?: string;
-    onLocationSelect?: (id: string) => void;
+    activeLocationId?: string | null;
+    onLocationSelect?: (id: string | null) => void;
 }
 
-function MapUpdater({ locations, activeLocationId }: { locations: Location[]; activeLocationId?: string }) {
+function MapUpdater({ locations, activeLocationId }: { locations: Location[]; activeLocationId?: string | null }) {
     const map = useMap();
 
     useEffect(() => {

@@ -85,11 +85,12 @@ export default function MinistriesPage() {
     }
 
     return (
-        <div className="flex flex-col min-h-screen bg-background">
+        <div className="flex flex-col min-h-screen bg-background relative overflow-hidden">
             {/* HEADER */}
             <section className="relative pt-32 pb-20 overflow-hidden">
-                <div className="absolute inset-0 z-0 opacity-10">
-                    <div className="absolute top-0 left-1/2 w-full h-full bg-linear-to-b from-primary/20 via-transparent to-transparent blur-[100px]" />
+                <div className="absolute inset-0 z-0 pointer-events-none">
+                    <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-primary/20 rounded-full blur-[150px]" />
+                    <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-indigo-500/10 rounded-full blur-[120px]" />
                 </div>
 
                 <div className="relative z-10 max-w-7xl mx-auto px-6 text-center space-y-6">
@@ -108,6 +109,8 @@ export default function MinistriesPage() {
                         There is a place for your talents and heart at Christian Life Center. Discover where you can make an impact.
                     </p>
                 </div>
+                {/* BOTTOM GRADIENT FADE */}
+                <div className="absolute bottom-0 left-0 right-0 h-40 bg-linear-to-t from-background to-transparent z-0" />
             </section>
 
             {/* MINISTRIES GRID */}
@@ -145,10 +148,12 @@ export default function MinistriesPage() {
                         </motion.div>
                     ))}
                 </div>
+                {/* SMOOTH TRANSITION TO JOIN TEAM */}
+                <div className="absolute bottom-0 left-0 right-0 h-48 bg-linear-to-b from-transparent to-muted/20 z-0 pointer-events-none" />
             </section>
 
             {/* JOIN THE TEAM SECTION */}
-            <section className="py-24 px-6 bg-muted/20">
+            <section className="py-24 px-6 bg-muted/20 relative">
                 <div className="max-w-5xl mx-auto text-center space-y-12">
                     <motion.div {...fadeIn} className="space-y-4">
                         <h2 className="text-4xl md:text-5xl font-black tracking-tight uppercase italic leading-none">

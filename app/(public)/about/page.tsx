@@ -26,12 +26,12 @@ export default function AboutPage() {
     };
 
     return (
-        <div className="flex flex-col min-h-screen bg-background">
+        <div className="flex flex-col min-h-screen bg-background relative overflow-hidden">
             {/* SUB-PAGE HEADER */}
             <section className="relative pt-32 pb-20 overflow-hidden">
-                <div className="absolute inset-0 z-0 opacity-10">
-                    <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary rounded-full blur-[120px]" />
-                    <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-indigo-500 rounded-full blur-[150px]" />
+                <div className="absolute inset-0 z-0 pointer-events-none">
+                    <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-primary/20 rounded-full blur-[150px]" />
+                    <div className="absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-indigo-500/10 rounded-full blur-[180px]" />
                 </div>
 
                 <div className="relative z-10 max-w-7xl mx-auto px-6 text-center space-y-6">
@@ -50,6 +50,8 @@ export default function AboutPage() {
                         A vibrant community of believers dedicated to transforming lives through the power of God's word and authentic fellowship.
                     </p>
                 </div>
+                {/* SMOOTH TRANSITION TO STORY */}
+                <div className="absolute bottom-0 left-0 right-0 h-48 bg-linear-to-b from-transparent to-muted/20 z-0 pointer-events-none" />
             </section>
 
             {/* OUR STORY SECTION */}
@@ -96,6 +98,8 @@ export default function AboutPage() {
                         </div>
                     </motion.div>
                 </div>
+                {/* SMOOTH TRANSITION TO BELIEFS */}
+                <div className="absolute bottom-0 left-0 right-0 h-48 bg-linear-to-b from-transparent to-background z-0 pointer-events-none" />
             </section>
 
             {/* CORE BELIEFS */}
@@ -132,10 +136,12 @@ export default function AboutPage() {
                         ))}
                     </div>
                 </div>
+                {/* SMOOTH TRANSITION TO QUOTE */}
+                <div className="absolute bottom-0 left-0 right-0 h-48 bg-linear-to-b from-transparent to-primary/5 z-0 pointer-events-none" />
             </section>
 
             {/* QUOTE SECTION */}
-            <section className="py-24 px-6 bg-primary/5">
+            <section className="py-24 px-6 bg-primary/5 relative">
                 <div className="max-w-4xl mx-auto text-center space-y-8">
                     <Quote className="w-12 h-12 text-primary mx-auto opacity-30" />
                     <motion.p
@@ -149,6 +155,8 @@ export default function AboutPage() {
                         <p className="text-[10px] text-muted-foreground font-medium uppercase">Christian Life Center</p>
                     </div>
                 </div>
+                {/* SMOOTH TRANSITION TO CTA */}
+                <div className="absolute bottom-0 left-0 right-0 h-48 bg-linear-to-b from-transparent to-background z-0 pointer-events-none" />
             </section>
 
             {/* CALL TO ACTION */}

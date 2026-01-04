@@ -44,11 +44,12 @@ export default async function EventsPage() {
     const displayEvents = allEvents.length > 0 ? allEvents : MOCK_EVENTS;
 
     return (
-        <div className="flex flex-col min-h-screen bg-background">
+        <div className="flex flex-col min-h-screen bg-background relative overflow-hidden">
             {/* HEADER */}
             <section className="relative pt-32 pb-20 overflow-hidden">
-                <div className="absolute inset-0 z-0 opacity-10">
-                    <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-rose-500 rounded-full blur-[150px]" />
+                <div className="absolute inset-0 z-0 pointer-events-none">
+                    <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-rose-500/20 rounded-full blur-[150px]" />
+                    <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-primary/10 rounded-full blur-[120px]" />
                 </div>
 
                 <div className="relative z-10 max-w-7xl mx-auto px-6 space-y-8">
@@ -67,10 +68,12 @@ export default async function EventsPage() {
 
                     <EventsGrid initialEvents={displayEvents as any} />
                 </div>
+                {/* SMOOTH TRANSITION TO ANNOUNCEMENTS */}
+                <div className="absolute bottom-0 left-0 right-0 h-48 bg-linear-to-b from-transparent to-muted/20 z-0 pointer-events-none" />
             </section>
 
             {/* ANNOUNCEMENT BOARD */}
-            <section className="py-24 px-6 bg-muted/20">
+            <section className="py-24 px-6 bg-muted/20 relative">
                 <div className="max-w-7xl mx-auto space-y-16">
                     <div className="flex items-end justify-between gap-8">
                         <div className="space-y-4">
@@ -101,10 +104,12 @@ export default async function EventsPage() {
                         ))}
                     </div>
                 </div>
+                {/* SMOOTH TRANSITION TO NEWSLETTER */}
+                <div className="absolute bottom-0 left-0 right-0 h-48 bg-linear-to-b from-transparent to-rose-500 z-0 pointer-events-none" />
             </section>
 
             {/* NEWSLETTER CTA */}
-            <section className="py-24 px-6 bg-rose-500 text-white">
+            <section className="py-24 px-6 bg-rose-500 text-white relative">
                 <div className="max-w-4xl mx-auto text-center space-y-8">
                     <Megaphone className="w-12 h-12 mx-auto rotate-[-15deg] opacity-50" />
                     <h2 className="text-4xl md:text-5xl font-black uppercase italic tracking-tighter">Never Miss a Moment</h2>

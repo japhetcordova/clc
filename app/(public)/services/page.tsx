@@ -79,12 +79,12 @@ export default function ServicesPage() {
     ];
 
     return (
-        <div className="flex flex-col min-h-screen bg-background">
+        <div className="flex flex-col min-h-screen bg-background relative overflow-hidden">
             {/* HEADER */}
             <section className="relative pt-32 pb-20 overflow-hidden">
-                <div className="absolute inset-0 z-0 opacity-10">
-                    <div className="absolute top-0 right-1/4 w-96 h-96 bg-accent rounded-full blur-[120px]" />
-                    <div className="absolute bottom-0 left-1/4 w-[500px] h-[500px] bg-primary rounded-full blur-[150px]" />
+                <div className="absolute inset-0 z-0 pointer-events-none">
+                    <div className="absolute top-0 right-1/4 w-[600px] h-[600px] bg-accent/20 rounded-full blur-[180px]" />
+                    <div className="absolute bottom-0 left-1/4 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[150px]" />
                 </div>
 
                 <div className="relative z-10 max-w-7xl mx-auto px-6 text-center space-y-6">
@@ -103,6 +103,8 @@ export default function ServicesPage() {
                         Discover the various ways you can connect with God and our community through our corporate services.
                     </p>
                 </div>
+                {/* BOTTOM GRADIENT FADE */}
+                <div className="absolute bottom-0 left-0 right-0 h-40 bg-linear-to-t from-background to-transparent z-0" />
             </section>
 
             {/* MAIN SERVICES GRID */}
@@ -131,10 +133,12 @@ export default function ServicesPage() {
                         </motion.div>
                     ))}
                 </div>
+                {/* SMOOTH TRANSITION TO SPECIALIZED */}
+                <div className="absolute bottom-0 left-0 right-0 h-48 bg-linear-to-b from-transparent to-muted/20 z-0 pointer-events-none" />
             </section>
 
             {/* SPECIALIZED SERVICES */}
-            <section className="py-24 px-6 bg-muted/20">
+            <section className="py-24 px-6 bg-muted/20 relative">
                 <div className="max-w-7xl mx-auto">
                     <div className="flex flex-col md:flex-row justify-between items-end gap-8 mb-16">
                         <motion.div {...fadeIn} className="space-y-4">
@@ -168,6 +172,8 @@ export default function ServicesPage() {
                         ))}
                     </div>
                 </div>
+                {/* SMOOTH TRANSITION TO WHAT TO EXPECT */}
+                <div className="absolute bottom-0 left-0 right-0 h-48 bg-linear-to-b from-transparent to-background z-0 pointer-events-none" />
             </section>
 
             {/* WHAT TO EXPECT SECTION */}
@@ -218,6 +224,8 @@ export default function ServicesPage() {
                         </div>
                     </div>
                 </div>
+                {/* SMOOTH TRANSITION TO FOOTER */}
+                <div className="absolute bottom-0 left-0 right-0 h-48 bg-linear-to-b from-transparent to-primary z-0 pointer-events-none" />
             </section>
 
             {/* LOCATION FOOTER */}
