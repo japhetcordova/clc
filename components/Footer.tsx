@@ -115,7 +115,7 @@ export default function Footer() {
                         <Link href="#" className="hover:text-primary transition-colors">Cookie Settings</Link>
                     </div>
                     <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground/50">
-                        Made with <Heart className="w-3 h-3 text-rose-500 fill-rose-500 animate-pulse" /> by
+                        Crafted by
                         <a href="https://japhetcordova.com" target="_blank" className="text-foreground hover:text-primary transition-colors flex items-center gap-1">
                             CoreDova <ExternalLink className="w-2.5 h-2.5" />
                         </a>

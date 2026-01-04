@@ -98,8 +98,70 @@ export default function AboutPage() {
                         </div>
                     </motion.div>
                 </div>
-                {/* SMOOTH TRANSITION TO BELIEFS */}
+                {/* SMOOTH TRANSITION TO LEADERSHIP */}
                 <div className="absolute bottom-0 left-0 right-0 h-48 bg-linear-to-b from-transparent to-background z-0 pointer-events-none" />
+            </section>
+
+            {/* OUR PASTORS / LEADERSHIP */}
+            <section className="py-24 px-6 relative overflow-hidden">
+                <div className="absolute inset-0 z-0 pointer-events-none">
+                    <div className="absolute top-1/2 left-0 w-[400px] h-[400px] bg-primary/5 rounded-full blur-[120px]" />
+                </div>
+
+                <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center flex-row-reverse">
+                    <motion.div {...fadeIn} className="space-y-8 lg:order-2">
+                        <div className="space-y-4">
+                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20">
+                                <Users className="w-3 h-3 text-primary" />
+                                <span className="text-[8px] font-black uppercase tracking-widest text-primary">Our Heartbeat</span>
+                            </div>
+                            <h2 className="text-4xl md:text-5xl font-black uppercase italic tracking-tight leading-none">
+                                Our <span className="text-primary">Pastors</span>
+                            </h2>
+                            <p className="text-muted-foreground font-medium text-lg leading-relaxed">
+                                Led by a shared vision and a deep love for God's people, <span className="text-foreground font-bold italic">Ptr Jeser Molina</span> and <span className="text-foreground font-bold italic">Ptra Alene Molina</span> (husband and wife) have dedicated their lives to building a community where everyone can experience the unconditional love of Jesus.
+                            </p>
+                            <p className="text-muted-foreground font-medium leading-relaxed">
+                                Together, they serve as a testament to God's grace, leading Christian Life Center with humility, wisdom, and a relentless passion for spiritual growth and community transformation.
+                            </p>
+                        </div>
+
+                        <div className="p-6 rounded-3xl bg-muted/30 border border-border backdrop-blur-sm">
+                            <div className="flex gap-4">
+                                <div className="h-12 w-12 rounded-2xl bg-primary flex items-center justify-center shrink-0">
+                                    <Heart className="w-6 h-6 text-white" />
+                                </div>
+                                <div>
+                                    <h4 className="font-black uppercase italic tracking-tight underline decoration-primary/30 underline-offset-4">Husband & Wife</h4>
+                                    <p className="text-xs text-muted-foreground font-medium mt-1 uppercase tracking-wider">A united front in faith and ministry.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </motion.div>
+
+                    <motion.div
+                        {...fadeIn}
+                        className="relative lg:order-1"
+                    >
+                        <div className="aspect-[4/5] rounded-[3rem] overflow-hidden shadow-2xl ring-1 ring-border relative group">
+                            <Image
+                                src="/pastors_molina.png"
+                                alt="Ptr Jeser and Ptra Alene Molina"
+                                fill
+                                className="object-cover transition-transform duration-700 group-hover:scale-105"
+                                priority
+                            />
+                            <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                            <div className="absolute bottom-8 left-8 right-8 translate-y-4 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-500">
+                                <p className="text-white/80 text-[10px] font-bold uppercase tracking-[0.3em]">Lead Pastors</p>
+                                <h3 className="text-white text-2xl font-black uppercase italic tracking-tighter">Ptr Jeser & Ptra Alene</h3>
+                            </div>
+                        </div>
+                        {/* Decorative elements */}
+                        <div className="absolute -top-4 -right-4 w-24 h-24 bg-primary/10 rounded-full blur-2xl animate-pulse" />
+                        <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-indigo-500/10 rounded-full blur-3xl" />
+                    </motion.div>
+                </div>
             </section>
 
             {/* CORE BELIEFS */}
