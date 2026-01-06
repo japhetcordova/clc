@@ -72,9 +72,9 @@ export default function EditProfile({ user }: EditProfileProps) {
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
-                <Button variant="outline" className="w-full h-12 rounded-2xl border-2 border-primary/20 text-primary font-black uppercase tracking-widest hover:bg-primary/5 transition-all gap-2 mt-4">
+                <Button variant="ghost" className="col-span-2 w-full h-12 rounded-2xl border-2 border-dashed border-primary/20 text-primary font-black uppercase tracking-widest hover:bg-primary/5 hover:border-primary/50 transition-all gap-2">
                     <Edit3 className="w-4 h-4" />
-                    Modify Details
+                    Modify Profile Details
                 </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[500px] border-none shadow-[0_32px_64px_-16px_rgba(0,0,0,0.3)] bg-card/95 backdrop-blur-2xl ring-1 ring-border p-0 overflow-hidden">

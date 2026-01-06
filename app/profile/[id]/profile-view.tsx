@@ -1,0 +1,268 @@
+"use client";
+
+import { motion } from "framer-motion";
+import { User as UserIcon, Phone, Mail, Users as UsersIcon, Calendar, Share2, Download, Edit3, Settings, ShieldCheck } from "lucide-react";
+import { QRCodeSVG } from "qrcode.react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { cn } from "@/lib/utils";
+import ProfileClient from "./profile-client";
+import EditProfile from "./edit-profile";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Copy, Check } from "lucide-react";
+import { toast } from "sonner";
+import React, { useState } from "react";
+
+interface ProfileViewProps {
+    user: any;
+    qrValue: string;
+    attendance?: any[];
+}
+
+export default function ProfileView({ user, qrValue, attendance = [] }: ProfileViewProps) {
+    const [activeTab, setActiveTab] = useState("overview");
+
+    const fadeInUp = {
+        initial: { opacity: 0, y: 20 },
+        animate: { opacity: 1, y: 0 },
+        transition: { duration: 0.5 }
+    };
+
+    const stagger = {
+        animate: {
+            transition: {
+                staggerChildren: 0.1
+            }
+        }
+    };
+
+    return (
+        <div className="min-h-screen w-full flex items-center justify-center p-4 md:p-8 bg-muted/20 relative overflow-hidden">
+            {/* Dynamic Background */}
+            <div className="absolute inset-0 pointer-events-none">
+                <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-primary/5 rounded-full blur-[100px]" />
+                <div className="absolute bottom-[-10%] left-[-5%] w-[500px] h-[500px] bg-rose-500/5 rounded-full blur-[100px]" />
+            </div>
+
+            <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+                className="w-full max-w-4xl grid md:grid-cols-[350px_1fr] gap-6 relative z-10"
+            >
+                {/* Left Column: ID Card & Quick Actions */}
+                <div className="space-y-6">
+                    <Card className="overflow-hidden border-none shadow-2xl bg-card/80 backdrop-blur-xl ring-1 ring-white/10 relative group">
+                        <div className="absolute inset-0 bg-linear-to-br from-primary/10 via-transparent to-rose-500/5 opacity-50" />
+
+                        <div className="relative pt-12 pb-8 px-6 text-center space-y-4">
+                            <div className="relative mx-auto w-32 h-32">
+                                <div className="absolute inset-0 bg-linear-to-tr from-primary to-rose-500 rounded-full blur-lg opacity-40 animate-pulse" />
+                                <div className="relative w-full h-full rounded-full bg-background border-4 border-background shadow-xl flex items-center justify-center overflow-hidden">
+                                    <UserIcon className="w-12 h-12 text-muted-foreground/50" />
+                                </div>
+                                <div className="absolute bottom-0 right-0 p-2 bg-green-500 rounded-full border-4 border-background shadow-sm" />
+                            </div>
+
+                            <div className="space-y-1">
+                                <h1 className="text-2xl font-black text-foreground tracking-tight">{user.firstName} {user.lastName}</h1>
+                                <p className="text-sm font-medium text-muted-foreground uppercase tracking-widest">{user.ministry}</p>
+                            </div>
+
+                            <div className="flex justify-center gap-2 pt-2">
+                                <div className="px-3 py-1 bg-primary/10 rounded-full border border-primary/20">
+                                    <p className="text-[10px] font-black uppercase tracking-widest text-primary">Active Member</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Interactive QR Section */}
+                        <div className="px-6 pb-8">
+                            <div className="bg-white p-4 rounded-2xl shadow-inner shadow-black/5 mx-auto w-fit mb-6">
+                                <div className="relative">
+                                    <ProfileClient
+                                        user={user}
+                                        qrValue={qrValue}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </Card>
+
+                    <div className="grid grid-cols-2 gap-4">
+                        <EditProfile user={user} />
+                    </div>
+                </div>
+
+                {/* Right Column: Detailed Info */}
+                <div className="space-y-6">
+                    <Card className="h-full border-none shadow-xl bg-card/50 backdrop-blur-md ring-1 ring-border p-1">
+                        <Tabs defaultValue="overview" className="h-full flex flex-col">
+                            <TabsList className="w-full justify-start p-2 bg-transparent border-b border-border/50 rounded-none h-auto gap-2">
+                                {["overview", "network", "activity"].map((tab) => (
+                                    <TabsTrigger
+                                        key={tab}
+                                        value={tab}
+                                        className="rounded-xl px-6 py-2.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-bold uppercase text-[10px] tracking-widest transition-all"
+                                    >
+                                        {tab}
+                                    </TabsTrigger>
+                                ))}
+                            </TabsList>
+
+                            <div className="p-6 md:p-8 flex-1">
+                                <TabsContent value="overview" className="mt-0 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                                    <div className="grid gap-6">
+                                        <div className="space-y-4">
+                                            <h3 className="text-sm font-black uppercase text-muted-foreground tracking-widest flex items-center gap-2">
+                                                <ShieldCheck className="w-4 h-4 text-primary" />
+                                                Personal Details
+                                            </h3>
+                                            <div className="grid sm:grid-cols-2 gap-4">
+                                                <InfoItem icon={<UserIcon />} label="Full Name" value={`${user.firstName} ${user.lastName}`} />
+                                                <InfoItem icon={<UsersIcon />} label="Gender" value={user.gender} />
+                                                <InfoItem icon={<Calendar />} label="Member Since" value={new Date(user.createdAt).toLocaleDateString()} />
+                                            </div>
+                                        </div>
+
+                                        <div className="space-y-4">
+                                            <h3 className="text-sm font-black uppercase text-muted-foreground tracking-widest flex items-center gap-2">
+                                                <Phone className="w-4 h-4 text-primary" />
+                                                Contact Information
+                                            </h3>
+                                            <div className="grid sm:grid-cols-2 gap-4">
+                                                <InfoItem icon={<Phone />} label="Phone" value={user.contactNumber} isCopyable />
+                                                <InfoItem icon={<Mail />} label="Email" value={user.email || "No email provided"} isCopyable />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </TabsContent>
+
+                                <TabsContent value="network" className="mt-0 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                                    <div className="grid gap-4">
+                                        <div className="p-6 rounded-3xl bg-linear-to-br from-primary/5 to-transparent border border-primary/10 space-y-4">
+                                            <div className="flex items-start justify-between">
+                                                <div className="p-3 bg-primary/10 rounded-2xl">
+                                                    <UsersIcon className="w-6 h-6 text-primary" />
+                                                </div>
+                                                <div className="bg-primary px-3 py-1 rounded-full text-[10px] font-black text-white uppercase tracking-widest">
+                                                    Current Network
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Cell Leader / Network</p>
+                                                <h4 className="text-2xl font-black italic tracking-tight text-foreground mt-1">{user.network}</h4>
+                                            </div>
+                                            <div className="pt-4 border-t border-border/50 flex gap-4">
+                                                <div>
+                                                    <p className="text-[10px] font-bold text-muted-foreground uppercase">Cluster</p>
+                                                    <p className="text-sm font-bold text-foreground">{user.cluster}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </TabsContent>
+
+                                <TabsContent value="activity" className="mt-0 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                                    <div className="space-y-4">
+                                        <div className="flex items-center justify-between">
+                                            <h3 className="text-sm font-black uppercase text-muted-foreground tracking-widest flex items-center gap-2">
+                                                <Calendar className="w-4 h-4 text-primary" />
+                                                Recent Attendance
+                                            </h3>
+                                            <span className="text-[10px] font-bold bg-primary/10 text-primary px-2 py-0.5 rounded-full uppercase tracking-widest">
+                                                {attendance?.length || 0} Records
+                                            </span>
+                                        </div>
+
+                                        {(attendance && attendance.length > 0) ? (
+                                            <div className="space-y-3">
+                                                {attendance.map((record: any) => (
+                                                    <div key={record.id} className="flex items-center justify-between p-4 rounded-2xl bg-muted/30 border border-border/50 hover:bg-muted/50 transition-colors group">
+                                                        <div className="flex items-center gap-4">
+                                                            <div className="p-2.5 rounded-xl bg-green-500/10 text-green-500 ring-1 ring-green-500/20">
+                                                                <Check className="w-4 h-4" />
+                                                            </div>
+                                                            <div>
+                                                                <p className="text-sm font-bold text-foreground">Service Attendance</p>
+                                                                <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
+                                                                    {new Date(record.scannedAt).toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                        <div className="text-right">
+                                                            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground bg-background px-2 py-1 rounded-lg border border-border/50">
+                                                                {new Date(record.scannedAt).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        ) : (
+                                            <div className="text-center py-12 space-y-4 rounded-3xl bg-muted/20 border border-dashed border-border">
+                                                <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto">
+                                                    <Calendar className="w-8 h-8 text-muted-foreground/50" />
+                                                </div>
+                                                <div>
+                                                    <h4 className="font-bold text-lg">No Recent Activity</h4>
+                                                    <p className="text-muted-foreground text-sm">Attendance records will appear here.</p>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                </TabsContent>
+                            </div>
+                        </Tabs>
+                    </Card>
+                </div>
+            </motion.div>
+        </div>
+    );
+}
+
+function InfoItem({ icon, label, value, isCopyable }: { icon: any, label: string, value: string, isCopyable?: boolean }) {
+    const [copied, setCopied] = useState(false);
+
+    const handleCopy = () => {
+        if (!value) return;
+        navigator.clipboard.writeText(value);
+        setCopied(true);
+        toast.success(`${label} copied to clipboard`);
+        setTimeout(() => setCopied(false), 2000);
+    };
+
+    return (
+        <div className="group relative flex items-center gap-4 p-4 rounded-2xl bg-muted/30 border border-border/50 hover:bg-muted/50 transition-colors overflow-hidden">
+            <div className="shrink-0 p-2.5 rounded-xl bg-background shadow-sm text-muted-foreground group-hover:text-primary transition-colors">
+                {React.cloneElement(icon, { className: "w-4 h-4" } as any)}
+            </div>
+            <div className="min-w-0 flex-1">
+                <p className="text-[10px] font-black uppercase text-muted-foreground tracking-widest truncate">{label}</p>
+
+                <TooltipProvider delayDuration={300}>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <div className="flex items-center gap-2 cursor-default">
+                                <p className="text-sm font-bold text-foreground truncate">{value}</p>
+                            </div>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                            <p>{value}</p>
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
+            </div>
+
+            {isCopyable && (
+                <button
+                    onClick={handleCopy}
+                    className="shrink-0 p-2 rounded-lg hover:bg-background text-muted-foreground hover:text-foreground opacity-0 group-hover:opacity-100 transition-all focus:opacity-100 focus:outline-none"
+                    title="Copy to clipboard"
+                >
+                    {copied ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
+                </button>
+            )}
+        </div>
+    );
+}

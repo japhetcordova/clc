@@ -51,31 +51,27 @@ export default function ProfileClient({ user, qrValue }: ProfileClientProps) {
     };
 
     return (
-        <>
-            <div className="flex flex-col items-center gap-6">
-                <div className="p-3 bg-white rounded-xl shadow-inner shadow-black/5">
-                    <QRCodeSVG
-                        value={profileUrl || qrValue}
-                        size={160}
-                        level="H"
-                        includeMargin
-                    />
-                </div>
+        <div className="flex flex-col items-center gap-6">
+            <QRCodeSVG
+                value={profileUrl || qrValue}
+                size={180}
+                level="H"
+                includeMargin
+            />
 
-                <Button
-                    variant="outline"
-                    onClick={downloadPDF}
-                    className="w-full max-w-[200px] border-2 border-primary/10 hover:bg-primary/5 rounded-xl font-bold flex items-center justify-center gap-2 h-11"
-                >
-                    <FileDown className="w-5 h-5" />
-                    Download ID
-                </Button>
-            </div>
+            <Button
+                variant="outline"
+                onClick={downloadPDF}
+                className="w-full border-2 border-primary/10 hover:bg-primary/5 rounded-xl font-bold flex items-center justify-center gap-2 h-11 uppercase text-[10px] tracking-widest"
+            >
+                <FileDown className="w-4 h-4" />
+                Download Digital ID
+            </Button>
 
             {/* Hidden component for PDF generation */}
             <div className="fixed -left-[2000px] top-0 pointer-events-none">
                 <DigitalIDCard user={user} qrValue={profileUrl} />
             </div>
-        </>
+        </div>
     );
 }
