@@ -99,9 +99,13 @@ export default function Navbar() {
 
                     <div className="flex items-center gap-3">
                         <Link href="/registration" className="hidden sm:block">
-                            <Button size="sm" className="bg-primary hover:bg-primary/90 rounded-xl font-bold uppercase text-[10px] tracking-widest px-5 h-9">
+                            <motion.button
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl font-bold uppercase text-[10px] tracking-widest px-5 h-9 shadow-lg shadow-primary/20"
+                            >
                                 Join Us
-                            </Button>
+                            </motion.button>
                         </Link>
 
                         <button

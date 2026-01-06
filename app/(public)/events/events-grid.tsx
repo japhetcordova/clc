@@ -33,8 +33,8 @@ export default function EventsGrid({ initialEvents }: EventsGridProps) {
                         key={tab}
                         onClick={() => setActiveTab(tab)}
                         className={`px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all border ${activeTab === tab
-                                ? "bg-rose-500 text-white border-rose-500 shadow-lg shadow-rose-500/20"
-                                : "bg-card border-border text-muted-foreground hover:border-rose-500/50"
+                            ? "bg-rose-500 text-white border-rose-500 shadow-lg shadow-rose-500/20"
+                            : "bg-card border-border text-muted-foreground hover:border-rose-500/50"
                             }`}
                     >
                         {tab}
@@ -52,12 +52,13 @@ export default function EventsGrid({ initialEvents }: EventsGridProps) {
                             initial={{ opacity: 0, scale: 0.9 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.9 }}
+                            whileHover={{ y: -8, transition: { duration: 0.2 } }}
                             transition={{ duration: 0.4 }}
-                            className="group p-8 rounded-[3rem] bg-card border border-border flex flex-col justify-between space-y-8 hover:shadow-2xl hover:border-rose-500/20 transition-all relative overflow-hidden"
+                            className="group p-8 rounded-[3rem] bg-card border border-border flex flex-col justify-between space-y-8 shadow-lg hover:shadow-2xl hover:shadow-rose-500/10 hover:border-rose-500/20 transition-all relative overflow-hidden"
                         >
                             <div className="space-y-4 relative z-10">
                                 <div className="flex justify-between items-start">
-                                    <div className="px-3 py-1 bg-muted rounded-full text-[9px] font-black uppercase tracking-widest text-muted-foreground">
+                                    <div className="px-3 py-1 bg-muted rounded-full text-[9px] font-black uppercase tracking-widest text-muted-foreground group-hover:bg-rose-500/10 group-hover:text-rose-500 transition-colors">
                                         {event.tag}
                                     </div>
                                     <div className="text-right">
@@ -74,7 +75,7 @@ export default function EventsGrid({ initialEvents }: EventsGridProps) {
                                         ) : event.title}
                                     </h3>
                                     <div className="flex items-center gap-2 text-muted-foreground">
-                                        <MapPin className="w-3 h-3" />
+                                        <MapPin className="w-3 h-3 group-hover:text-rose-500 transition-colors" />
                                         <span className="text-[10px] font-bold uppercase tracking-widest">{event.location}</span>
                                     </div>
                                 </div>
@@ -84,16 +85,20 @@ export default function EventsGrid({ initialEvents }: EventsGridProps) {
                                 </p>
                             </div>
 
-                            <div className="flex items-center justify-between pt-6 border-t border-border relative z-10">
+                            <div className="flex items-center justify-between pt-6 border-t border-border relative z-10 group-hover:border-rose-500/20 transition-colors">
                                 <Link href={`/events/${event.id}`}>
                                     <Button variant="ghost" className="p-0 h-auto font-black uppercase text-[10px] tracking-[0.2em] group/btn flex items-center gap-2 hover:bg-transparent text-foreground">
                                         Event Details
                                         <ChevronRight className="w-3 h-3 group-hover/btn:translate-x-1 transition-transform" />
                                     </Button>
                                 </Link>
-                                <Button className="rounded-xl h-10 px-6 bg-rose-500 text-white font-black uppercase text-[10px] tracking-widest shadow-lg shadow-rose-500/20">
+                                <motion.button
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
+                                    className="rounded-xl h-10 px-6 bg-rose-500 text-white font-black uppercase text-[10px] tracking-widest shadow-lg shadow-rose-500/20 hover:bg-rose-600 transition-colors"
+                                >
                                     Add to Calendar
-                                </Button>
+                                </motion.button>
                             </div>
 
                             <div className="absolute top-[-20%] right-[-10%] w-48 h-48 bg-rose-500/5 rounded-full blur-[60px] group-hover:bg-rose-500/10 transition-colors" />

@@ -74,7 +74,7 @@ export default async function EventsPage() {
 
             {/* ANNOUNCEMENT BOARD */}
             <section className="py-24 px-6 bg-muted/20 relative">
-                <div className="max-w-7xl mx-auto space-y-16">
+                <div className="max-w-7xl mx-auto space-y-16 relative z-10">
                     <div className="flex items-end justify-between gap-8">
                         <div className="space-y-4">
                             <h2 className="text-4xl font-black uppercase italic tracking-tight">Recent <span className="text-rose-500">Updates</span></h2>
@@ -91,13 +91,13 @@ export default async function EventsPage() {
                             { title: "Missions Fund Goal Reached", date: "Dec 28, 2025", type: "News" },
                             { title: "New Cell Network Opening", date: "Dec 20, 2025", type: "Community" }
                         ].map((post, i) => (
-                            <div key={i} className="p-8 rounded-[2rem] bg-card border border-border space-y-4 hover:border-rose-500/30 transition-all cursor-pointer group">
+                            <div key={i} className="p-8 rounded-[2rem] bg-card border border-border space-y-4 hover:border-rose-500/30 hover:-translate-y-1 hover:shadow-2xl hover:shadow-rose-500/10 transition-all duration-300 cursor-pointer group">
                                 <div className="flex justify-between items-center">
                                     <span className="text-[10px] font-black uppercase tracking-widest text-rose-500/60">{post.type}</span>
                                     <span className="text-[10px] font-bold text-muted-foreground">{post.date}</span>
                                 </div>
-                                <h4 className="text-xl font-black uppercase italic tracking-tight leading-none group-hover:translate-x-1 transition-transform">{post.title}</h4>
-                                <div className="flex items-center gap-2 text-rose-500 font-black text-[10px] uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
+                                <h4 className="text-xl font-black uppercase italic tracking-tight leading-none group-hover:text-rose-500 transition-colors">{post.title}</h4>
+                                <div className="flex items-center gap-2 text-rose-500 font-black text-[10px] uppercase tracking-widest opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 delay-75">
                                     Read Article <ArrowUpRight className="w-3 h-3" />
                                 </div>
                             </div>
