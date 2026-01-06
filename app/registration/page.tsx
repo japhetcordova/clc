@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { QRCodeSVG } from "qrcode.react";
-import { CheckCircle2, UserPlus, Phone, Mail, Building2, Users, ArrowRight, ArrowLeft, Heart, Sparkles, Search, LogIn } from "lucide-react";
+import { CheckCircle2, UserPlus, Phone, Mail, Building2, Users, ArrowRight, ArrowLeft, Heart, Sparkles, Search, LogIn, QrCode, Scan } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import jsPDF from "jspdf";
@@ -197,30 +197,78 @@ export default function RegistrationPage() {
                         </div>
                     )}
 
-                    <CardHeader className="space-y-4 pb-8 pt-10">
-                        <div className="flex bg-muted/50 p-1 rounded-2xl w-fit mx-auto mb-4 ring-1 ring-border">
+                    <CardHeader className="space-y-4 pb-4 pt-6 sm:pb-8 sm:pt-10">
+                        <div className="flex bg-muted/50 p-1 rounded-2xl w-full sm:w-fit mx-auto mb-4 ring-1 ring-border">
                             <button
                                 onClick={() => setActiveTab("register")}
-                                className={cn("px-6 py-2 rounded-xl text-sm font-black uppercase tracking-widest transition-all", activeTab === "register" ? "bg-background text-foreground shadow-lg shadow-black/5" : "text-muted-foreground hover:text-foreground")}
+                                className={cn("flex-1 sm:flex-none px-6 py-2 rounded-xl text-sm font-black uppercase tracking-widest transition-all", activeTab === "register" ? "bg-background text-foreground shadow-lg shadow-black/5" : "text-muted-foreground hover:text-foreground")}
                             >
                                 Register
                             </button>
                             <button
                                 onClick={() => setActiveTab("login")}
-                                className={cn("px-6 py-2 rounded-xl text-sm font-black uppercase tracking-widest transition-all", activeTab === "login" ? "bg-background text-foreground shadow-lg shadow-black/5" : "text-muted-foreground hover:text-foreground")}
+                                className={cn("flex-1 sm:flex-none px-6 py-2 rounded-xl text-sm font-black uppercase tracking-widest transition-all", activeTab === "login" ? "bg-background text-foreground shadow-lg shadow-black/5" : "text-muted-foreground hover:text-foreground")}
                             >
                                 Login
                             </button>
                         </div>
 
                         <div className="text-center space-y-1">
-                            <CardTitle className="text-4xl font-black tracking-tighter text-foreground uppercase italic leading-none">
+                            <CardTitle className="text-2xl sm:text-4xl font-black tracking-tighter text-foreground uppercase italic leading-none">
                                 {activeTab === "register" ? "Join Christian Life Center" : "Welcome Back"}
                             </CardTitle>
-                            <CardDescription className="text-muted-foreground font-medium">
+                            <CardDescription className="text-muted-foreground font-medium text-xs sm:text-base">
                                 {activeTab === "register" ? "Create your official Christian Life Center digital profile." : "Enter your name to access your Digital ID."}
                             </CardDescription>
                         </div>
+
+                        {activeTab === "register" && (
+                            <div className="pt-6 mt-2 border-t border-border/50">
+                                <div className="relative grid grid-cols-3 gap-2">
+                                    {/* Connecting Line */}
+                                    <div className="absolute top-5 left-[16%] right-[16%] h-0.5 bg-border/50 -z-10" />
+
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: 0.1 }}
+                                        className="flex flex-col items-center text-center space-y-2 group cursor-default"
+                                    >
+                                        <div className="relative w-12 h-12 rounded-2xl bg-background flex items-center justify-center ring-1 ring-border group-hover:ring-primary/50 group-hover:bg-primary/5 transition-all shadow-sm">
+                                            <span className="absolute top-1 right-2 text-[9px] font-black text-muted-foreground/30">01</span>
+                                            <UserPlus className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors mt-1" />
+                                        </div>
+                                        <p className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-muted-foreground group-hover:text-primary transition-colors">Fill Form</p>
+                                    </motion.div>
+
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: 0.2 }}
+                                        className="flex flex-col items-center text-center space-y-2 group cursor-default"
+                                    >
+                                        <div className="relative w-12 h-12 rounded-2xl bg-background flex items-center justify-center ring-1 ring-border group-hover:ring-primary/50 group-hover:bg-primary/5 transition-all shadow-sm">
+                                            <span className="absolute top-1 right-2 text-[9px] font-black text-muted-foreground/30">02</span>
+                                            <QrCode className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors mt-1" />
+                                        </div>
+                                        <p className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-muted-foreground group-hover:text-primary transition-colors">Get ID</p>
+                                    </motion.div>
+
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: 0.3 }}
+                                        className="flex flex-col items-center text-center space-y-2 group cursor-default"
+                                    >
+                                        <div className="relative w-12 h-12 rounded-2xl bg-background flex items-center justify-center ring-1 ring-border group-hover:ring-primary/50 group-hover:bg-primary/5 transition-all shadow-sm">
+                                            <span className="absolute top-1 right-2 text-[9px] font-black text-muted-foreground/30">03</span>
+                                            <Scan className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors mt-1" />
+                                        </div>
+                                        <p className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-muted-foreground group-hover:text-primary transition-colors">Scan Entry</p>
+                                    </motion.div>
+                                </div>
+                            </div>
+                        )}
                     </CardHeader>
 
                     <CardContent className="pb-10">

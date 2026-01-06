@@ -164,36 +164,91 @@ export default function AboutPage() {
                 </div>
             </section>
 
-            {/* CORE BELIEFS */}
-            <section className="py-24 px-6 relative">
-                <div className="max-w-7xl mx-auto space-y-16">
-                    <motion.div {...fadeIn} className="text-center space-y-4 max-w-2xl mx-auto">
-                        <h2 className="text-4xl md:text-5xl font-black tracking-tight uppercase italic leading-none">
-                            What We <span className="text-primary">Believe</span>
+            {/* G12 LADDER OF SUCCESS */}
+            <section className="py-24 px-6 bg-muted/20 relative overflow-hidden">
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[150px] -z-10" />
+
+                <div className="max-w-7xl mx-auto space-y-20">
+                    <motion.div {...fadeIn} className="text-center space-y-4 max-w-3xl mx-auto">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mx-auto">
+                            <Target className="w-4 h-4 text-primary" />
+                            <span className="text-[10px] font-black uppercase tracking-widest text-primary">Our Strategy</span>
+                        </div>
+                        <h2 className="text-4xl md:text-6xl font-black tracking-tighter uppercase italic leading-none">
+                            The Ladder of <span className="text-primary transparent-text-stroke">Success</span>
                         </h2>
-                        <p className="text-muted-foreground font-medium">The foundation of our faith and the principles that guide our walk with God.</p>
+                        <p className="text-lg text-muted-foreground font-medium">
+                            We implement the G12 Vision through four key stages, empowering every believer to become a leader.
+                        </p>
                     </motion.div>
 
-                    <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div className="grid md:grid-cols-4 gap-8 relative">
+                        {/* Connecting Line (Desktop) */}
+                        <div className="hidden md:block absolute top-12 left-0 right-0 h-0.5 bg-border/50 -z-10" />
+
                         {[
-                            { title: "One God", desc: "We believe in the eternal, triune God—Father, Son, and Holy Spirit." },
-                            { title: "The Bible", desc: "The inspired and authoritative Word of God is our ultimate guide." },
-                            { title: "Salvation", desc: "Given by grace through faith in Jesus Christ alone." },
-                            { title: "Community", desc: "Called to live in love and service to one another and the world." }
-                        ].map((belief, i) => (
+                            { step: "01", title: "Win", desc: "Evangelism & Cell Groups" },
+                            { step: "02", title: "Consolidate", desc: "Care & Integration" },
+                            { step: "03", title: "Disciple", desc: "Life Class & Training" },
+                            { step: "04", title: "Send", desc: "Leading & Multiplying" }
+                        ].map((item, i) => (
                             <motion.div
                                 key={i}
                                 initial={{ opacity: 0, y: 20 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
-                                transition={{ delay: i * 0.1 }}
-                                className="p-8 rounded-[2rem] bg-card border border-border shadow-xl hover:shadow-2xl transition-all space-y-4 group"
+                                transition={{ delay: i * 0.15 }}
+                                className="relative bg-background md:bg-transparent p-6 md:p-0 rounded-3xl border md:border-none border-border"
                             >
-                                <div className="p-3 bg-muted w-fit rounded-xl group-hover:bg-primary/10 transition-colors">
-                                    <Sparkles className="w-6 h-6 text-primary" />
+                                <div className="w-24 h-24 rounded-full bg-background border-4 border-muted flex items-center justify-center mb-6 mx-auto relative z-10 shadow-xl group hover:scale-110 transition-transform duration-500 hover:border-primary">
+                                    <span className="text-3xl font-black text-muted-foreground/30">{item.step}</span>
                                 </div>
-                                <h3 className="text-xl font-black uppercase italic tracking-tight">{belief.title}</h3>
-                                <p className="text-xs text-muted-foreground font-medium leading-relaxed">{belief.desc}</p>
+                                <div className="text-center space-y-2">
+                                    <h3 className="text-2xl font-black uppercase italic tracking-tighter">{item.title}</h3>
+                                    <p className="text-sm font-bold text-muted-foreground uppercase tracking-wide">{item.desc}</p>
+                                </div>
+                            </motion.div>
+                        ))}
+                    </div>
+                </div>
+                {/* SMOOTH TRANSITION */}
+                <div className="absolute bottom-0 left-0 right-0 h-32 bg-linear-to-b from-transparent to-background z-0 pointer-events-none" />
+            </section>
+
+            {/* CORE BELIEFS */}
+            <section className="py-24 px-6 relative">
+                <div className="max-w-7xl mx-auto space-y-16">
+                    <motion.div {...fadeIn} className="space-y-4 max-w-2xl">
+                        <h2 className="text-4xl md:text-5xl font-black tracking-tight uppercase italic leading-none">
+                            What We <span className="text-primary">Believe</span>
+                        </h2>
+                        <p className="text-muted-foreground font-medium text-lg">The foundation of our faith and the principles that guide our walk with God.</p>
+                    </motion.div>
+
+                    <div className="grid md:grid-cols-2 gap-x-16 gap-y-12">
+                        {[
+                            { title: "One God", desc: "We believe in the one eternal God, Creator and Lord of the universe, who eternally exists in three persons: Father, Son, and Holy Spirit." },
+                            { title: "The Bible", desc: "We believe the Bible is God's inspired, authoritative, and infallible Word, the supreme standard for all conduct and doctrine." },
+                            { title: "Salvation", desc: "We believe that salvation is a gift of God's grace, received through personal faith in the Lord Jesus Christ." },
+                            { title: "The Church", desc: "We believe the Church is the body of Christ, calling for the gathering of believers for worship, prayer, and mission." }
+                        ].map((belief, i) => (
+                            <motion.div
+                                key={i}
+                                initial={{ opacity: 0, x: -20 }}
+                                whileInView={{ opacity: 1, x: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: i * 0.1 }}
+                                className="flex gap-6 group"
+                            >
+                                <div className="shrink-0 pt-1">
+                                    <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-colors duration-300">
+                                        <Sparkles className="w-6 h-6" />
+                                    </div>
+                                </div>
+                                <div className="space-y-2">
+                                    <h3 className="text-2xl font-black uppercase italic tracking-tighter">{belief.title}</h3>
+                                    <p className="text-muted-foreground font-medium leading-relaxed">{belief.desc}</p>
+                                </div>
                             </motion.div>
                         ))}
                     </div>

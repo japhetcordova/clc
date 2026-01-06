@@ -71,38 +71,45 @@ export default function LandingContent() {
 
                 <div className="relative z-10 max-w-5xl px-6 text-center space-y-8 mt-20">
                     <motion.div
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 1 }}
-                        className="space-y-4"
+                        initial={{ opacity: 0, y: 30 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8, ease: "easeOut" }}
+                        className="flex flex-col items-center gap-6"
                     >
-                        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 backdrop-blur-md mb-4">
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.8 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ delay: 0.2, duration: 0.5 }}
+                            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-primary/10 border border-primary/20 backdrop-blur-xl shadow-lg shadow-primary/5 mb-2"
+                        >
                             <Sparkles className="w-4 h-4 text-primary animate-pulse" />
-                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">A Place to Belong</span>
-                        </div>
-                        <h1 className="text-6xl md:text-8xl font-black tracking-tighter text-foreground uppercase italic leading-[0.9]">
+                            <span className="text-xs font-black uppercase tracking-[0.25em] text-primary">A Place to Belong</span>
+                        </motion.div>
+
+                        <h1 className="text-6xl md:text-9xl font-black tracking-tighter text-foreground uppercase italic leading-[0.85] drop-shadow-2xl">
                             Christian Life <br />
-                            <span className="text-primary drop-shadow-[0_0_15px_rgba(var(--primary),0.3)]">Center</span>
+                            <span className="text-transparent bg-clip-text bg-linear-to-r from-primary via-indigo-500 to-primary bg-[length:200%_auto] animate-gradient-x pr-4">Center</span>
                         </h1>
-                        <p className="max-w-2xl mx-auto text-lg md:text-xl font-medium text-muted-foreground/80 leading-relaxed md:px-12">
-                            A community of faith devoted to loving God, loving people, and making a difference in the world.
+
+                        <p className="max-w-2xl mx-auto text-lg md:text-3xl font-black text-muted-foreground/90 leading-relaxed md:px-12 uppercase italic tracking-widest">
+                            Love God. Love People. Make Disciples.
                         </p>
                     </motion.div>
 
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.5, duration: 0.8 }}
-                        className="flex flex-wrap items-center justify-center gap-4"
+                        transition={{ delay: 0.6, duration: 0.8 }}
+                        className="flex flex-wrap items-center justify-center gap-4 pt-4"
                     >
                         <Link href="/registration">
-                            <Button size="lg" className="h-14 px-8 rounded-2xl bg-primary text-primary-foreground font-black text-lg shadow-2xl shadow-primary/20 hover:scale-105 transition-all">
+                            <Button size="lg" className="h-16 px-10 rounded-full bg-primary text-primary-foreground font-black text-lg shadow-xl shadow-primary/30 hover:scale-105 hover:shadow-2xl hover:shadow-primary/40 transition-all">
                                 Join Our Church
-                                <ArrowRight className="ml-2 w-5 h-5" />
+                                <ArrowRight className="ml-2 w-6 h-6" />
                             </Button>
                         </Link>
                         <Link href="/scanner">
-                            <Button size="lg" variant="outline" className="h-14 px-8 rounded-2xl border-border bg-background/50 backdrop-blur-md font-black text-lg shadow-xl hover:bg-muted/50 transition-all">
+                            <Button size="lg" variant="outline" className="h-16 px-10 rounded-full border-2 border-white/20 bg-white/5 backdrop-blur-md text-foreground font-black text-lg hover:bg-white/10 hover:border-white/40 transition-all">
                                 Scanner Portal
                             </Button>
                         </Link>
@@ -142,7 +149,7 @@ export default function LandingContent() {
                             <div className="p-4 rounded-2xl bg-muted/30 border border-border space-y-2">
                                 <Users className="w-6 h-6 text-primary" />
                                 <h3 className="font-bold uppercase text-xs tracking-widest">Global Family</h3>
-                                <p className="text-[10px] text-muted-foreground font-medium">Over 2 clusters and dozens of cell networks.</p>
+                                <p className="text-[10px] text-muted-foreground font-medium">Part of the worldwide G12 family of churches.</p>
                             </div>
                             <div className="p-4 rounded-2xl bg-muted/30 border border-border space-y-2">
                                 <Heart className="w-6 h-6 text-rose-500" />
@@ -179,31 +186,37 @@ export default function LandingContent() {
 
             {/* VISION & GOALS SECTION */}
             <section id="vision" className="py-24 px-6 bg-muted/20 relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[100px] -mr-64 -mt-64" />
-                <div className="max-w-7xl mx-auto text-center space-y-16">
-                    <motion.div {...fadeIn} className="space-y-4 max-w-2xl mx-auto">
-                        <h2 className="text-4xl md:text-5xl font-black tracking-tight text-foreground uppercase italic leading-none">
-                            Vision <span className="text-primary">&</span> Mission
+                <div className="absolute top-0 left-0 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[120px] -ml-64 -mt-64" />
+                <div className="max-w-7xl mx-auto space-y-20 relative z-10">
+                    <motion.div {...fadeIn} className="space-y-4 max-w-3xl">
+                        <h2 className="text-5xl md:text-7xl font-black tracking-tighter text-foreground uppercase italic leading-[0.9]">
+                            Our <span className="text-primary transparent-text-stroke">Core</span> <br />
+                            Foundations
                         </h2>
-                        <p className="text-muted-foreground font-medium">Our compass for everything we do as a church body.</p>
+                        <p className="text-xl text-muted-foreground font-medium max-w-lg leading-relaxed">
+                            The heartbeat of our church. These principles guide every step we take as a community.
+                        </p>
                     </motion.div>
 
-                    <div className="grid md:grid-cols-3 gap-8">
+                    <div className="grid md:grid-cols-3 gap-12 md:gap-0 divide-y md:divide-y-0 md:divide-x divide-border/50 border-t border-b border-border/50 py-12 md:py-16">
                         {[
                             {
-                                icon: <Compass className="w-10 h-10 text-primary" />,
-                                title: "Our Mission",
-                                desc: "To present the person of Jesus Christ to our generation, leading them into a growing relationship with Him."
+                                icon: <Compass className="w-12 h-12 text-primary" />,
+                                title: "Mission",
+                                subtitle: "Our Purpose",
+                                desc: "Love God. Love People. Make Disciples. We exist to present Jesus to our generation."
                             },
                             {
-                                icon: <Sparkles className="w-10 h-10 text-accent" />,
-                                title: "Our Vision",
-                                desc: "To see a transformed community walking in the fullness of life provided by the Gospel of Jesus."
+                                icon: <Sparkles className="w-12 h-12 text-indigo-500" />,
+                                title: "Vision",
+                                subtitle: "Our Strategy",
+                                desc: "The G12 Vision (Government of 12). Establishing the Kingdom of God through discipleship and leadership."
                             },
                             {
-                                icon: <ShieldCheck className="w-10 h-10 text-emerald-500" />,
-                                title: "Our Values",
-                                desc: "Integrity, Worship, Service, and Honor guide every action we take as a family."
+                                icon: <HandHeart className="w-12 h-12 text-rose-500" />,
+                                title: "Process",
+                                subtitle: "Our Steps",
+                                desc: "Win, Consolidate, Disciple, and Send. Empowering every believer to become a leader."
                             }
                         ].map((item, i) => (
                             <motion.div
@@ -212,19 +225,66 @@ export default function LandingContent() {
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ delay: i * 0.1, duration: 0.6 }}
-                                className="p-8 rounded-[2.5rem] bg-card border border-border shadow-xl hover:shadow-2xl transition-all space-y-4 group"
+                                className="px-8 md:px-12 py-8 md:py-0 flex flex-col items-start gap-6 group"
                             >
-                                <div className="p-4 bg-muted w-fit rounded-2xl group-hover:scale-110 group-hover:bg-primary/10 transition-all">
+                                <div className="p-4 bg-background rounded-[2rem] shadow-sm ring-1 ring-border group-hover:scale-110 transition-transform duration-500">
                                     {item.icon}
                                 </div>
-                                <h3 className="text-2xl font-black uppercase italic tracking-tight">{item.title}</h3>
-                                <p className="text-sm text-muted-foreground leading-relaxed font-medium">{item.desc}</p>
+                                <div className="space-y-4">
+                                    <div className="space-y-1">
+                                        <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{item.subtitle}</p>
+                                        <h3 className="text-3xl md:text-4xl font-black uppercase italic tracking-tighter">{item.title}</h3>
+                                    </div>
+                                    <p className="text-base text-muted-foreground font-medium leading-relaxed">
+                                        {item.desc}
+                                    </p>
+                                </div>
                             </motion.div>
                         ))}
                     </div>
+
+                    {/* 12 CORE VALUES GRID */}
+                    <div className="space-y-12">
+                        <div className="flex items-center gap-4">
+                            <div className="h-px flex-1 bg-border/50" />
+                            <h3 className="text-2xl font-black uppercase tracking-widest text-muted-foreground opacity-50">The 12 Core Values</h3>
+                            <div className="h-px flex-1 bg-border/50" />
+                        </div>
+
+                        <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                            {[
+                                { t: "Winning", d: "Reaching the lost for Christ." },
+                                { t: "Consolidating", d: "Establishing new believers in faith." },
+                                { t: "Discipling", d: "Forming Christlike character." },
+                                { t: "Sending", d: "Empowering disciples to lead." },
+                                { t: "Leadership", d: "Developed, not just assumed." },
+                                { t: "The Word", d: "Our ultimate authority for life." },
+                                { t: "Prayer", d: "The foundation of spiritual power." },
+                                { t: "The Holy Spirit", d: "Dependence on His guidance." },
+                                { t: "Excellence", d: "Our offering to honor God." },
+                                { t: "Teamwork", d: "Unity and collaboration over self." },
+                                { t: "Vision", d: "Clear direction brings results." },
+                                { t: "Love", d: "The motivation for all we do." }
+                            ].map((val, i) => (
+                                <motion.div
+                                    key={i}
+                                    initial={{ opacity: 0, scale: 0.95 }}
+                                    whileInView={{ opacity: 1, scale: 1 }}
+                                    viewport={{ once: true }}
+                                    transition={{ delay: i * 0.05 }}
+                                    className="p-6 rounded-3xl bg-background/50 border border-border hover:border-primary/50 hover:bg-primary/5 transition-all group"
+                                >
+                                    <div className="text-4xl font-black text-muted-foreground/10 mb-4 group-hover:text-primary/20 transition-colors">{String(i + 1).padStart(2, '0')}</div>
+                                    <h4 className="text-lg font-black uppercase italic tracking-tight mb-2 group-hover:text-primary transition-colors">{val.t}</h4>
+                                    <p className="text-xs font-semibold text-muted-foreground">{val.d}</p>
+                                </motion.div>
+                            ))}
+                        </div>
+                    </div>
+
                 </div>
-                {/* SMOOTH TRANSITION TO SERVICES */}
-                <div className="absolute bottom-0 left-0 right-0 h-48 bg-linear-to-b from-transparent to-background z-0 pointer-events-none" />
+                {/* SMOOTH TRANSITION */}
+                <div className="absolute bottom-0 left-0 right-0 h-32 bg-linear-to-b from-transparent to-background z-0 pointer-events-none" />
             </section>
 
             {/* SERVICES SECTION */}
