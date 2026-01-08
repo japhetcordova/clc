@@ -24,5 +24,6 @@ export const MINISTRIES = [
     "Arete",
     "Hosting",
     "Writer",
+    "General Services",
     "No Ministry"
 ] as const;
