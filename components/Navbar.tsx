@@ -7,6 +7,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 export default function Navbar() {
     const [scrolled, setScrolled] = useState(false);
@@ -71,9 +72,7 @@ export default function Navbar() {
             <nav className={`fixed top-6 left-1/2 -translate-x-1/2 z-50 w-full max-w-5xl px-6 transition-all duration-500 ${scrolled ? 'top-4' : 'top-6'}`}>
                 <div className={`backdrop-blur-xl border border-white/10 rounded-2xl h-16 px-6 flex items-center justify-between shadow-2xl overflow-hidden ring-1 ring-white/5 transition-all duration-500 ${scrolled ? 'bg-card/80 scale-[0.98]' : 'bg-card/40'}`}>
                     <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-                        <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                            <ChurchIcon className="w-5 h-5 text-white" />
-                        </div>
+                        <Image src="/logo.png" alt="CLC Logo" width={32} height={32} className="rounded-full" />
                         <span className="font-black italic uppercase tracking-tighter text-lg">CLC</span>
                     </Link>
 

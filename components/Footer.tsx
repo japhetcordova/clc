@@ -15,6 +15,7 @@ import {
     Heart
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 
 export default function Footer() {
     const currentYear = new Date().getFullYear();
@@ -30,9 +31,7 @@ export default function Footer() {
                     {/* Brand Section */}
                     <div className="space-y-6">
                         <div className="flex items-center gap-2">
-                            <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-lg shadow-primary/20">
-                                <Church className="w-6 h-6 text-white" />
-                            </div>
+                            <Image src="/logo.png" alt="CLC Logo" width={40} height={40} className="rounded-full shadow-lg shadow-primary/20" />
                             <span className="font-black italic uppercase tracking-tighter text-2xl">CLC</span>
                         </div>
                         <p className="text-sm text-muted-foreground font-medium leading-relaxed">

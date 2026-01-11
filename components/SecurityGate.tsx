@@ -8,6 +8,7 @@ import { InputOTP, InputOTPGroup, InputOTPSlot, InputOTPSeparator } from "@/comp
 import { motion } from "framer-motion";
 import { Loader2, ArrowRight } from "lucide-react";
 import { getTodayString } from "@/lib/date-utils";
+import Image from "next/image";
 
 interface SecurityGateProps {
     children: React.ReactNode;
@@ -120,7 +121,7 @@ export function SecurityGate({
     if (isLoading) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-background">
-                <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                <Image src="/logo.png" alt="Loading..." width={64} height={64} className="rounded-full animate-pulse" />
             </div>
         );
     }

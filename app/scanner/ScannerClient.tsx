@@ -9,6 +9,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { CheckCircle2, Scan, Clock, Loader2, XCircle, Camera, Repeat, ShieldCheck, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 export default function ScannerClient() {
     const [lastScan, setLastScan] = useState<{ success: boolean; user?: any; error?: string } | null>(null);
@@ -214,7 +215,9 @@ export default function ScannerClient() {
                     <AnimatePresence>
                         {isProcessing && (
                             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 bg-accent/20 backdrop-blur-2xl flex flex-col items-center justify-center z-40">
-                                <Loader2 className="w-12 h-12 sm:w-16 sm:h-16 text-accent animate-spin" />
+                                <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-background flex items-center justify-center shadow-2xl ring-4 ring-accent z-10 overflow-hidden animate-pulse">
+                                    <Image src="/logo.png" alt="Verifying" width={80} height={80} className="w-full h-full object-cover" />
+                                </div>
                                 <p className="font-black text-xl sm:text-2xl mt-6 sm:mt-8 tracking-tighter text-foreground">Verifying...</p>
                             </motion.div>
                         )}
