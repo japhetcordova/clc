@@ -3,7 +3,7 @@
 import { db } from "@/db";
 import { users, attendance, dailyPins, events } from "@/db/schema";
 import type { NewChurchEvent } from "@/db/schema";
-import { eq, and, desc } from "drizzle-orm";
+import { eq, and, desc, ilike } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { randomBytes } from "node:crypto";
 import { cookies } from "next/headers";
@@ -19,12 +19,15 @@ export async function registerUser(formData: {
     email?: string;
     ministry: string;
 }) {
+    const firstName = formData.firstName.trim();
+    const lastName = formData.lastName.trim();
+
     try {
         // Check for existing user (Name or Contact Number)
         const [existingUser] = await db.select().from(users).where(
             and(
-                eq(users.firstName, formData.firstName),
-                eq(users.lastName, formData.lastName)
+                ilike(users.firstName, firstName),
+                ilike(users.lastName, lastName)
             )
         ).limit(1);
 
@@ -37,6 +40,8 @@ export async function registerUser(formData: {
 
         const [newUser] = await db.insert(users).values({
             ...formData,
+            firstName,
+            lastName,
             qrCodeId,
         }).returning();
 
@@ -70,11 +75,14 @@ export async function updateUser(qrCodeId: string, formData: Partial<{
 }
 
 export async function findUser(firstName: string, lastName: string) {
+    const fName = firstName.trim();
+    const lName = lastName.trim();
+
     try {
         const [user] = await db.select().from(users).where(
             and(
-                eq(users.firstName, firstName),
-                eq(users.lastName, lastName)
+                ilike(users.firstName, fName),
+                ilike(users.lastName, lName)
             )
         ).limit(1);
 

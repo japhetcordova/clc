@@ -12,61 +12,87 @@ interface DigitalIDCardProps {
         qrCodeId: string;
     };
     qrValue: string;
+    backgroundVariant?: number; // 0: Default, 1: 1.png, 2: 2.png, 3: 3.png
+    isDark?: boolean;
 }
 
-export default function DigitalIDCard({ user, qrValue }: DigitalIDCardProps) {
+export default function DigitalIDCard({ user, qrValue, backgroundVariant = 0, isDark = true }: DigitalIDCardProps) {
+    const bgImages = ["", "/1.png", "/2.png", "/3.png"];
+    const currentBg = bgImages[backgroundVariant];
+    const textColor = isDark ? "text-white" : "text-slate-900";
+    const subTextColor = isDark ? "text-white/40" : "text-slate-500";
+    const accentColor = isDark ? "text-indigo-400" : "text-indigo-600";
+    const badgeBg = isDark ? "bg-white/5" : "bg-slate-100";
+    const badgeBorder = isDark ? "border-white/10" : "border-slate-200";
+
     return (
         <div
             id="digital-id-card"
-            className="w-[400px] h-[600px] bg-white text-slate-950 relative overflow-hidden font-sans p-8 flex flex-col items-center justify-between border border-slate-200"
-            style={{ backgroundColor: '#ffffff' }}
+            className={`w-[400px] h-[600px] ${isDark ? 'bg-[#020617]' : 'bg-white'} ${textColor} relative overflow-hidden font-sans flex flex-col items-center p-6`}
+            style={{
+                backgroundColor: isDark ? '#020617' : '#ffffff',
+                backgroundImage: backgroundVariant > 0 ? `url(${currentBg})` : 'none',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center'
+            }}
         >
-            {/* Decorative background branding */}
-            <div className="absolute top-0 left-0 w-full h-full opacity-5 pointer-events-none">
-                <div className="absolute -top-20 -left-20 w-64 h-64 bg-indigo-500 rounded-full blur-[120px]" />
-                <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-purple-500 rounded-full blur-[120px]" />
-            </div>
-
-            {/* Header */}
-            <div className="relative z-10 w-full flex flex-col items-center gap-2">
-                <h1 className="text-2xl font-black tracking-tighter uppercase italic text-slate-950" style={{ color: '#020617' }}>Christian Life Center</h1>
-                <div className="h-1.5 w-16 bg-indigo-600 rounded-full" />
-            </div>
-
-            {/* Member Info */}
-            <div className="relative z-10 text-center space-y-2">
-                <h2 className="text-4xl font-black tracking-tight text-slate-950" style={{ color: '#020617' }}>{user.firstName} {user.lastName}</h2>
-                <p className="text-indigo-800 font-black uppercase tracking-[0.2em] text-[10px] px-6 py-2.5 bg-indigo-50 rounded-full inline-block border-2 border-indigo-100">
-                    {user.ministry}
-                </p>
-            </div>
-
-            {/* Centerpiece: QR Code */}
-            <div className="relative z-10 p-6 bg-white rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] ring-1 ring-slate-100">
-                <QRCodeSVG value={qrValue} size={200} level="H" includeMargin={false} />
-            </div>
-
-            {/* Network & Verification */}
-            <div className="relative z-10 w-full grid grid-cols-2 gap-3 px-6">
-                <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 flex flex-col items-center gap-1.5 shadow-sm">
-                    <Users className="w-4 h-4 text-slate-400" />
-                    <span className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Network</span>
-                    <span className="font-bold text-xs text-slate-900">{user.network}</span>
+            {/* Background Effects */}
+            {backgroundVariant === 0 && (
+                <div className="absolute inset-0 pointer-events-none">
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-indigo-500/10 rounded-full blur-[100px]" />
+                    <div className="absolute top-0 left-0 w-full h-full opacity-15" style={{ backgroundImage: `radial-gradient(circle at 2px 2px, rgba(255,255,255,0.05) 1px, transparent 0)`, backgroundSize: '24px 24px' }} />
                 </div>
-                <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 flex flex-col items-center gap-1.5 shadow-sm">
-                    <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                    <span className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Status</span>
-                    <span className="font-bold text-xs text-emerald-600">Verified</span>
+            )}
+
+            {backgroundVariant > 0 && (
+                <div className={`absolute inset-0 pointer-events-none ${isDark ? 'bg-black/40' : 'bg-white/10'} backdrop-blur-[1px]`} />
+            )}
+
+            {/* Top Branding */}
+            <div className="relative z-10 text-center w-full">
+                <p className={`text-[10px] font-black uppercase tracking-[0.25em] ${accentColor} mb-2`}>Christian Life Center</p>
+                <p className={`text-[10px] font-black uppercase tracking-[0.25em] ${accentColor} mb-2`}>Tagum City</p>
+                <div className={`h-[1px] w-8 ${isDark ? 'bg-indigo-500/30' : 'bg-indigo-600/20'} mx-auto`} />
+            </div>
+
+            {/* Main Centered Section */}
+            <div className="flex-1 flex flex-col items-center justify-center w-full space-y-12 relative z-10">
+                {/* QR Focus */}
+                <div className="relative">
+                    <div className="absolute -inset-8 border border-white/5 rounded-[4rem] blur-sm" />
+                    <div className={`absolute -inset-[1px] ${isDark ? 'bg-linear-to-b from-white/20 to-transparent' : 'bg-linear-to-b from-black/10 to-transparent'} rounded-[2.5rem] opacity-50`} />
+
+                    <div className="relative p-6 bg-white rounded-[2.5rem] shadow-[0_0_80px_rgba(79,70,229,0.15)]">
+                        <QRCodeSVG
+                            value={qrValue}
+                            size={180}
+                            level="H"
+                            includeMargin={true}
+                            fgColor="#020617"
+                        />
+                    </div>
+                </div>
+
+                {/* Identification */}
+                <div className="text-center space-y-4 w-full">
+                    <div className="space-y-2">
+                        <h2 className="text-3xl font-black tracking-tighter leading-tight px-4">
+                            {user.firstName} {user.lastName}
+                        </h2>
+                        <p className={`text-[9px] font-bold uppercase tracking-[0.3em] ${subTextColor}`}>Volunteer Access</p>
+                    </div>
+
+                    <div className="pt-4 flex justify-center">
+                        <div className={`inline-flex items-center gap-2.5 px-5 py-2.5 ${badgeBg} rounded-full border ${badgeBorder} shadow-sm`}>
+                            <ShieldCheck className={`w-3.5 h-3.5 ${accentColor}`} />
+                            <span className="text-[9px] font-black uppercase tracking-widest">Official Digital ID</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            {/* Footer Branding */}
-            <div className="relative z-10 space-y-1 text-center">
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Digital Access Key</p>
-            </div>
-
-            {/* Decorative line */}
-            <div className="absolute bottom-0 left-0 w-full h-2 bg-linear-to-r from-indigo-600 via-purple-600 to-indigo-600" />
+            {/* Subtle Texture Overlay */}
+            <div className="absolute inset-0 opacity-[0.03] pointer-events-none mix-blend-overlay" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3%3Cfilter id='noiseFilter'%3%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3%3C/filter%3%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3%3C/svg%3")` }} />
         </div>
     );
 }

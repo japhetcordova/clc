@@ -100,7 +100,7 @@ export default function ProfileView({ user, qrValue, attendance = [] }: ProfileV
                     <Card className="h-full border-none shadow-xl bg-card/50 backdrop-blur-md ring-1 ring-border p-1">
                         <Tabs defaultValue="overview" className="h-full flex flex-col">
                             <TabsList className="w-full justify-start p-2 bg-transparent border-b border-border/50 rounded-none h-auto gap-2">
-                                {["overview", "network", "activity"].map((tab) => (
+                                {["overview", "activity"].map((tab) => (
                                     <TabsTrigger
                                         key={tab}
                                         value={tab}
@@ -122,7 +122,13 @@ export default function ProfileView({ user, qrValue, attendance = [] }: ProfileV
                                             <div className="grid sm:grid-cols-2 gap-4">
                                                 <InfoItem icon={<UserIcon />} label="Full Name" value={`${user.firstName} ${user.lastName}`} />
                                                 <InfoItem icon={<UsersIcon />} label="Gender" value={user.gender} />
-                                                <InfoItem icon={<Calendar />} label="Member Since" value={new Date(user.createdAt).toLocaleDateString()} />
+                                                <InfoItem icon={<UsersIcon />} label="Network" value={user.network} />
+                                                <InfoItem icon={<ShieldCheck />} label="Cluster" value={user.cluster} />
+                                                <InfoItem
+                                                    icon={<Calendar />}
+                                                    label="Member Since"
+                                                    value={new Date(user.createdAt).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }).replace(/^(\w+)/, '$1.')}
+                                                />
                                             </div>
                                         </div>
 
@@ -139,30 +145,6 @@ export default function ProfileView({ user, qrValue, attendance = [] }: ProfileV
                                     </div>
                                 </TabsContent>
 
-                                <TabsContent value="network" className="mt-0 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                                    <div className="grid gap-4">
-                                        <div className="p-6 rounded-3xl bg-linear-to-br from-primary/5 to-transparent border border-primary/10 space-y-4">
-                                            <div className="flex items-start justify-between">
-                                                <div className="p-3 bg-primary/10 rounded-2xl">
-                                                    <UsersIcon className="w-6 h-6 text-primary" />
-                                                </div>
-                                                <div className="bg-primary px-3 py-1 rounded-full text-[10px] font-black text-white uppercase tracking-widest">
-                                                    Current Network
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Cell Leader / Network</p>
-                                                <h4 className="text-2xl font-black italic tracking-tight text-foreground mt-1">{user.network}</h4>
-                                            </div>
-                                            <div className="pt-4 border-t border-border/50 flex gap-4">
-                                                <div>
-                                                    <p className="text-[10px] font-bold text-muted-foreground uppercase">Cluster</p>
-                                                    <p className="text-sm font-bold text-foreground">{user.cluster}</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </TabsContent>
 
                                 <TabsContent value="activity" className="mt-0 animate-in fade-in slide-in-from-bottom-4 duration-500">
                                     <div className="space-y-4">
