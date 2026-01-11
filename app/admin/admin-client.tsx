@@ -87,6 +87,11 @@ export default function AdminClient({
                 .join(' ');
         };
 
+        const formatDate = (dateStr: string) => {
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
+        };
+
         // Header
         const drawHeader = (data: any) => {
             doc.setFillColor(primaryColor[0], primaryColor[1], primaryColor[2]);
@@ -99,38 +104,172 @@ export default function AdminClient({
             doc.setFontSize(9);
             doc.setTextColor(148, 163, 184); // Slate 400
             // Added Service Name to subtitle
-            doc.text(`Attendance Report | ${initialDate} | ${serviceName}`, 14, 32);
+            doc.text(`Attendance Report | ${formatDate(initialDate)} | ${serviceName}`, 14, 32);
         };
 
-        const tableBody = sortedData.map(record => [
+        // Draw header for the first page
+        drawHeader(null);
+
+        // Stats Calculation
+        const totalAttendance = attendanceData.length;
+
+        // Get all unique networks
+        const allPossibleNetworks = Array.from(new Set([
+            ...NETWORKS["Cluster 1"].Male,
+            ...NETWORKS["Cluster 1"].Female,
+            ...NETWORKS["Cluster 2"].Male,
+            ...NETWORKS["Cluster 2"].Female
+        ])).sort();
+
+        // Initialize with zeros
+        const initialNetworks: Record<string, number> = {};
+        allPossibleNetworks.forEach(n => initialNetworks[n] = 0);
+
+        const initialMinistries: Record<string, number> = {};
+        MINISTRIES.forEach(m => initialMinistries[m] = 0);
+
+        const networks = attendanceData.reduce((acc, r) => {
+            const n = r.user.network || "No Network";
+            acc[n] = (acc[n] || 0) + 1;
+            return acc;
+        }, initialNetworks);
+
+        const ministries = attendanceData.reduce((acc, r) => {
+            const m = r.user.ministry || "No Ministry";
+            acc[m] = (acc[m] || 0) + 1;
+            return acc;
+        }, initialMinistries);
+
+        // Helper for summary drawing
+        let currentY = 50;
+
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(12);
+        doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+        doc.text(`Total Attendance: ${totalAttendance}`, 14, currentY);
+        currentY += 12;
+
+        const drawMiniChart = (title: string, data: Record<string, number>) => {
+            const entries = Object.entries(data).sort((a, b) => b[1] - a[1]);
+            if (entries.length === 0) return;
+
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(10);
+            doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+            doc.text(title, 14, currentY);
+            currentY += 6;
+
+            const max = Math.max(...entries.map(e => e[1]));
+
+            entries.forEach(([name, count]) => {
+                const barWidth = (count / max) * 100;
+
+                // Simple page overflow check for summary
+                if (currentY > pageHeight - 20) {
+                    doc.addPage();
+                    drawHeader(null); // Draw header on new page
+                    currentY = 55;
+                }
+
+                doc.setFillColor(241, 245, 249); // Slate 100
+                doc.rect(60, currentY - 3.5, 100, 4, 'F');
+                doc.setFillColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+                doc.rect(60, currentY - 3.5, barWidth, 4, 'F');
+
+                doc.setFont("helvetica", "normal");
+                doc.setFontSize(7);
+                doc.setTextColor(71, 85, 105); // Slate 600
+                doc.text(toTitleCase(name), 14, currentY);
+                doc.text(count.toString(), 165, currentY);
+                currentY += 6;
+            });
+            currentY += 6;
+        };
+
+        drawMiniChart("Attendance by Network", networks);
+        drawMiniChart("Attendance by Ministry", ministries);
+
+        const createTableBody = (data: typeof attendanceData) => data.map(record => [
             toTitleCase(`${record.user.lastName}, ${record.user.firstName}`),
             new Date(record.scannedAt).toLocaleTimeString("en-US", { hour: '2-digit', minute: '2-digit', timeZone: "Asia/Manila" }),
-            record.user.ministry, // Preserve original casing per user request
+            record.user.ministry,
             toTitleCase(record.user.network),
             toTitleCase(record.user.cluster),
             toTitleCase(record.user.gender)
         ]);
 
-        autoTable(doc, {
-            head: [['Member Name', 'Time', 'Ministry', 'Network', 'Cluster', 'Gender']],
-            body: tableBody,
-            startY: 55, // Increased spacing from header
+        const noMinistryFiltered = sortedData.filter(r => r.user.ministry === "No Ministry");
+        const noNetworkFiltered = sortedData.filter(r => r.user.network === "No Network");
+
+        const commonTableOptions: any = {
             theme: 'plain',
             styles: { fontSize: 8, cellPadding: 3, lineColor: [226, 232, 240], lineWidth: 0.1 },
             headStyles: { fillColor: primaryColor, textColor: [255, 255, 255], fontStyle: 'bold' },
             alternateRowStyles: { fillColor: [250, 250, 250] },
-            margin: { top: 55 }, // Ensure margin for next pages matches startY
-            didDrawPage: (data) => {
-                // Header
+            margin: { top: 55 },
+            didDrawPage: (data: any) => {
                 drawHeader(data);
-
-                // Footer
                 const str = `Page ${data.pageNumber}`;
                 doc.setFontSize(8);
                 doc.setTextColor(150);
                 doc.text(str, pageWidth - 20, pageHeight - 10, { align: 'right' });
-                doc.text(`Generated by CLC Apps Platform | ${new Date().toLocaleDateString()}`, 14, pageHeight - 10);
+                doc.text(`Generated by CLC Apps Platform | ${formatDate(new Date().toISOString())}`, 14, pageHeight - 10);
             }
+        };
+
+        // Table 1: No Ministry
+        if (noMinistryFiltered.length > 0) {
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(10);
+            doc.setTextColor(185, 28, 28); // Red 700 for highlighting
+            doc.text("Attendees with No Ministry", 14, currentY + 5);
+
+            autoTable(doc, {
+                ...commonTableOptions,
+                head: [['Member Name', 'Time', 'Ministry', 'Network', 'Cluster', 'Gender']],
+                body: createTableBody(noMinistryFiltered),
+                startY: currentY + 10,
+            });
+            currentY = (doc as any).lastAutoTable.finalY + 10;
+        }
+
+        // Table 2: No Network
+        if (noNetworkFiltered.length > 0) {
+            if (currentY > pageHeight - 40) {
+                doc.addPage();
+                drawHeader(null);
+                currentY = 50;
+            }
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(10);
+            doc.setTextColor(185, 28, 28); // Red 700
+            doc.text("Attendees with No Network", 14, currentY);
+
+            autoTable(doc, {
+                ...commonTableOptions,
+                head: [['Member Name', 'Time', 'Ministry', 'Network', 'Cluster', 'Gender']],
+                body: createTableBody(noNetworkFiltered),
+                startY: currentY + 5,
+            });
+            currentY = (doc as any).lastAutoTable.finalY + 10;
+        }
+
+        // Main Table: Full List
+        if (currentY > pageHeight - 40) {
+            doc.addPage();
+            drawHeader(null);
+            currentY = 50;
+        }
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(10);
+        doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+        doc.text("Full Attendance List", 14, currentY);
+
+        autoTable(doc, {
+            ...commonTableOptions,
+            head: [['Member Name', 'Time', 'Ministry', 'Network', 'Cluster', 'Gender']],
+            body: createTableBody(sortedData),
+            startY: currentY + 5,
         });
 
         doc.save(`CLC_Attendance_${initialDate}.pdf`);
