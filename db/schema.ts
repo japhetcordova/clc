@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, uuid, date, uniqueIndex, unique } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, uuid, date, uniqueIndex, unique, integer, boolean } from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
     id: uuid("id").primaryKey().defaultRandom(),
@@ -43,6 +43,24 @@ export const events = pgTable("events", {
     createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+export const suggestions = pgTable("suggestions", {
+    id: uuid("id").primaryKey().defaultRandom(),
+    content: text("content").notNull(),
+    isAnonymous: boolean("is_anonymous").notNull().default(false),
+    userId: uuid("user_id").references(() => users.id, { onDelete: "cascade" }).notNull(),
+    likeCount: integer("like_count").notNull().default(0),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const suggestionLikes = pgTable("suggestion_likes", {
+    id: uuid("id").primaryKey().defaultRandom(),
+    suggestionId: uuid("suggestion_id").references(() => suggestions.id, { onDelete: "cascade" }).notNull(),
+    userId: uuid("user_id").references(() => users.id, { onDelete: "cascade" }).notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (t) => [
+    unique().on(t.suggestionId, t.userId),
+]);
+
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
 export type Attendance = typeof attendance.$inferSelect;
@@ -50,3 +68,7 @@ export type NewAttendance = typeof attendance.$inferInsert;
 export type DailyPin = typeof dailyPins.$inferSelect;
 export type ChurchEvent = typeof events.$inferSelect;
 export type NewChurchEvent = typeof events.$inferInsert;
+export type Suggestion = typeof suggestions.$inferSelect;
+export type NewSuggestion = typeof suggestions.$inferInsert;
+export type SuggestionLike = typeof suggestionLikes.$inferSelect;
+export type NewSuggestionLike = typeof suggestionLikes.$inferInsert;

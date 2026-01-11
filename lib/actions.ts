@@ -32,6 +32,15 @@ export async function registerUser(formData: {
         ).limit(1);
 
         if (existingUser) {
+            // Set cookie for existing user
+            const cookieStore = await cookies();
+            cookieStore.set("qrCodeId", existingUser.qrCodeId, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === "production",
+                sameSite: "strict",
+                path: "/",
+                maxAge: 60 * 60 * 24 * 400, // 400 days
+            });
             return { success: true, user: existingUser, alreadyExists: true };
         }
 
@@ -44,6 +53,16 @@ export async function registerUser(formData: {
             lastName,
             qrCodeId,
         }).returning();
+
+        // Set cookie for new user
+        const cookieStore = await cookies();
+        cookieStore.set("qrCodeId", newUser.qrCodeId, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            path: "/",
+            maxAge: 60 * 60 * 24 * 400, // 400 days
+        });
 
         return { success: true, user: newUser, alreadyExists: false };
     } catch (error) {
@@ -87,6 +106,15 @@ export async function findUser(firstName: string, lastName: string) {
         ).limit(1);
 
         if (user) {
+            // Set cookie for found user
+            const cookieStore = await cookies();
+            cookieStore.set("qrCodeId", user.qrCodeId, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === "production",
+                sameSite: "strict",
+                path: "/",
+                maxAge: 60 * 60 * 24 * 400, // 400 days
+            });
             return { success: true, user };
         }
         return { success: false, error: "No profile found with this name." };
@@ -277,5 +305,154 @@ export async function deleteEvent(id: string) {
         return { success: true };
     } catch (error) {
         return { success: false, error: "Failed to delete event." };
+    }
+}
+
+// ============================================
+// SUGGESTION ACTIONS
+// ============================================
+
+export async function createSuggestion(data: {
+    content: string;
+    isAnonymous: boolean;
+    userId: string;
+}) {
+    try {
+        const { suggestions } = await import("@/db/schema");
+
+        if (!data.content.trim()) {
+            return { success: false, error: "Suggestion cannot be empty." };
+        }
+
+        const [newSuggestion] = await db.insert(suggestions).values({
+            content: data.content.trim(),
+            isAnonymous: data.isAnonymous,
+            userId: data.userId,
+        }).returning();
+
+        revalidatePath("/suggestions");
+        return { success: true, suggestion: newSuggestion };
+    } catch (error) {
+        console.error("Error creating suggestion:", error);
+        return { success: false, error: "Failed to create suggestion." };
+    }
+}
+
+export async function toggleSuggestionLike(suggestionId: string, userId: string) {
+    try {
+        const { suggestions, suggestionLikes } = await import("@/db/schema");
+
+        // Check if user already liked this suggestion
+        const [existingLike] = await db.select()
+            .from(suggestionLikes)
+            .where(
+                and(
+                    eq(suggestionLikes.suggestionId, suggestionId),
+                    eq(suggestionLikes.userId, userId)
+                )
+            )
+            .limit(1);
+
+        if (existingLike) {
+            // Unlike: Remove the like
+            await db.delete(suggestionLikes)
+                .where(eq(suggestionLikes.id, existingLike.id));
+
+            // Get new count and update
+            const likes = await db.select()
+                .from(suggestionLikes)
+                .where(eq(suggestionLikes.suggestionId, suggestionId));
+
+            await db.update(suggestions)
+                .set({ likeCount: likes.length })
+                .where(eq(suggestions.id, suggestionId));
+
+            revalidatePath("/suggestions");
+            return { success: true, liked: false };
+        } else {
+            // Like: Add the like
+            await db.insert(suggestionLikes).values({
+                suggestionId,
+                userId,
+            });
+
+            // Get new count and update
+            const likes = await db.select()
+                .from(suggestionLikes)
+                .where(eq(suggestionLikes.suggestionId, suggestionId));
+
+            await db.update(suggestions)
+                .set({ likeCount: likes.length })
+                .where(eq(suggestions.id, suggestionId));
+
+            revalidatePath("/suggestions");
+            return { success: true, liked: true };
+        }
+    } catch (error) {
+        console.error("Error toggling suggestion like:", error);
+        return { success: false, error: "Failed to toggle like." };
+    }
+}
+
+export async function getSuggestions(currentUserId?: string) {
+    try {
+        const { suggestions, suggestionLikes } = await import("@/db/schema");
+
+        const allSuggestions = await db.select({
+            id: suggestions.id,
+            content: suggestions.content,
+            isAnonymous: suggestions.isAnonymous,
+            userId: suggestions.userId,
+            likeCount: suggestions.likeCount,
+            createdAt: suggestions.createdAt,
+        })
+            .from(suggestions)
+            .orderBy(desc(suggestions.createdAt));
+
+        // Fetch user data for non-anonymous suggestions
+        const enrichedSuggestions = await Promise.all(
+            allSuggestions.map(async (suggestion) => {
+                let author = null;
+
+                if (!suggestion.isAnonymous) {
+                    const [user] = await db.select({
+                        firstName: users.firstName,
+                        lastName: users.lastName,
+                    })
+                        .from(users)
+                        .where(eq(users.id, suggestion.userId))
+                        .limit(1);
+
+                    author = user || null;
+                }
+
+                // Check if current user has liked this suggestion
+                let isLikedByCurrentUser = false;
+                if (currentUserId) {
+                    const [like] = await db.select()
+                        .from(suggestionLikes)
+                        .where(
+                            and(
+                                eq(suggestionLikes.suggestionId, suggestion.id),
+                                eq(suggestionLikes.userId, currentUserId)
+                            )
+                        )
+                        .limit(1);
+
+                    isLikedByCurrentUser = !!like;
+                }
+
+                return {
+                    ...suggestion,
+                    author,
+                    isLikedByCurrentUser,
+                };
+            })
+        );
+
+        return { success: true, suggestions: enrichedSuggestions };
+    } catch (error) {
+        console.error("Error fetching suggestions:", error);
+        return { success: false, error: "Failed to fetch suggestions.", suggestions: [] };
     }
 }
