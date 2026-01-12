@@ -15,7 +15,9 @@ import {
     Coins,
     CheckCircle2,
     Info,
-    ExternalLink
+    ExternalLink,
+    Quote,
+    BookOpen
 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -57,69 +59,100 @@ export default function LandingContent() {
     return (
         <div className="flex flex-col min-h-screen bg-background relative selection:bg-primary/20">
             {/* HERO SECTION */}
-            <section className="relative h-screen flex items-center justify-center overflow-hidden">
+            <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden py-12 md:py-32 px-6">
                 <div className="absolute inset-0 z-0">
                     <Image
                         src="/church_hero_worship_1767400361470.png"
                         alt="Church Worship"
                         fill
-                        className="object-cover opacity-60 scale-105"
+                        className="object-cover opacity-40 scale-110"
                         priority
                     />
-                    <div className="absolute inset-0 bg-linear-to-b from-background/40 via-background/60 to-background" />
+                    <div className="absolute inset-0 bg-radial-[at_center_center] from-transparent via-background/40 to-background" />
+                    <div className="absolute inset-0 bg-linear-to-b from-transparent via-background/60 to-background" />
                 </div>
 
-                <div className="relative z-10 max-w-5xl px-6 text-center space-y-8 mt-20">
+                <div className="relative z-10 max-w-7xl mx-auto w-full grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
                     <motion.div
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
+                        initial={{ opacity: 0, x: -30 }}
+                        animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.8, ease: "easeOut" }}
-                        className="flex flex-col items-center gap-6"
+                        className="flex flex-col items-start gap-6"
                     >
                         <motion.div
                             initial={{ opacity: 0, scale: 0.8 }}
                             animate={{ opacity: 1, scale: 1 }}
                             transition={{ delay: 0.2, duration: 0.5 }}
-                            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-primary/10 border border-primary/20 backdrop-blur-xl shadow-lg shadow-primary/5 mb-2"
+                            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 backdrop-blur-xl shadow-lg shadow-primary/5"
                         >
                             <Sparkles className="w-4 h-4 text-primary animate-pulse" />
-                            <span className="text-xs font-black uppercase tracking-[0.25em] text-primary">A Place to Belong</span>
+                            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">A Place to Belong</span>
                         </motion.div>
 
-                        <h1 className="text-6xl md:text-9xl font-black tracking-tighter text-foreground uppercase italic leading-[0.85] drop-shadow-2xl">
-                            Christian Life <br />
-                            <span className="text-transparent bg-clip-text bg-linear-to-r from-primary via-indigo-500 to-primary bg-[length:200%_auto] animate-gradient-x pr-4">Center</span>
-                        </h1>
+                        <div className="space-y-4">
+                            <h1 className="text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter text-foreground uppercase italic leading-[0.85] drop-shadow-2xl">
+                                Christian <br />
+                                Life <span className="text-transparent bg-clip-text bg-linear-to-r from-primary via-indigo-500 to-primary bg-[length:200%_auto] animate-gradient-x pr-4">Center</span>
+                            </h1>
+                            <p className="max-w-xl text-lg md:text-2xl font-black text-muted-foreground/80 leading-relaxed uppercase italic tracking-widest">
+                                Love God. Love People. Make Disciples.
+                            </p>
+                        </div>
 
-                        <p className="max-w-2xl mx-auto text-lg md:text-3xl font-black text-muted-foreground/90 leading-relaxed md:px-12 uppercase italic tracking-widest">
-                            Love God. Love People. Make Disciples.
-                        </p>
+                        <div className="flex flex-wrap items-center gap-6 pt-2">
+                            <Link href="/registration">
+                                <Button size="lg" className="h-16 px-10 rounded-2xl bg-primary text-primary-foreground font-black text-lg shadow-2xl shadow-primary/30 hover:scale-105 hover:shadow-primary/40 transition-all group">
+                                    Join Our Church
+                                    <ArrowRight className="ml-2 w-6 h-6 group-hover:translate-x-1 transition-transform" />
+                                </Button>
+                            </Link>
+                            <Link href="/about" className="text-foreground font-black uppercase italic tracking-widest text-sm hover:text-primary transition-colors flex items-center gap-2">
+                                Learn More About Us
+                                <div className="w-10 h-px bg-foreground/20 group-hover:bg-primary/40" />
+                            </Link>
+                        </div>
                     </motion.div>
 
                     <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.6, duration: 0.8 }}
-                        className="flex flex-wrap items-center justify-center gap-4 pt-4"
+                        initial={{ opacity: 0, x: 30 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.4, duration: 0.8, ease: "easeOut" }}
+                        className="relative"
                     >
-                        <Link href="/registration">
-                            <Button size="lg" className="h-16 px-10 rounded-full bg-primary text-primary-foreground font-black text-lg shadow-xl shadow-primary/30 hover:scale-105 hover:shadow-2xl hover:shadow-primary/40 transition-all">
-                                Join Our Church
-                                <ArrowRight className="ml-2 w-6 h-6" />
-                            </Button>
-                        </Link>
-                        <Link href="/scanner">
-                            <Button size="lg" variant="outline" className="h-16 px-10 rounded-full border-2 border-white/20 bg-white/5 backdrop-blur-md text-foreground font-black text-lg hover:bg-white/10 hover:border-white/40 transition-all">
-                                Scanner Portal
-                            </Button>
-                        </Link>
+                        <div className="absolute -inset-4 bg-primary/20 blur-3xl opacity-20 -z-10 animate-pulse" />
+                        <Card className="bg-background/20 backdrop-blur-3xl border-white/10 shadow-2xl rounded-[2.5rem] overflow-hidden group hover:border-primary/30 transition-all duration-500">
+                            <div className="relative p-8 md:p-10 space-y-8">
+                                <div className="absolute top-8 right-8 text-primary/20 group-hover:text-primary/40 transition-colors">
+                                    <Quote className="w-16 h-16 rotate-180" />
+                                </div>
+
+                                <div className="space-y-6">
+                                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary">
+                                        <BookOpen className="w-4 h-4" />
+                                        <span className="text-[10px] font-bold uppercase tracking-widest">Verse of the Day</span>
+                                    </div>
+
+                                    <blockquote className="space-y-6">
+                                        <p className="text-2xl md:text-3xl font-black italic uppercase tracking-tight leading-[1.1] text-foreground">
+                                            "Trust in the LORD with all your heart and lean not on your own understanding; in all your ways submit to him, and he will make your paths straight."
+                                        </p>
+                                        <footer className="flex items-center gap-4">
+                                            <div className="h-px w-8 bg-primary" />
+                                            <cite className="text-sm font-black uppercase tracking-widest text-muted-foreground not-italic">
+                                                Proverbs 3:5-6
+                                            </cite>
+                                        </footer>
+                                    </blockquote>
+                                </div>
+                            </div>
+                        </Card>
                     </motion.div>
                 </div>
 
                 <motion.div
                     animate={{ y: [0, 10, 0] }}
                     transition={{ repeat: Infinity, duration: 2 }}
-                    className="absolute bottom-10 left-1/2 -translate-x-1/2 opacity-50"
+                    className="absolute bottom-10 left-1/2 -translate-x-1/2 opacity-30 hidden md:block"
                 >
                     <div className="w-6 h-10 rounded-full border-2 border-muted-foreground flex justify-center p-1">
                         <div className="w-1 h-2 bg-muted-foreground rounded-full" />
@@ -128,8 +161,8 @@ export default function LandingContent() {
             </section>
 
             {/* ABOUT SECTION */}
-            <section id="about" className="py-24 px-6 relative">
-                <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-16 items-center">
+            <section id="about" className="py-16 md:py-20 px-6 relative">
+                <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
                     <motion.div
                         {...fadeIn}
                         className="space-y-6"
@@ -185,9 +218,9 @@ export default function LandingContent() {
             </section>
 
             {/* VISION & GOALS SECTION */}
-            <section id="vision" className="py-24 px-6 bg-muted/20 relative overflow-hidden">
+            <section id="vision" className="py-16 md:py-20 px-6 bg-muted/20 relative overflow-hidden">
                 <div className="absolute top-0 left-0 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[120px] -ml-64 -mt-64" />
-                <div className="max-w-7xl mx-auto space-y-20 relative z-10">
+                <div className="max-w-7xl mx-auto space-y-12 relative z-10">
                     <motion.div {...fadeIn} className="space-y-4 max-w-3xl">
                         <h2 className="text-5xl md:text-7xl font-black tracking-tighter text-foreground uppercase italic leading-[0.9]">
                             Our <span className="text-primary transparent-text-stroke">Core</span> <br />
@@ -198,7 +231,7 @@ export default function LandingContent() {
                         </p>
                     </motion.div>
 
-                    <div className="grid md:grid-cols-3 gap-12 md:gap-0 divide-y md:divide-y-0 md:divide-x divide-border/50 border-t border-b border-border/50 py-12 md:py-16">
+                    <div className="grid md:grid-cols-3 gap-8 md:gap-0 divide-y md:divide-y-0 md:divide-x divide-border/50 border-t border-b border-border/50 py-6 md:py-10">
                         {[
                             {
                                 icon: <Compass className="w-12 h-12 text-primary" />,
@@ -244,7 +277,7 @@ export default function LandingContent() {
                     </div>
 
                     {/* 12 CORE VALUES GRID */}
-                    <div className="space-y-12">
+                    <div className="space-y-8">
                         <div className="flex items-center gap-4">
                             <div className="h-px flex-1 bg-border/50" />
                             <h3 className="text-2xl font-black uppercase tracking-widest text-muted-foreground opacity-50">The 12 Core Values</h3>
@@ -288,9 +321,9 @@ export default function LandingContent() {
             </section>
 
             {/* SERVICES SECTION */}
-            <section id="services" className="py-24 px-6 relative">
+            <section id="services" className="py-16 md:py-20 px-6 relative">
                 <div className="max-w-7xl mx-auto">
-                    <div className="flex flex-col md:flex-row justify-between items-end gap-8 mb-16">
+                    <div className="flex flex-col md:flex-row justify-between items-end gap-8 mb-12">
                         <motion.div {...fadeIn} className="space-y-4">
                             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20">
                                 <Calendar className="w-4 h-4 text-primary" />
@@ -338,9 +371,9 @@ export default function LandingContent() {
             </section>
 
             {/* GIVING SECTION */}
-            <section className="py-24 px-6">
+            <section className="py-16 md:py-20 px-6">
                 <div className="max-w-7xl mx-auto">
-                    <div className="rounded-[4rem] bg-linear-to-br from-primary via-indigo-600 to-indigo-800 p-12 md:p-20 text-white relative overflow-hidden shadow-2xl">
+                    <div className="rounded-[4rem] bg-linear-to-br from-primary via-indigo-600 to-indigo-800 p-10 md:p-16 text-white relative overflow-hidden shadow-2xl">
                         <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-white/10 rounded-full blur-[100px] -mr-32 -mt-32" />
                         <div className="relative z-10 grid md:grid-cols-2 gap-16 items-center">
                             <div className="space-y-8">
@@ -412,7 +445,7 @@ export default function LandingContent() {
             </section>
 
             {/* LOCATION SECTION */}
-            <section id="location" className="py-24 px-6 relative bg-muted/10">
+            <section id="location" className="py-16 md:py-20 px-6 relative bg-muted/10">
                 <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-16 items-center">
                     <motion.div
                         initial={{ opacity: 0, x: -20 }}
@@ -484,8 +517,8 @@ export default function LandingContent() {
             </section>
 
             {/* FAQ SECTION */}
-            <section className="py-24 px-6 relative">
-                <div className="max-w-3xl mx-auto space-y-16">
+            <section className="py-16 md:py-20 px-6 relative">
+                <div className="max-w-3xl mx-auto space-y-12">
                     <motion.div {...fadeIn} className="text-center space-y-4">
                         <h2 className="text-4xl md:text-5xl font-black tracking-tight uppercase italic leading-none">
                             Common <span className="text-primary">Questions</span>
@@ -564,7 +597,7 @@ export default function LandingContent() {
             </AnimatePresence>
 
             {/* FINAL CTA */}
-            <section className="py-24 px-6 text-center border-t border-border mt-auto">
+            <section className="py-16 md:py-20 px-6 text-center border-t border-border mt-auto">
                 <div className="max-w-2xl mx-auto space-y-8">
                     <motion.div {...fadeIn} className="space-y-4">
                         <h2 className="text-4xl md:text-5xl font-black tracking-tight uppercase italic drop-shadow-sm">Ready to <span className="text-primary underline decoration-primary/20 underline-offset-8">be a part</span> of CLC?</h2>
