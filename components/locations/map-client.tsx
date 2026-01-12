@@ -75,16 +75,30 @@ export default function MapClient({ locations, activeLocationId, onLocationSelec
                             <div className="p-2">
                                 <h3 className="font-black uppercase italic text-sm tracking-tight">{loc.name}</h3>
                                 <p className="text-[10px] text-muted-foreground font-medium mt-1">{loc.address}</p>
+                                {loc.phone && (
+                                    <p className="text-[10px] text-muted-foreground font-medium mt-0.5">
+                                        📞 {loc.phone}
+                                    </p>
+                                )}
                                 <div className="mt-3 pt-2 border-t border-border flex flex-col gap-2">
-                                    <div className="flex items-center gap-2">
-                                        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                                        <span className="text-[9px] font-bold uppercase tracking-widest text-emerald-600">Active Now</span>
+                                    <div className="space-y-1.5 pt-1">
+                                        <div className="flex items-center gap-2">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary opacity-60"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>
+                                            <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">Schedule</span>
+                                        </div>
+                                        <div className="flex flex-col gap-1 pl-5">
+                                            {loc.serviceTimes.map((time, idx) => (
+                                                <span key={idx} className="text-[9px] font-bold text-foreground bg-primary/5 px-2 py-0.5 rounded-md w-fit">
+                                                    {time}
+                                                </span>
+                                            ))}
+                                        </div>
                                     </div>
                                     <a
-                                        href={`https://www.google.com/maps/dir/?api=1&destination=${loc.lat},${loc.lng}`}
+                                        href={loc.googleMapsLink || `https://www.google.com/maps/dir/?api=1&destination=${loc.lat},${loc.lng}`}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="inline-flex items-center justify-center gap-2 px-3 py-1.5 rounded-lg bg-primary text-white text-[9px] font-black uppercase tracking-widest hover:bg-primary/90 transition-all no-underline"
+                                        className="inline-flex items-center justify-center gap-2 px-3 py-1.5 rounded-lg bg-secondary text-[9px] font-black uppercase tracking-widest transition-all no-underline"
                                     >
                                         Get Directions
                                     </a>

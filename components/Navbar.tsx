@@ -16,12 +16,10 @@ export default function Navbar() {
 
     const navLinks = [
         { name: "About", href: "/about" },
-        { name: "Services", href: "/services" },
         { name: "Locations", href: "/locations" },
         { name: "Ministries", href: "/ministries" },
         { name: "Giving", href: "/giving" },
         { name: "Events", href: "/events" },
-        { name: "Suggestions", href: "/suggestions" },
     ];
 
     useEffect(() => {

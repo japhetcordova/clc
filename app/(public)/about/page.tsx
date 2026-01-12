@@ -57,22 +57,6 @@ export default function AboutPage() {
             {/* OUR STORY SECTION */}
             <section className="py-24 px-6 relative bg-muted/20">
                 <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
-                    <motion.div {...fadeIn} className="relative">
-                        <div className="aspect-square rounded-[3rem] overflow-hidden shadow-2xl ring-1 ring-border">
-                            <Image
-                                src="/church_hero_worship_1767400361470.png"
-                                alt="Church History"
-                                fill
-                                className="object-cover grayscale hover:grayscale-0 transition-all duration-700"
-                            />
-                        </div>
-                        <div className="absolute -bottom-6 -right-6 p-8 rounded-[2rem] bg-primary text-white shadow-2xl max-w-[200px] hidden md:block">
-                            <History className="w-8 h-8 mb-3" />
-                            <h4 className="font-black text-xl italic uppercase tracking-tighter">Established</h4>
-                            <p className="text-[10px] font-bold opacity-80 uppercase mt-1">Founding years of faith and service.</p>
-                        </div>
-                    </motion.div>
-
                     <motion.div {...fadeIn} className="space-y-8">
                         <div className="space-y-4">
                             <h2 className="text-4xl font-black uppercase italic tracking-tight">How It <span className="text-primary">All Started</span></h2>
@@ -95,6 +79,21 @@ export default function AboutPage() {
                                 <h3 className="font-black uppercase text-xs tracking-widest">Faithful Service</h3>
                                 <p className="text-[10px] text-muted-foreground font-medium leading-relaxed">Decades of commitment to our local community.</p>
                             </div>
+                        </div>
+                    </motion.div>
+                    <motion.div {...fadeIn} className="relative">
+                        <div className="aspect-square rounded-[3rem] overflow-hidden shadow-2xl ring-1 ring-border">
+                            <Image
+                                src="/church_hero_worship_1767400361470.png"
+                                alt="Church History"
+                                fill
+                                className="object-cover grayscale hover:grayscale-0 transition-all duration-700"
+                            />
+                        </div>
+                        <div className="absolute -bottom-6 -right-6 p-8 rounded-[2rem] bg-primary text-white shadow-2xl max-w-[200px] hidden md:block">
+                            <History className="w-8 h-8 mb-3" />
+                            <h4 className="font-black text-xl italic uppercase tracking-tighter">Established</h4>
+                            <p className="text-[10px] font-bold opacity-80 uppercase mt-1">Founding years of faith and service.</p>
                         </div>
                     </motion.div>
                 </div>
@@ -145,8 +144,8 @@ export default function AboutPage() {
                     >
                         <div className="aspect-[4/5] rounded-[3rem] overflow-hidden shadow-2xl ring-1 ring-border relative group">
                             <Image
-                                src="/pastors_molina.png"
-                                alt="Ptr Jeser and Ptra Alene Molina"
+                                src="/pastors.png"
+                                alt="Ptr Jeser and Ptra Arlene Molina"
                                 fill
                                 className="object-cover transition-transform duration-700 group-hover:scale-105"
                                 priority
@@ -289,9 +288,9 @@ export default function AboutPage() {
                                 Get Started
                             </Button>
                         </Link>
-                        <Link href="/services">
+                        <Link href="/locations">
                             <Button size="lg" variant="outline" className="h-14 px-10 rounded-2xl border-border bg-background font-black uppercase text-xs tracking-widest">
-                                Our Services
+                                Our Locations
                             </Button>
                         </Link>
                     </div>

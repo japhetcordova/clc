@@ -6,12 +6,13 @@ import {
     Search,
     Compass,
     Activity,
-    Users,
     ChevronRight,
     Navigation,
     ExternalLink,
     Filter,
-    X
+    X,
+    Phone,
+    Clock
 } from "lucide-react";
 import { useState, useMemo, useEffect } from "react";
 import dynamic from "next/dynamic";
@@ -79,7 +80,7 @@ export default function LocationsPage() {
     }, [searchQuery]);
 
     const handleGetDirections = (loc: typeof DEFAULT_LOCATIONS[0]) => {
-        const url = `https://www.google.com/maps/dir/?api=1&destination=${loc.lat},${loc.lng}`;
+        const url = loc.googleMapsLink || `https://www.google.com/maps/dir/?api=1&destination=${loc.lat},${loc.lng}`;
         window.open(url, "_blank");
     };
 
@@ -151,7 +152,7 @@ export default function LocationsPage() {
                             </div>
 
                             <div className="flex flex-wrap gap-2">
-                                {["All", "Headquarters", "Community Center", "Outreach Center", "Small Group Hub"].map((category) => (
+                                {["All", "Luzon", "Visayas", "Mindanao"].map((category) => (
                                     <Badge
                                         key={category}
                                         variant={activeCategory === category ? "default" : "outline"}
@@ -192,11 +193,6 @@ export default function LocationsPage() {
                                                                     <Badge variant="outline" className="text-[8px] font-black uppercase tracking-widest bg-background/50">
                                                                         {loc.type}
                                                                     </Badge>
-                                                                    {loc.status === "Active" && (
-                                                                        <Badge variant="outline" className="text-[8px] font-black uppercase tracking-widest text-emerald-500 border-emerald-500/20 bg-emerald-500/5">
-                                                                            Live Gathering
-                                                                        </Badge>
-                                                                    )}
                                                                 </div>
                                                                 <h3 className="text-xl font-black uppercase italic tracking-tighter group-hover:text-primary transition-colors">{loc.name}</h3>
                                                                 <p className="text-xs text-muted-foreground font-medium flex items-center gap-1.5">
@@ -215,13 +211,30 @@ export default function LocationsPage() {
                                                                 animate={{ opacity: 1, height: "auto" }}
                                                                 className="pt-6 mt-6 border-t border-border/50 space-y-4 shadow-[0_-20px_40px_-20px_rgba(0,0,0,0.1)_inset]"
                                                             >
-                                                                <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-widest">
-                                                                    <div className="flex items-center gap-2 text-muted-foreground">
-                                                                        <Users className="w-3 h-3" />
-                                                                        <span>Est. Attendance: {loc.attendees}</span>
-                                                                    </div>
-                                                                    <div className="text-primary">{loc.status} Now</div>
+                                                                <div className="space-y-2 mb-4">
+                                                                    <p className="text-xs text-muted-foreground font-medium">{loc.address}</p>
+                                                                    {loc.phone && (
+                                                                        <p className="text-xs text-muted-foreground font-medium flex items-center gap-1.5">
+                                                                            <Phone className="w-3 h-3 text-primary opacity-60" />
+                                                                            {loc.phone}
+                                                                        </p>
+                                                                    )}
                                                                 </div>
+
+                                                                <div className="space-y-3 pb-2">
+                                                                    <div className="flex items-center gap-2 mb-1">
+                                                                        <Clock className="w-3.5 h-3.5 text-primary opacity-70" />
+                                                                        <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Service Schedule</span>
+                                                                    </div>
+                                                                    <div className="flex flex-wrap gap-2">
+                                                                        {loc.serviceTimes.map((time, idx) => (
+                                                                            <Badge key={idx} variant="secondary" className="text-[10px] font-black px-3 py-1 bg-primary/10 hover:bg-primary/20 transition-colors border-none">
+                                                                                {time}
+                                                                            </Badge>
+                                                                        ))}
+                                                                    </div>
+                                                                </div>
+
                                                                 <div className="flex gap-2">
                                                                     <Button
                                                                         className="flex-1 rounded-xl h-10 text-[10px] font-black uppercase tracking-widest bg-primary"

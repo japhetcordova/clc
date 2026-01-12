@@ -3,22 +3,38 @@
 import React from "react";
 import Link from "next/link";
 import {
-    Church,
     Facebook,
     Instagram,
     Youtube,
-    Twitter,
     MapPin,
     Phone,
     Mail,
-    ExternalLink,
-    Heart
+    ExternalLink
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 
+// Custom TikTok Icon
+const TikTokIcon = ({ className }: { className?: string }) => (
+    <svg
+        viewBox="0 0 24 24"
+        fill="currentColor"
+        className={className}
+        xmlns="http://www.w3.org/2000/svg"
+    >
+        <path d="M12.635 0h2.95c.216 1.07.81 2.425 1.85 3.768C18.483 5.083 19.835 6 21.64 6v3c-2.63 0-4.605-1.22-6-2.744V17.5a7.5 7.5 0 1 1-7.5-7.5v3a4.5 4.5 0 1 0 4.5 4.5V0Z" />
+    </svg>
+);
+
 export default function Footer() {
     const currentYear = new Date().getFullYear();
+
+    const socialLinks = [
+        { Icon: Facebook, href: "https://www.facebook.com/clctagum", color: "hover:bg-blue-600" },
+        { Icon: Instagram, href: "https://www.instagram.com/clctagum", color: "hover:bg-pink-600" },
+        { Icon: Youtube, href: "https://www.youtube.com/@clctagum", color: "hover:bg-red-600" },
+        { Icon: TikTokIcon, href: "https://www.tiktok.com/@clctagum", color: "hover:bg-zinc-800" },
+    ];
 
     return (
         <footer className="relative bg-card border-t border-border overflow-hidden pt-20 pb-10">
@@ -37,12 +53,14 @@ export default function Footer() {
                         <p className="text-sm text-muted-foreground font-medium leading-relaxed">
                             Dedicated to fostering spiritual growth, community impact, and authentic worship in Tagum City since inception. Join our global family today.
                         </p>
-                        <div className="flex items-center gap-4">
-                            {[Facebook, Instagram, Youtube, Twitter].map((Icon, i) => (
+                        <div className="flex items-center gap-3">
+                            {socialLinks.map(({ Icon, href, color }, i) => (
                                 <Link
                                     key={i}
-                                    href="#"
-                                    className="p-2.5 rounded-xl bg-muted/50 border border-border hover:bg-primary hover:text-white transition-all hover:-translate-y-1 shadow-sm"
+                                    href={href}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className={`p-2.5 rounded-xl bg-muted/50 border border-border text-muted-foreground hover:text-white transition-all hover:-translate-y-1 shadow-sm ${color}`}
                                 >
                                     <Icon className="w-4 h-4" />
                                 </Link>
@@ -55,7 +73,6 @@ export default function Footer() {
                         <ul className="space-y-4">
                             {[
                                 { name: "About CLC", href: "/about" },
-                                { name: "Our Services", href: "/services" },
                                 { name: "Our Locations", href: "/locations" },
                                 { name: "Ministries", href: "/ministries" },
                                 { name: "Giving", href: "/giving" },
@@ -77,11 +94,11 @@ export default function Footer() {
                         <ul className="space-y-4">
                             <li className="flex gap-3">
                                 <MapPin className="w-5 h-5 text-primary shrink-0" />
-                                <span className="text-sm font-medium text-muted-foreground">Briz District, Tagum City,<br />Davao del Norte, 8100</span>
+                                <span className="text-sm font-medium text-muted-foreground">Cor. Sobrecary and Pioneer Streets,<br />Tagum City, Philippines, 8100</span>
                             </li>
                             <li className="flex gap-3">
                                 <Phone className="w-5 h-5 text-primary shrink-0" />
-                                <span className="text-sm font-medium text-muted-foreground">(084) 123-4567</span>
+                                <span className="text-sm font-medium text-muted-foreground">0916 461 3649</span>
                             </li>
                             <li className="flex gap-3">
                                 <Mail className="w-5 h-5 text-primary shrink-0" />
