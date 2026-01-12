@@ -4,6 +4,8 @@ export interface Ministry {
     description: string;
     roleDescription: string;
     responsibilities: string[];
+    thumbnail: string;
+    category: "Creative" | "Hospitality" | "Family" | "Technical" | "Operations";
 }
 
 export const DEFAULT_MINISTRIES: Ministry[] = [
@@ -17,7 +19,9 @@ export const DEFAULT_MINISTRIES: Ministry[] = [
             "Attend weekly rehearsals",
             "Maintain spiritual preparation",
             "Collaborate on song selection"
-        ]
+        ],
+        thumbnail: "/location_thumbnails/tagum.png", // Reusing existing thumbnails for now
+        category: "Creative"
     },
     {
         id: "media",
@@ -29,7 +33,9 @@ export const DEFAULT_MINISTRIES: Ministry[] = [
             "Content creation for socials",
             "Live streaming management",
             "Event coverage"
-        ]
+        ],
+        thumbnail: "/location_thumbnails/dujali.png",
+        category: "Creative"
     },
     {
         id: "usher",
@@ -41,7 +47,9 @@ export const DEFAULT_MINISTRIES: Ministry[] = [
             "Collect offering",
             "Assist with communion",
             "Maintain auditorium order"
-        ]
+        ],
+        thumbnail: "/location_thumbnails/valencia.png",
+        category: "Hospitality"
     },
     {
         id: "marshal",
@@ -53,7 +61,9 @@ export const DEFAULT_MINISTRIES: Ministry[] = [
             "Security surveillance",
             "Emergency response",
             "Venue safety checks"
-        ]
+        ],
+        thumbnail: "/location_thumbnails/asuncion.png",
+        category: "Hospitality"
     },
     {
         id: "production",
@@ -65,7 +75,9 @@ export const DEFAULT_MINISTRIES: Ministry[] = [
             "Stage management",
             "Service flow coordination",
             "Prop and set design"
-        ]
+        ],
+        thumbnail: "/location_thumbnails/kapalong.png",
+        category: "Technical"
     },
     {
         id: "kids-church",
@@ -77,7 +89,9 @@ export const DEFAULT_MINISTRIES: Ministry[] = [
             "Lead activities & crafts",
             "Ensure child safety",
             "Parent communication"
-        ]
+        ],
+        thumbnail: "/location_thumbnails/cubao.png",
+        category: "Family"
     },
     {
         id: "technical",
@@ -89,19 +103,23 @@ export const DEFAULT_MINISTRIES: Ministry[] = [
             "Sermon slides management",
             "Visual assets display",
             "Software operation"
-        ]
+        ],
+        thumbnail: "/location_thumbnails/cebu.png",
+        category: "Technical"
     },
     {
         id: "pa",
         name: "PA",
-        description: "Managing sound engineering and audio mixing for clear and balanced sound.",
-        roleDescription: "The PA team ensures the message is heard. You will be responsible for mixing audio for the band and speakers, managing microphones, and maintaining audio equipment.",
+        description: "Providing dedicated personal assistance to the pastor or guest speaker during services and events.",
+        roleDescription: "As a PA, you serve as the primary support for our speakers. You'll ensure their needs are met, manage their schedule during the service, and provide a hospitable environment so they can focus on delivering the message.",
         responsibilities: [
-            "Live audio mixing",
-            "Microphone management",
-            "Equipment maintenance",
-            "Sound check setup"
-        ]
+            "Speaker hospitality & assistance",
+            "Itinerary & timing management",
+            "Liaison between speaker and team",
+            "Resource & material preparation"
+        ],
+        thumbnail: "/location_thumbnails/stotomas.png",
+        category: "Operations"
     },
     {
         id: "finance",
@@ -113,7 +131,9 @@ export const DEFAULT_MINISTRIES: Ministry[] = [
             "Record financial data",
             "Maintain confidentiality",
             "Adhere to financial protocols"
-        ]
+        ],
+        thumbnail: "/location_thumbnails/cdo.png",
+        category: "Operations"
     },
     {
         id: "arete",
@@ -125,7 +145,9 @@ export const DEFAULT_MINISTRIES: Ministry[] = [
             "Choreography & script practice",
             "Creative service planning",
             "Costume & prop prep"
-        ]
+        ],
+        thumbnail: "/location_thumbnails/stotomas.png",
+        category: "Creative"
     },
     {
         id: "hosting",
@@ -137,7 +159,9 @@ export const DEFAULT_MINISTRIES: Ministry[] = [
             "Announcements",
             "Congregation engagement",
             "Platform presence"
-        ]
+        ],
+        thumbnail: "/location_thumbnails/mati.png",
+        category: "Operations"
     },
     {
         id: "writer",
@@ -149,7 +173,9 @@ export const DEFAULT_MINISTRIES: Ministry[] = [
             "Copywriting for promo",
             "Editing & proofreading",
             "Content strategy"
-        ]
+        ],
+        thumbnail: "/location_thumbnails/tagum.png",
+        category: "Creative"
     },
     {
         id: "general-services",
@@ -161,6 +187,8 @@ export const DEFAULT_MINISTRIES: Ministry[] = [
             "Event setup/teardown",
             "Maintenance repairs",
             "Supply inventory"
-        ]
+        ],
+        thumbnail: "/location_thumbnails/dujali.png",
+        category: "Hospitality"
     }
 ];

@@ -67,14 +67,22 @@ export default function Navbar() {
                 style={{ scaleX: scrollProgress / 100 }}
             />
 
-            <nav className={`fixed top-6 left-1/2 -translate-x-1/2 z-50 w-full max-w-5xl px-6 transition-all duration-500 ${scrolled ? 'top-4' : 'top-6'}`}>
-                <div className={`backdrop-blur-xl border border-white/10 rounded-2xl h-16 px-6 flex items-center justify-between shadow-2xl overflow-hidden ring-1 ring-white/5 transition-all duration-500 ${scrolled ? 'bg-card/80 scale-[0.98]' : 'bg-card/40'}`}>
-                    <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-                        <Image src="/logo.png" alt="CLC Logo" width={32} height={32} className="rounded-full" />
-                        <span className="font-black italic uppercase tracking-tighter text-lg">CLC</span>
+            <nav className={cn(
+                "fixed top-0 left-0 right-0 z-50 w-full transition-all duration-500 border-b",
+                scrolled
+                    ? "bg-background/80 backdrop-blur-xl border-border shadow-lg"
+                    : "bg-background/40 backdrop-blur-md border-border/40"
+            )}>
+                <div className="max-w-7xl mx-auto h-16 md:h-20 px-6 flex items-center justify-between">
+                    <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
+                        <Image src="/logo.png" alt="CLC Logo" width={40} height={40} className="rounded-full shadow-lg" />
+                        <div className="flex flex-col -space-y-1">
+                            <span className="font-black italic uppercase tracking-tighter text-xl leading-none">CLC</span>
+                            <span className="text-[10px] pt-1 font-black uppercase tracking-[0.3em] text-primary leading-none ml-0.5">Tagum</span>
+                        </div>
                     </Link>
 
-                    <div className="hidden md:flex items-center gap-8 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                    <div className="hidden md:flex items-center gap-10 text-[11px] lg:text-xs font-black uppercase tracking-[0.2em] text-muted-foreground">
                         {navLinks.map((link) => (
                             <Link
                                 key={link.href}
@@ -100,7 +108,7 @@ export default function Navbar() {
                             <motion.button
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
-                                className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl font-bold uppercase text-[10px] tracking-widest px-5 h-9 shadow-lg shadow-primary/20"
+                                className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl font-black uppercase text-[11px] tracking-widest px-6 h-10 md:h-12 shadow-xl shadow-primary/20 transition-all hover:shadow-primary/40 hover:-translate-y-0.5"
                             >
                                 Join Us
                             </motion.button>

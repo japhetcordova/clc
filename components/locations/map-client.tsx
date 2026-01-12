@@ -10,14 +10,12 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { MAP_CONFIG, Location } from "@/config/locations";
 
 // Fix for default marker icons in Leaflet with Next.js
-const DefaultIcon = L.icon({
-    iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-    shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
+const OrangeMarker = L.divIcon({
+    className: "custom-div-icon",
+    html: `<div class="w-4 h-4 bg-primary rounded-full border-2 border-background shadow-[0_0_15px_rgba(235,94,40,0.6)]"></div>`,
+    iconSize: [16, 16],
+    iconAnchor: [8, 8],
 });
-
-L.Marker.prototype.options.icon = DefaultIcon;
 
 interface MapClientProps {
     locations: Location[];
@@ -37,9 +35,6 @@ function MapUpdater({ locations, activeLocationId }: { locations: Location[]; ac
                     duration: 1
                 });
             }
-        } else if (locations.length > 0) {
-            const bounds = L.latLngBounds(locations.map(loc => [loc.lat, loc.lng]));
-            map.fitBounds(bounds, { padding: [50, 50], animate: true, duration: 1 });
         }
     }, [activeLocationId, locations, map]);
 
@@ -48,23 +43,46 @@ function MapUpdater({ locations, activeLocationId }: { locations: Location[]; ac
 
 export default function MapClient({ locations, activeLocationId, onLocationSelect }: MapClientProps) {
     return (
-        <div className="w-full h-full min-h-[500px] rounded-[2.5rem] overflow-hidden shadow-2xl border border-border bg-muted/20 relative z-0">
+        <div className="w-full h-full min-h-[500px] overflow-hidden relative z-0">
+            <style jsx global>{`
+                .leaflet-container {
+                    background: #f8fafc !important;
+                }
+                .leaflet-popup-content-wrapper {
+                    background: rgba(255, 255, 255, 0.9) !important;
+                    backdrop-filter: blur(12px);
+                    border: 1px solid rgba(0, 0, 0, 0.05);
+                    border-radius: 1.5rem !important;
+                    color: #0f172a !important;
+                    padding: 0 !important;
+                    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1) !important;
+                }
+                .leaflet-popup-tip {
+                    background: rgba(255, 255, 255, 0.9) !important;
+                }
+                .leaflet-popup-content {
+                    margin: 0 !important;
+                    width: 240px !important;
+                }
+            `}</style>
             <MapContainer
                 center={MAP_CONFIG.defaultCenter}
                 zoom={MAP_CONFIG.defaultZoom}
-                scrollWheelZoom={false}
+                scrollWheelZoom={true}
                 className="w-full h-full"
+                zoomControl={false}
                 style={{ height: "100%", width: "100%" }}
             >
                 <TileLayer
-                    attribution={MAP_CONFIG.attribution}
-                    url={MAP_CONFIG.tileLayer}
+                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+                    url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
                 />
                 <MapUpdater locations={locations} activeLocationId={activeLocationId} />
                 {locations.map((loc) => (
                     <Marker
                         key={loc.id}
                         position={[loc.lat, loc.lng]}
+                        icon={OrangeMarker}
                         eventHandlers={{
                             click: () => {
                                 onLocationSelect?.(loc.id);
@@ -72,23 +90,21 @@ export default function MapClient({ locations, activeLocationId, onLocationSelec
                         }}
                     >
                         <Popup>
-                            <div className="p-2">
-                                <h3 className="font-black uppercase italic text-sm tracking-tight">{loc.name}</h3>
-                                <p className="text-[10px] text-muted-foreground font-medium mt-1">{loc.address}</p>
-                                {loc.phone && (
-                                    <p className="text-[10px] text-muted-foreground font-medium mt-0.5">
-                                        📞 {loc.phone}
-                                    </p>
-                                )}
-                                <div className="mt-3 pt-2 border-t border-border flex flex-col gap-2">
-                                    <div className="space-y-1.5 pt-1">
+                            <div className="p-5 space-y-3">
+                                <div>
+                                    <h3 className="font-black uppercase italic text-sm tracking-tight text-slate-900 mb-0.5">{loc.name}</h3>
+                                    <p className="text-[10px] font-bold text-primary uppercase tracking-widest">{loc.type}</p>
+                                </div>
+                                <p className="text-[10px] text-slate-500 font-medium leading-relaxed">{loc.address}</p>
+                                <div className="pt-3 border-t border-slate-100 flex flex-col gap-3">
+                                    <div className="space-y-1.5">
                                         <div className="flex items-center gap-2">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary opacity-60"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>
-                                            <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">Schedule</span>
+                                            <div className="w-1 h-1 rounded-full bg-primary"></div>
+                                            <span className="text-[9px] font-black uppercase tracking-widest text-slate-400">Service Times</span>
                                         </div>
-                                        <div className="flex flex-col gap-1 pl-5">
+                                        <div className="flex flex-wrap gap-1.5">
                                             {loc.serviceTimes.map((time, idx) => (
-                                                <span key={idx} className="text-[9px] font-bold text-foreground bg-primary/5 px-2 py-0.5 rounded-md w-fit">
+                                                <span key={idx} className="text-[8px] font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded-md">
                                                     {time}
                                                 </span>
                                             ))}
@@ -98,7 +114,7 @@ export default function MapClient({ locations, activeLocationId, onLocationSelec
                                         href={loc.googleMapsLink || `https://www.google.com/maps/dir/?api=1&destination=${loc.lat},${loc.lng}`}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="inline-flex items-center justify-center gap-2 px-3 py-1.5 rounded-lg bg-secondary text-[9px] font-black uppercase tracking-widest transition-all no-underline"
+                                        className="w-full py-2 rounded-xl bg-primary text-white text-[9px] font-black uppercase tracking-widest text-center transition-all hover:scale-105 active:scale-95 no-underline"
                                     >
                                         Get Directions
                                     </a>

@@ -5,7 +5,10 @@ export interface Location {
     lng: number;
     address: string;
     district: string;
-    type: string;
+    region: string;
+    type: "Campus" | "Watch Party";
+    thumbnail: string;
+    hostedBy?: string;
     phone?: string;
     googleMapsLink?: string;
     serviceTimes: string[];
@@ -19,7 +22,10 @@ export const DEFAULT_LOCATIONS: Location[] = [
         lng: 125.8024,
         address: "Cor. Sobrecary and Pioneer Streets, Tagum City, Philippines, 8100",
         district: "Tagum City",
-        type: "Mindanao",
+        region: "Mindanao",
+        type: "Campus",
+        thumbnail: "/location_thumbnails/tagum.png",
+        hostedBy: "Central Leadership",
         phone: "0916 461 3649",
         googleMapsLink: "https://www.google.com/maps/place/Christian+Life+Center+-+Tagum+City/@7.4515283,125.7997885,17z/data=!4m6!3m5!1s0x32f95313be6009a5:0x7425d83a59feb39c!8m2!3d7.4515283!4d125.8023634!16s%2Fg%2F11cs1slhl1?entry=ttu",
         serviceTimes: ["10:00 AM - 11:45 AM", "5:00 PM - 6:45 PM"]
@@ -31,7 +37,10 @@ export const DEFAULT_LOCATIONS: Location[] = [
         lng: 125.7214,
         address: "Purok 1-C Cabay angan B.E DUJALI",
         district: "B.E Dujali",
-        type: "Mindanao",
+        region: "Mindanao",
+        type: "Campus",
+        thumbnail: "/location_thumbnails/dujali.png",
+        hostedBy: "Campus Pastor",
         phone: "0916 461 3649",
         googleMapsLink: "https://maps.app.goo.gl/azPmU49CvjmFcxVw5",
         serviceTimes: ["10:00 AM - 11:45 AM"]
@@ -43,7 +52,10 @@ export const DEFAULT_LOCATIONS: Location[] = [
         lng: 125.0906,
         address: "Brgy poblacion, Fronting Old gaisano",
         district: "Valencia City",
-        type: "Mindanao",
+        region: "Mindanao",
+        type: "Campus",
+        thumbnail: "/location_thumbnails/valencia.png",
+        hostedBy: "Campus Pastor",
         phone: "0916 461 3649",
         serviceTimes: ["10:00 AM - 11:45 AM"]
     },
@@ -54,7 +66,10 @@ export const DEFAULT_LOCATIONS: Location[] = [
         lng: 125.7539,
         address: "4th Floor Trocio Building, Cambanogoy, Asuncion",
         district: "Asuncion",
-        type: "Mindanao",
+        region: "Mindanao",
+        type: "Campus",
+        thumbnail: "/location_thumbnails/asuncion.png",
+        hostedBy: "Campus Pastor",
         phone: "0916 461 3649",
         googleMapsLink: "https://maps.app.goo.gl/uy1oYG3hd586of5r6",
         serviceTimes: ["10:00 AM - 11:45 AM"]
@@ -66,7 +81,10 @@ export const DEFAULT_LOCATIONS: Location[] = [
         lng: 125.7062,
         address: "Prk 10A Maniki Kapalong DDN",
         district: "Kapalong",
-        type: "Mindanao",
+        region: "Mindanao",
+        type: "Campus",
+        thumbnail: "/location_thumbnails/kapalong.png",
+        hostedBy: "Campus Pastor",
         phone: "0916 461 3649",
         googleMapsLink: "https://maps.app.goo.gl/P5do1osMRtNGp1Qt6",
         serviceTimes: ["10:00 AM - 11:45 AM"]
@@ -78,7 +96,10 @@ export const DEFAULT_LOCATIONS: Location[] = [
         lng: 121.0571,
         address: "Cubao, Quezon City",
         district: "Metro Manila",
-        type: "Luzon",
+        region: "Luzon",
+        type: "Watch Party",
+        thumbnail: "/location_thumbnails/cubao.png",
+        hostedBy: "Church member",
         phone: "0916 461 3649",
         googleMapsLink: "https://maps.app.goo.gl/SGmZ7SfeahPyVA6j9",
         serviceTimes: ["10:00 AM - 11:45 AM"]
@@ -90,7 +111,10 @@ export const DEFAULT_LOCATIONS: Location[] = [
         lng: 123.8854,
         address: "Cebu City",
         district: "Cebu",
-        type: "Visayas",
+        region: "Visayas",
+        type: "Watch Party",
+        thumbnail: "/location_thumbnails/cebu.png",
+        hostedBy: "Church member",
         phone: "0916 461 3649",
         googleMapsLink: "https://maps.app.goo.gl/tXdtkzZQJkKD4uyh6",
         serviceTimes: ["10:00 AM - 11:45 AM"]
@@ -102,7 +126,10 @@ export const DEFAULT_LOCATIONS: Location[] = [
         lng: 125.3527,
         address: "Digos City",
         district: "Davao del Sur",
-        type: "Mindanao",
+        region: "Mindanao",
+        type: "Campus",
+        thumbnail: "/location_thumbnails/digos.png",
+        hostedBy: "Campus Pastor",
         phone: "0916 461 3649",
         googleMapsLink: "https://maps.app.goo.gl/93xTQH5hzHqueiRN9",
         serviceTimes: ["10:00 AM - 11:45 AM"]
@@ -114,7 +141,10 @@ export const DEFAULT_LOCATIONS: Location[] = [
         lng: 124.6319,
         address: "Cagayan de Oro City",
         district: "Misamis Oriental",
-        type: "Mindanao",
+        region: "Mindanao",
+        type: "Campus",
+        thumbnail: "/location_thumbnails/cdo.png",
+        hostedBy: "Campus Pastor",
         phone: "0916 461 3649",
         googleMapsLink: "https://maps.app.goo.gl/WvRiww1nW35J5uDv5",
         serviceTimes: ["10:00 AM - 11:45 AM"]
@@ -126,7 +156,10 @@ export const DEFAULT_LOCATIONS: Location[] = [
         lng: 125.6235,
         address: "Sto. Tomas, Davao del Norte",
         district: "Sto. Tomas",
-        type: "Mindanao",
+        region: "Mindanao",
+        type: "Campus",
+        thumbnail: "/location_thumbnails/stotomas.png",
+        hostedBy: "Campus Pastor",
         phone: "0916 461 3649",
         googleMapsLink: "https://maps.app.goo.gl/iqP18wqJJ5H1eLP79",
         serviceTimes: ["10:00 AM - 11:45 AM"]
@@ -138,7 +171,10 @@ export const DEFAULT_LOCATIONS: Location[] = [
         lng: 126.2165,
         address: "Mati City, Davao Oriental",
         district: "Mati City",
-        type: "Mindanao",
+        region: "Mindanao",
+        type: "Campus",
+        thumbnail: "/location_thumbnails/mati.png",
+        hostedBy: "Campus Pastor",
         phone: "0916 461 3649",
         googleMapsLink: "https://maps.app.goo.gl/DqQZUkVMRaG3bd5c8",
         serviceTimes: ["10:00 AM - 11:45 AM"]
