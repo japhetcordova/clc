@@ -80,8 +80,8 @@ export default async function VOTDPage() {
                                     </div>
 
                                     <blockquote className="space-y-10 relative z-10">
-                                        <p className="text-3xl md:text-5xl font-black italic uppercase tracking-tight leading-[1] text-foreground">
-                                            "{data?.text}"
+                                        <p className="text-3xl md:text-5xl font-black italic tracking-tight leading-[1] text-foreground">
+                                            "{data?.text ? data.text.charAt(0).toUpperCase() + data.text.slice(1) : ''}"
                                         </p>
                                         <footer className="flex items-center gap-6">
                                             <div className="h-px w-16 bg-primary" />
