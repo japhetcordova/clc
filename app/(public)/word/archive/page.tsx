@@ -59,7 +59,7 @@ export default async function ArchivePage() {
                                             {devotional.shortDate}
                                         </h3>
                                         <p className="text-xs text-muted-foreground font-medium">
-                                            Daily Devotional
+                                            Verse of the Day
                                         </p>
                                     </div>
                                 </div>

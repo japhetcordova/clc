@@ -26,10 +26,10 @@ export const revalidate = 86400; // Revalidate every 24 hours
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
     const { slug } = await params;
     const data = await getVOTDByDate(slug);
-    if (!data) return { title: "Devotional Not Found" };
+    if (!data) return { title: "Verse of the Day Not Found" };
 
     return {
-        title: `${data.reference} - Daily Devotional`,
+        title: `${data.reference} - Verse of the Day`,
         description: `Read today's verse: "${data.text.substring(0, 150)}..." and find inspiration through thoughts and prayer.`,
     };
 }
