@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { toPng } from "html-to-image";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Play, Pause, Volume2, Download, Copy, Mail, Facebook, Instagram, VolumeX, X } from "lucide-react";
-import { toast } from "sonner";
 
 interface VOTDClientProps {
     verseText: string;
@@ -14,6 +15,7 @@ interface VOTDClientProps {
 export default function VOTDClient({ verseText, reference, audioUrl }: VOTDClientProps) {
     const [isPlaying, setIsPlaying] = useState(false);
     const [isMuted, setIsMuted] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
     const [progress, setProgress] = useState(0);
     const [isSupported, setIsSupported] = useState(false);
     const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
@@ -138,6 +140,64 @@ export default function VOTDClient({ verseText, reference, audioUrl }: VOTDClien
         }
     };
 
+    const handleSaveImage = async () => {
+        const element = document.getElementById('verse-card-content');
+        if (!element) {
+            toast.error("Could not find verse card element");
+            return;
+        }
+
+        setIsSaving(true);
+        const toastId = toast.loading("Preparing your image...");
+
+        try {
+            // Find and hide the interactive elements temporarily
+            const excludeEl = element.querySelector('.capture-exclude') as HTMLElement;
+            if (excludeEl) excludeEl.style.display = 'none';
+
+            // Get the current theme background color to ensure the image is legible (opaque)
+            // instead of semi-transparent glassmorphism which looks bad on some social media
+            const computedStyle = window.getComputedStyle(document.body);
+            const themeBg = computedStyle.backgroundColor || '#ffffff';
+
+            // Store original style to restore later
+            const originalBg = element.style.backgroundColor;
+            element.style.backgroundColor = themeBg;
+
+            // Ensure the background and text colors are preserved correctly for the screenshot
+            const dataUrl = await toPng(element, {
+                quality: 1.0,
+                pixelRatio: 3, // Premium quality
+                backgroundColor: 'transparent', // Keep corners transparent
+                style: {
+                    transform: 'scale(1)',
+                    borderRadius: '3rem',
+                },
+            });
+
+            // Restore styles
+            element.style.backgroundColor = originalBg;
+            if (excludeEl) excludeEl.style.display = 'block';
+
+            // Create download link
+            const link = document.createElement('a');
+            link.download = `CLC-Verse-${reference.replace(/\s+/g, '-')}.png`;
+            link.href = dataUrl;
+            link.click();
+
+            toast.success("Image saved successfully!", { id: toastId });
+        } catch (error) {
+            console.error('Save image error:', error);
+            toast.error("Failed to generate image. Please try again.", { id: toastId });
+
+            // Re-show elements if failed
+            const excludeEl = element.querySelector('.capture-exclude') as HTMLElement;
+            if (excludeEl) excludeEl.style.display = 'block';
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
     const shareActions = {
         email: () => {
             const subject = encodeURIComponent("Bible Verse of the Day");
@@ -204,15 +264,23 @@ export default function VOTDClient({ verseText, reference, audioUrl }: VOTDClien
                 <div className="flex flex-wrap gap-3">
                     <Button
                         variant="ghost"
-                        className="rounded-xl gap-2 font-black uppercase text-xs tracking-widest text-muted-foreground hover:text-primary"
+                        className="rounded-xl gap-2 font-black uppercase text-xs tracking-widest text-muted-foreground hover:text-primary hover:bg-primary/5"
                         onClick={handleCopy}
                     >
                         <Copy className="w-4 h-4" />
                         Copy
                     </Button>
-                    <Button className="rounded-xl gap-2 bg-primary font-black uppercase text-xs tracking-widest px-6 shadow-lg shadow-primary/20">
-                        <Download className="w-4 h-4" />
-                        Save Image
+                    <Button
+                        className="rounded-xl gap-2 bg-primary font-black uppercase text-xs tracking-widest px-6 shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform disabled:opacity-50"
+                        onClick={handleSaveImage}
+                        disabled={isSaving}
+                    >
+                        {isSaving ? (
+                            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        ) : (
+                            <Download className="w-4 h-4" />
+                        )}
+                        {isSaving ? "Saving..." : "Save Image"}
                     </Button>
                 </div>
             </div>
@@ -242,7 +310,7 @@ export default function VOTDClient({ verseText, reference, audioUrl }: VOTDClien
                     <Button
                         variant="ghost"
                         size="icon"
-                        className="w-8 h-8 hover:text-primary"
+                        className="w-8 h-8 hover:text-primary hover:bg-primary/5"
                         onClick={toggleMute}
                     >
                         {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
@@ -250,7 +318,7 @@ export default function VOTDClient({ verseText, reference, audioUrl }: VOTDClien
                     <Button
                         variant="ghost"
                         size="icon"
-                        className="w-8 h-8 hover:text-primary"
+                        className="w-8 h-8 hover:text-primary hover:bg-primary/5"
                         onClick={handleDownloadAudio}
                     >
                         <Download className="w-4 h-4" />

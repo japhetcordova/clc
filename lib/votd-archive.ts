@@ -1,13 +1,28 @@
 import { decodeHTMLEntities } from "./utils";
 
-export async function getVOTDByDate(dateString: string) {
+export async function getVOTDByDate(dateInput: string) {
     try {
-        // Parse date string (format: MMDDYYYY)
-        const month = dateString.substring(0, 2);
-        const day = dateString.substring(2, 4);
-        const year = dateString.substring(4, 8);
+        let dateKey = dateInput;
+        let date: Date;
 
-        const date = new Date(`${year}-${month}-${day}`);
+        // 1. Handle MMDDYYYY format (our primary key)
+        if (/^\d{8}$/.test(dateInput)) {
+            const month = dateInput.substring(0, 2);
+            const day = dateInput.substring(2, 4);
+            const year = dateInput.substring(4, 8);
+            date = new Date(`${year}-${month}-${day}`);
+        }
+        // 2. Handle ISO or other parseable formats (e.g., 2026-01-13)
+        else {
+            date = new Date(dateInput);
+            if (isNaN(date.getTime())) throw new Error("Invalid date format");
+
+            const m = String(date.getMonth() + 1).padStart(2, '0');
+            const d = String(date.getDate()).padStart(2, '0');
+            const y = date.getFullYear();
+            dateKey = `${m}${d}${y}`;
+        }
+
         const fullDate = new Intl.DateTimeFormat('en-US', {
             weekday: 'long',
             month: 'long',
@@ -16,7 +31,8 @@ export async function getVOTDByDate(dateString: string) {
         }).format(date);
 
         // Fetch from VerseOfTheDay.com
-        const votdUrl = `https://www.verseoftheday.com/en/${dateString}/`;
+        const votdUrl = `https://www.verseoftheday.com/en/${dateKey}/`;
+
         const response = await fetch(votdUrl, {
             next: { revalidate: 86400 } // Cache for 24 hours
         });
@@ -27,25 +43,34 @@ export async function getVOTDByDate(dateString: string) {
 
         const html = await response.text();
 
-        // Extract verse text
-        const verseMatch = html.match(/<meta property="og:description" content="([^"]+)"/i);
+        // 1. Extract reference from title (much more robustly)
+        const fullTitleMatch = html.match(/<title>([\s\S]*?)<\/title>/i);
+        const fullTitle = fullTitleMatch ? fullTitleMatch[1].trim() : "";
+        const reference = fullTitle.split(/[—–-]/)[0].trim(); // Split by em-dash, en-dash, or regular dash
+
+        // 2. Extract verse text from og:description
+        const verseMatch = html.match(/<meta\s+property="og:description"\s+content="([^"]+)"/i) ||
+            html.match(/<meta\s+name="description"\s+content="([^"]+)"/i);
         const verse = verseMatch ? verseMatch[1] : "";
 
-        // Extract reference from title
-        const titleMatch = html.match(/<title>([^—]+)—/i);
-        const reference = titleMatch ? titleMatch[1].trim() : "";
+        // 3. Extract thoughts and prayer with improved markers
+        const thoughtsMatch = html.match(/<h3>Thoughts on Today's Verse...<\/h3>([\s\S]*?)<h3>/i) ||
+            html.match(/<h[23]>Thoughts[\s\S]*?<\/h[23]>([\s\S]*?)<h/i);
 
-        // Extract thoughts and prayer
-        const thoughtsMatch = html.match(/<h3>Thoughts on Today's Verse...<\/h3>([\s\S]*?)<h3>/i);
-        const prayerMatch = html.match(/<h3>My Prayer...<\/h3>([\s\S]*?)<h3>/i);
+        const prayerMatch = html.match(/<h3>My Prayer...<\/h3>([\s\S]*?)<h3>/i) ||
+            html.match(/<h[23]>My Prayer[\s\S]*?<\/h[23]>([\s\S]*?)<h/i);
 
-        let thoughts = thoughtsMatch
+        const thoughts = thoughtsMatch
             ? decodeHTMLEntities(thoughtsMatch[1].replace(/<[^>]*>/g, '').trim().split("The Thoughts and Prayer")[0].trim())
             : "";
 
-        let prayer = prayerMatch
+        const prayer = prayerMatch
             ? decodeHTMLEntities(prayerMatch[1].replace(/<[^>]*>/g, '').trim().split("The Thoughts and Prayer")[0].trim())
             : "";
+
+        // 4. Extract audio URL
+        const audioMatch = html.match(/<source\s+src="([^"]+)"\s+type="audio\/mpeg"/i);
+        const audioUrl = audioMatch ? audioMatch[1] : undefined;
 
         return {
             text: decodeHTMLEntities(verse),
@@ -53,11 +78,12 @@ export async function getVOTDByDate(dateString: string) {
             version: "New International Version",
             thoughts,
             prayer,
-            date: dateString,
+            audioUrl,
+            date: dateKey,
             fullDate
         };
     } catch (error) {
-        console.error(`Error fetching VOTD for ${dateString}:`, error);
+        console.error(`Error fetching VOTD for ${dateInput}:`, error);
         return null;
     }
 }

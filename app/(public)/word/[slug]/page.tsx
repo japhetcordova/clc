@@ -1,68 +1,74 @@
-import { motion } from "framer-motion";
+import { notFound } from "next/navigation";
+import { getVOTDByDate, getPreviousDevotionals } from "@/lib/votd-archive";
 import {
     BookOpen,
     Calendar,
-    Share2,
-    Play,
-    Pause,
-    Volume2,
-    Download,
+    ArrowLeft,
+    Quote,
+    Heart,
+    ChevronRight,
+    Music,
     Mail,
     Facebook,
     Instagram,
     Youtube,
-    Rss,
-    ArrowRight,
-    ChevronLeft,
-    ChevronRight,
-    Quote,
-    Music,
-    Globe,
-    MessageCircle,
-    Copy,
-    Heart,
-    X
+    ArrowRight
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
 import Link from "next/link";
-import { getVOTD } from "@/lib/votd";
-import { getPreviousDevotionals } from "@/lib/votd-archive";
-import VOTDClient from "./votd-client";
+import VOTDClient from "../votd-client";
 
+import { Metadata } from "next";
 
-export const revalidate = 3600; // Revalidate every hour
+export const revalidate = 86400; // Revalidate every 24 hours
 
-export default async function VOTDPage() {
-    // Fetch data on the server
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+    const { slug } = await params;
+    const data = await getVOTDByDate(slug);
+    if (!data) return { title: "Devotional Not Found" };
+
+    return {
+        title: `${data.reference} - Daily Devotional`,
+        description: `Read today's verse: "${data.text.substring(0, 150)}..." and find inspiration through thoughts and prayer.`,
+    };
+}
+
+export default async function DevotionalPage({ params }: { params: Promise<{ slug: string }> }) {
+    const { slug } = await params;
+
+    // Fetch both data and previous devotionals
     const [data, previousDevotionals] = await Promise.all([
-        getVOTD(),
+        getVOTDByDate(slug),
         getPreviousDevotionals(7)
     ]);
+
+    if (!data || !data.text) {
+        notFound();
+    }
 
     return (
         <div className="min-h-screen pt-24 pb-20 px-6">
             <div className="max-w-7xl mx-auto">
-                {/* HEADER */}
+                {/* HEADERS & BACK BUTTON */}
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
                     <div className="space-y-4">
+                        <Link href="/word" className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground hover:text-primary transition-colors mb-4 group">
+                            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+                            Return to Today
+                        </Link>
                         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary">
                             <BookOpen className="w-4 h-4" />
-                            <span className="text-[10px] font-bold uppercase tracking-widest text-primary">Daily Inspiration</span>
+                            <span className="text-[10px] font-bold uppercase tracking-widest text-primary">Daily Inspiration Archive</span>
                         </div>
                         <h1 className="text-5xl md:text-7xl font-black tracking-tighter text-foreground uppercase italic leading-none">
-                            Verse of the <span className="text-primary">Day</span>
+                            Daily <span className="text-primary">Devotional</span>
                         </h1>
                         <div className="flex flex-wrap items-center gap-4 text-muted-foreground">
                             <div className="flex items-center gap-2">
                                 <Calendar className="w-4 h-4 text-primary" />
-                                <p className="font-bold uppercase tracking-widest text-xs italic">{data?.fullDate}</p>
+                                <p className="font-bold uppercase tracking-widest text-xs italic">{data.fullDate}</p>
                             </div>
-                            <Link href="#" className="text-[10px] font-black uppercase tracking-widest text-primary hover:underline flex items-center gap-1 group">
-                                Previous Devotionals
-                                <ChevronRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
-                            </Link>
                         </div>
                     </div>
                 </div>
@@ -81,24 +87,24 @@ export default async function VOTDPage() {
 
                                     <blockquote className="space-y-10 relative z-10">
                                         <p className="text-3xl md:text-5xl font-black italic uppercase tracking-tight leading-[1] text-foreground">
-                                            "{data?.text}"
+                                            "{data.text}"
                                         </p>
                                         <footer className="flex items-center gap-6">
                                             <div className="h-px w-16 bg-primary" />
                                             <div className="space-y-1">
                                                 <cite className="text-xl md:text-2xl font-black uppercase tracking-widest text-primary not-italic">
-                                                    {data?.reference}
+                                                    {data.reference}
                                                 </cite>
-                                                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">{data?.version}</p>
+                                                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">{data.version}</p>
                                             </div>
                                         </footer>
                                     </blockquote>
 
                                     <div className="capture-exclude">
                                         <VOTDClient
-                                            verseText={data?.text || ""}
-                                            reference={data?.reference || ""}
-                                            audioUrl={data?.audioUrl}
+                                            verseText={data.text || ""}
+                                            reference={data.reference || ""}
+                                            audioUrl={data.audioUrl}
                                         />
                                     </div>
                                 </CardContent>
@@ -112,11 +118,11 @@ export default async function VOTDPage() {
                                     <Music className="w-8 h-8" />
                                 </div>
                                 <div className="flex-1 space-y-4 w-full">
-                                    <h3 className="font-black uppercase italic tracking-tighter text-xl text-center md:text-left">Listen to Verse of the Day</h3>
+                                    <h3 className="font-black uppercase italic tracking-tighter text-xl text-center md:text-left">Listen to the Devotional</h3>
                                     <VOTDClient
-                                        verseText={data?.text || ""}
-                                        reference={data?.reference || ""}
-                                        audioUrl={data?.audioUrl}
+                                        verseText={data.text || ""}
+                                        reference={data.reference || ""}
+                                        audioUrl={data.audioUrl}
                                     />
                                     <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest text-center md:text-left">Audio is provided by BibleGateway. Click play to listen.</p>
                                 </div>
@@ -124,34 +130,40 @@ export default async function VOTDPage() {
                         </section>
 
                         {/* DEVOTIONAL CONTENT */}
-                        <div className="grid md:grid-cols-2 gap-12">
-                            <section className="space-y-6">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-2 h-8 bg-primary rounded-full" />
-                                    <h2 className="text-3xl font-black uppercase italic tracking-tighter">Thoughts on <span className="text-primary">Today's Verse</span></h2>
-                                </div>
-                                <div className="space-y-4 text-muted-foreground leading-relaxed font-medium">
-                                    {data?.thoughts.split('\n').filter((p: string) => p.trim()).map((para: string, i: number) => (
-                                        <p key={i}>{para}</p>
-                                    ))}
-                                </div>
-                            </section>
+                        {(data.thoughts || data.prayer) && (
+                            <div className="grid md:grid-cols-2 gap-12">
+                                {data.thoughts && (
+                                    <section className="space-y-6">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-2 h-8 bg-primary rounded-full" />
+                                            <h2 className="text-3xl font-black uppercase italic tracking-tighter">Thoughts on <span className="text-primary">Today's Verse</span></h2>
+                                        </div>
+                                        <div className="space-y-4 text-muted-foreground leading-relaxed font-medium">
+                                            {data.thoughts.split('\n').filter((p: string) => p.trim()).map((para: string, i: number) => (
+                                                <p key={i}>{para}</p>
+                                            ))}
+                                        </div>
+                                    </section>
+                                )}
 
-                            <section className="space-y-6">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-2 h-8 bg-rose-500 rounded-full" />
-                                    <h2 className="text-3xl font-black uppercase italic tracking-tighter">My <span className="text-rose-500">Prayer</span></h2>
-                                </div>
-                                <div className="p-8 bg-rose-500/5 border border-rose-500/10 rounded-[2rem] space-y-4 text-muted-foreground leading-relaxed font-medium italic relative overflow-hidden">
-                                    <div className="absolute -top-4 -right-4 text-rose-500/10">
-                                        <Heart className="w-24 h-24" />
-                                    </div>
-                                    {data?.prayer.split('\n').filter((p: string) => p.trim()).map((para: string, i: number) => (
-                                        <p key={i} className="relative z-10">{para}</p>
-                                    ))}
-                                </div>
-                            </section>
-                        </div>
+                                {data.prayer && (
+                                    <section className="space-y-6">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-2 h-8 bg-rose-500 rounded-full" />
+                                            <h2 className="text-3xl font-black uppercase italic tracking-tighter">My <span className="text-rose-500">Prayer</span></h2>
+                                        </div>
+                                        <div className="p-8 bg-rose-500/5 border border-rose-500/10 rounded-[2rem] space-y-4 text-muted-foreground leading-relaxed font-medium italic relative overflow-hidden">
+                                            <div className="absolute -top-4 -right-4 text-rose-500/10">
+                                                <Heart className="w-24 h-24" />
+                                            </div>
+                                            {data.prayer.split('\n').filter((p: string) => p.trim()).map((para: string, i: number) => (
+                                                <p key={i} className="relative z-10">{para}</p>
+                                            ))}
+                                        </div>
+                                    </section>
+                                )}
+                            </div>
+                        )}
                     </div>
 
                     {/* SIDEBAR */}
