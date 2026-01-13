@@ -1,5 +1,29 @@
 "use server";
 
+// Helper function to decode HTML entities
+function decodeHTMLEntities(text: string): string {
+    const entities: { [key: string]: string } = {
+        '&amp;': '&',
+        '&lt;': '<',
+        '&gt;': '>',
+        '&quot;': '"',
+        '&#39;': "'",
+        '&#8217;': "'",
+        '&#8216;': "'",
+        '&#8220;': '"',
+        '&#8221;': '"',
+        '&ldquo;': '"',
+        '&rdquo;': '"',
+        '&lsquo;': "'",
+        '&rsquo;': "'",
+        '&nbsp;': ' ',
+        '&mdash;': '—',
+        '&ndash;': '–',
+    };
+
+    return text.replace(/&[#\w]+;/g, (entity) => entities[entity] || entity);
+}
+
 export async function getVOTDByDate(dateString: string) {
     try {
         // Parse date string (format: MMDDYYYY)
@@ -40,16 +64,16 @@ export async function getVOTDByDate(dateString: string) {
         const prayerMatch = html.match(/<h3>My Prayer...<\/h3>([\s\S]*?)<h3>/i);
 
         let thoughts = thoughtsMatch
-            ? thoughtsMatch[1].replace(/<[^>]*>/g, '').trim().split("The Thoughts and Prayer")[0].trim()
+            ? decodeHTMLEntities(thoughtsMatch[1].replace(/<[^>]*>/g, '').trim().split("The Thoughts and Prayer")[0].trim())
             : "";
 
         let prayer = prayerMatch
-            ? prayerMatch[1].replace(/<[^>]*>/g, '').trim().split("The Thoughts and Prayer")[0].trim()
+            ? decodeHTMLEntities(prayerMatch[1].replace(/<[^>]*>/g, '').trim().split("The Thoughts and Prayer")[0].trim())
             : "";
 
         return {
-            text: verse,
-            reference,
+            text: decodeHTMLEntities(verse),
+            reference: decodeHTMLEntities(reference),
             version: "New International Version",
             thoughts,
             prayer,

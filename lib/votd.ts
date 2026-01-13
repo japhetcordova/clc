@@ -1,5 +1,29 @@
 "use server";
 
+// Helper function to decode HTML entities
+function decodeHTMLEntities(text: string): string {
+    const entities: { [key: string]: string } = {
+        '&amp;': '&',
+        '&lt;': '<',
+        '&gt;': '>',
+        '&quot;': '"',
+        '&#39;': "'",
+        '&#8217;': "'",
+        '&#8216;': "'",
+        '&#8220;': '"',
+        '&#8221;': '"',
+        '&ldquo;': '"',
+        '&rdquo;': '"',
+        '&lsquo;': "'",
+        '&rsquo;': "'",
+        '&nbsp;': ' ',
+        '&mdash;': '—',
+        '&ndash;': '–',
+    };
+
+    return text.replace(/&[#\w]+;/g, (entity) => entities[entity] || entity);
+}
+
 export async function getVOTD() {
     try {
         // Prepare date key for VerseOfTheDay.com scraping (MMDDYYYY)
@@ -55,10 +79,14 @@ export async function getVOTD() {
             const prayerMatch = html.match(/<h3>My Prayer...<\/h3>([\s\S]*?)<h3>/i);
 
             if (thoughtsMatch) {
-                thoughts = thoughtsMatch[1].replace(/<[^>]*>/g, '').trim().split("The Thoughts and Prayer")[0].trim();
+                thoughts = decodeHTMLEntities(
+                    thoughtsMatch[1].replace(/<[^>]*>/g, '').trim().split("The Thoughts and Prayer")[0].trim()
+                );
             }
             if (prayerMatch) {
-                prayer = prayerMatch[1].replace(/<[^>]*>/g, '').trim().split("The Thoughts and Prayer")[0].trim();
+                prayer = decodeHTMLEntities(
+                    prayerMatch[1].replace(/<[^>]*>/g, '').trim().split("The Thoughts and Prayer")[0].trim()
+                );
             }
         }
 

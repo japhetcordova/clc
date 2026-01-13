@@ -10,7 +10,6 @@ import {
     Mail,
     Facebook,
     Instagram,
-    Twitter,
     Youtube,
     Rss,
     ArrowRight,
@@ -21,7 +20,8 @@ import {
     Globe,
     MessageCircle,
     Copy,
-    Heart
+    Heart,
+    X
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -161,19 +161,20 @@ export default async function VOTDPage() {
                                     <h3 className="text-2xl font-black uppercase italic tracking-tighter border-b border-border/50 pb-4">Subscribe</h3>
                                     <div className="space-y-4">
                                         {[
-                                            { icon: Mail, label: "Subscribe by Email", color: "text-blue-500" },
-                                            { icon: Facebook, label: "Facebook", color: "text-blue-600" },
-                                            { icon: Instagram, label: "Instagram", color: "text-rose-500" },
-                                            { icon: Youtube, label: "YouTube", color: "text-red-500" },
+                                            { icon: Mail, label: "Subscribe by Email", color: "text-blue-500", href: "mailto:hello@clctagum.org" },
+                                            { icon: Facebook, label: "Facebook", color: "text-blue-600", href: "https://www.facebook.com/clctagum" },
+                                            { icon: Instagram, label: "Instagram", color: "text-rose-500", href: "https://www.instagram.com/clctagum" },
+                                            { icon: Youtube, label: "YouTube", color: "text-red-500", href: "https://www.youtube.com/@clctagum" },
                                         ].map((item, i) => (
-                                            <Button
-                                                key={i}
-                                                variant="ghost"
-                                                className="w-full justify-start gap-4 h-12 rounded-2xl hover:bg-muted transition-all group px-4"
-                                            >
-                                                <item.icon className={`w-5 h-5 ${item.color} group-hover:scale-110 transition-transform shrink-0`} />
-                                                <span className="font-bold uppercase tracking-widest text-[10px] truncate">{item.label}</span>
-                                            </Button>
+                                            <Link key={i} href={item.href} target={item.href.startsWith('http') ? "_blank" : undefined} rel={item.href.startsWith('http') ? "noopener noreferrer" : undefined}>
+                                                <Button
+                                                    variant="ghost"
+                                                    className="w-full justify-start gap-4 h-12 rounded-2xl hover:bg-muted hover:text-foreground transition-all group px-4"
+                                                >
+                                                    <item.icon className={`w-5 h-5 ${item.color} group-hover:scale-110 transition-transform shrink-0`} />
+                                                    <span className="font-bold uppercase tracking-widest text-[10px] truncate">{item.label}</span>
+                                                </Button>
+                                            </Link>
                                         ))}
                                     </div>
                                 </CardContent>

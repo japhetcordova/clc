@@ -130,13 +130,13 @@ export default async function DevotionalPage({ params }: { params: { date: strin
                             <h3 className="text-xl font-black uppercase italic tracking-tighter mb-6">Navigate</h3>
                             <div className="space-y-4">
                                 <Link href="/word">
-                                    <Button variant="outline" className="w-full justify-start gap-3 h-12 rounded-2xl">
+                                    <Button variant="outline" className="w-full justify-start gap-3 h-12 rounded-2xl hover:text-primary transition-all">
                                         <Calendar className="w-4 h-4 text-primary" />
                                         <span className="font-bold uppercase tracking-widest text-[10px]">Today's Devotional</span>
                                     </Button>
                                 </Link>
                                 <Link href="/word/archive">
-                                    <Button variant="outline" className="w-full justify-start gap-3 h-12 rounded-2xl">
+                                    <Button variant="outline" className="w-full justify-start gap-3 h-12 rounded-2xl hover:text-primary transition-all">
                                         <BookOpen className="w-4 h-4 text-primary" />
                                         <span className="font-bold uppercase tracking-widest text-[10px]">Browse Archive</span>
                                     </Button>

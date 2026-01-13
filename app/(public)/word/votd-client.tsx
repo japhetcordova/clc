@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { Play, Pause, Volume2, Download, Copy, Mail, Facebook, Instagram, Twitter, VolumeX } from "lucide-react";
+import { Play, Pause, Volume2, Download, Copy, Mail, Facebook, Instagram, VolumeX, X } from "lucide-react";
 import { toast } from "sonner";
 
 interface VOTDClientProps {
@@ -125,7 +125,7 @@ export default function VOTDClient({ verseText, reference, audioUrl }: VOTDClien
     };
 
     const handleCopy = () => {
-        navigator.clipboard.writeText(`"${verseText}" - ${reference}`);
+        navigator.clipboard.writeText(`"${verseText}" - ${reference} | Christian Life Center`);
         toast.success("Verse copied to clipboard!");
     };
 
@@ -138,6 +138,28 @@ export default function VOTDClient({ verseText, reference, audioUrl }: VOTDClien
         }
     };
 
+    const shareActions = {
+        email: () => {
+            const subject = encodeURIComponent("Bible Verse of the Day");
+            const body = encodeURIComponent(`"${verseText}" - ${reference}\n\nRead more at Christian Life Center.`);
+            window.location.href = `mailto:?subject=${subject}&body=${body}`;
+        },
+        facebook: () => {
+            const url = encodeURIComponent(window.location.href);
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank');
+        },
+        instagram: () => {
+            navigator.clipboard.writeText(`"${verseText}" - ${reference}`);
+            toast.info("Verse copied! Open Instagram to share in your story or post.");
+            window.open('https://www.instagram.com', '_blank');
+        },
+        x: () => {
+            const text = encodeURIComponent(`"${verseText}" - ${reference}`);
+            const url = encodeURIComponent(window.location.href);
+            window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank');
+        }
+    };
+
     return (
         <>
             {/* Share and Copy Buttons */}
@@ -145,16 +167,38 @@ export default function VOTDClient({ verseText, reference, audioUrl }: VOTDClien
                 <div className="flex items-center gap-4">
                     <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Share:</span>
                     <div className="flex gap-2">
-                        {[Mail, Facebook, Instagram, Twitter].map((Icon, i) => (
-                            <Button
-                                key={i}
-                                variant="outline"
-                                size="icon"
-                                className="w-10 h-10 rounded-xl border-border/50 hover:bg-primary/10 hover:border-primary/50 transition-all"
-                            >
-                                <Icon className="w-4 h-4" />
-                            </Button>
-                        ))}
+                        <Button
+                            variant="outline"
+                            size="icon"
+                            className="w-10 h-10 rounded-xl border-border/50 hover:bg-primary/10 hover:border-primary/50 hover:text-primary transition-all"
+                            onClick={shareActions.email}
+                        >
+                            <Mail className="w-4 h-4" />
+                        </Button>
+                        <Button
+                            variant="outline"
+                            size="icon"
+                            className="w-10 h-10 rounded-xl border-border/50 hover:bg-primary/10 hover:border-primary/50 hover:text-primary transition-all"
+                            onClick={shareActions.facebook}
+                        >
+                            <Facebook className="w-4 h-4" />
+                        </Button>
+                        <Button
+                            variant="outline"
+                            size="icon"
+                            className="w-10 h-10 rounded-xl border-border/50 hover:bg-primary/10 hover:border-primary/50 hover:text-primary transition-all"
+                            onClick={shareActions.instagram}
+                        >
+                            <Instagram className="w-4 h-4" />
+                        </Button>
+                        <Button
+                            variant="outline"
+                            size="icon"
+                            className="w-10 h-10 rounded-xl border-border/50 hover:bg-primary/10 hover:border-primary/50 hover:text-primary transition-all"
+                            onClick={shareActions.x}
+                        >
+                            <X className="w-4 h-4" />
+                        </Button>
                     </div>
                 </div>
                 <div className="flex flex-wrap gap-3">
@@ -166,7 +210,7 @@ export default function VOTDClient({ verseText, reference, audioUrl }: VOTDClien
                         <Copy className="w-4 h-4" />
                         Copy
                     </Button>
-                    <Button className="rounded-xl gap-2 bg-primary font-black uppercase text-xs tracking-widest px-6">
+                    <Button className="rounded-xl gap-2 bg-primary font-black uppercase text-xs tracking-widest px-6 shadow-lg shadow-primary/20">
                         <Download className="w-4 h-4" />
                         Save Image
                     </Button>
@@ -198,7 +242,7 @@ export default function VOTDClient({ verseText, reference, audioUrl }: VOTDClien
                     <Button
                         variant="ghost"
                         size="icon"
-                        className="w-8 h-8"
+                        className="w-8 h-8 hover:text-primary"
                         onClick={toggleMute}
                     >
                         {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
@@ -206,7 +250,7 @@ export default function VOTDClient({ verseText, reference, audioUrl }: VOTDClien
                     <Button
                         variant="ghost"
                         size="icon"
-                        className="w-8 h-8"
+                        className="w-8 h-8 hover:text-primary"
                         onClick={handleDownloadAudio}
                     >
                         <Download className="w-4 h-4" />
