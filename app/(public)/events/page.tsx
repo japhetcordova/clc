@@ -11,9 +11,11 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import EventsGrid from "./events-grid";
 
+export const revalidate = 1800; // Revalidate every 30 minutes
+
 export default async function EventsPage() {
-    // Fetch events from DB
-    const allEvents = await db.select().from(events).orderBy(desc(events.date));
+    // Fetch events from DB with limit for performance
+    const allEvents = await db.select().from(events).orderBy(desc(events.date)).limit(50);
 
     // Fallback Mock Events if DB is empty to prevent empty screen on first load
     const MOCK_EVENTS = [

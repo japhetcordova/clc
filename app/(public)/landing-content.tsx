@@ -73,12 +73,12 @@ export default function LandingContent() {
                 </div>
 
                 <div className="relative z-10 flex-1 flex items-center justify-center w-full">
-                    <div className="max-w-7xl mx-auto w-full grid lg:grid-cols-2 gap-16 lg:gap-24 items-center mb-12">
+                    <div className="max-w-7xl mx-auto w-full mb-12">
                         <motion.div
-                            initial={{ opacity: 0, x: -30 }}
-                            animate={{ opacity: 1, x: 0 }}
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
                             transition={{ duration: 0.8, ease: "easeOut" }}
-                            className="flex flex-col items-start gap-6"
+                            className="flex flex-col items-center text-center gap-8"
                         >
                             <motion.div
                                 initial={{ opacity: 0, scale: 0.8 }}
@@ -90,63 +90,28 @@ export default function LandingContent() {
                                 <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">A Place to Belong</span>
                             </motion.div>
 
-                            <div className="space-y-4">
-                                <h1 className="text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter text-foreground uppercase italic leading-[0.85] drop-shadow-2xl">
+                            <div className="space-y-6">
+                                <h1 className="text-7xl md:text-9xl lg:text-[10rem] font-black tracking-tighter text-foreground uppercase italic leading-[0.8] drop-shadow-2xl">
                                     Christian <br />
-                                    Life <span className="text-transparent bg-clip-text bg-linear-to-r from-primary via-indigo-500 to-primary bg-[length:200%_auto] animate-gradient-x pr-4">Center</span>
+                                    Life <span className="text-transparent bg-clip-text bg-linear-to-r from-primary via-indigo-500 to-primary bg-[length:200%_auto] animate-gradient-x px-4">Center</span>
                                 </h1>
-                                <p className="max-w-xl text-lg md:text-2xl font-black text-muted-foreground/80 leading-relaxed uppercase italic tracking-widest">
+                                <p className="max-w-2xl mx-auto text-lg md:text-3xl font-black text-muted-foreground/80 leading-relaxed uppercase italic tracking-[0.2em]">
                                     Love God. Love People. Make Disciples.
                                 </p>
                             </div>
 
-                            <div className="flex flex-wrap items-center gap-6 pt-2">
+                            <div className="flex flex-wrap items-center justify-center gap-8 pt-4">
                                 <Link href="/registration">
-                                    <Button size="lg" className="h-16 px-10 rounded-2xl bg-primary text-primary-foreground font-black text-lg shadow-2xl shadow-primary/30 hover:scale-105 hover:shadow-primary/40 transition-all group">
+                                    <Button size="lg" className="h-20 px-12 rounded-2xl bg-primary text-primary-foreground font-black text-xl shadow-2xl shadow-primary/30 hover:scale-105 hover:shadow-primary/40 transition-all group">
                                         Join Our Church
-                                        <ArrowRight className="ml-2 w-6 h-6 group-hover:translate-x-1 transition-transform" />
+                                        <ArrowRight className="ml-3 w-8 h-8 group-hover:translate-x-1 transition-transform" />
                                     </Button>
                                 </Link>
-                                <Link href="/about" className="text-foreground font-black uppercase italic tracking-widest text-sm hover:text-primary transition-colors flex items-center gap-2">
+                                <Link href="/about" className="text-foreground font-black uppercase italic tracking-widest text-sm hover:text-primary transition-colors flex items-center gap-3 group">
                                     Learn More About Us
-                                    <div className="w-10 h-px bg-foreground/20 group-hover:bg-primary/40" />
+                                    <div className="w-12 h-px bg-foreground/20 group-hover:bg-primary/40 group-hover:w-16 transition-all" />
                                 </Link>
                             </div>
-                        </motion.div>
-
-                        <motion.div
-                            initial={{ opacity: 0, x: 30 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: 0.4, duration: 0.8, ease: "easeOut" }}
-                            className="relative"
-                        >
-                            <div className="absolute -inset-4 bg-primary/20 blur-3xl opacity-20 -z-10 animate-pulse" />
-                            <Card className="bg-background/20 backdrop-blur-3xl border-white/10 shadow-2xl rounded-[2.5rem] overflow-hidden group hover:border-primary/30 transition-all duration-500">
-                                <div className="relative p-8 md:p-10 space-y-8">
-                                    <div className="absolute top-8 right-8 text-primary/20 group-hover:text-primary/40 transition-colors">
-                                        <Quote className="w-16 h-16 rotate-180" />
-                                    </div>
-
-                                    <div className="space-y-6">
-                                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary">
-                                            <BookOpen className="w-4 h-4" />
-                                            <span className="text-[10px] font-bold uppercase tracking-widest">Verse of the Day</span>
-                                        </div>
-
-                                        <blockquote className="space-y-6">
-                                            <p className="text-2xl md:text-3xl font-black italic uppercase tracking-tight leading-[1.1] text-foreground">
-                                                "Trust in the LORD with all your heart and lean not on your own understanding; in all your ways submit to him, and he will make your paths straight."
-                                            </p>
-                                            <footer className="flex items-center gap-4">
-                                                <div className="h-px w-8 bg-primary" />
-                                                <cite className="text-sm font-black uppercase tracking-widest text-muted-foreground not-italic">
-                                                    Proverbs 3:5-6
-                                                </cite>
-                                            </footer>
-                                        </blockquote>
-                                    </div>
-                                </div>
-                            </Card>
                         </motion.div>
                     </div>
                 </div>
