@@ -1,28 +1,4 @@
-"use server";
-
-// Helper function to decode HTML entities
-function decodeHTMLEntities(text: string): string {
-    const entities: { [key: string]: string } = {
-        '&amp;': '&',
-        '&lt;': '<',
-        '&gt;': '>',
-        '&quot;': '"',
-        '&#39;': "'",
-        '&#8217;': "'",
-        '&#8216;': "'",
-        '&#8220;': '"',
-        '&#8221;': '"',
-        '&ldquo;': '"',
-        '&rdquo;': '"',
-        '&lsquo;': "'",
-        '&rsquo;': "'",
-        '&nbsp;': ' ',
-        '&mdash;': '—',
-        '&ndash;': '–',
-    };
-
-    return text.replace(/&[#\w]+;/g, (entity) => entities[entity] || entity);
-}
+import { decodeHTMLEntities } from "./utils";
 
 export async function getVOTDByDate(dateString: string) {
     try {

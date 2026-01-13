@@ -1,28 +1,4 @@
-"use server";
-
-// Helper function to decode HTML entities
-function decodeHTMLEntities(text: string): string {
-    const entities: { [key: string]: string } = {
-        '&amp;': '&',
-        '&lt;': '<',
-        '&gt;': '>',
-        '&quot;': '"',
-        '&#39;': "'",
-        '&#8217;': "'",
-        '&#8216;': "'",
-        '&#8220;': '"',
-        '&#8221;': '"',
-        '&ldquo;': '"',
-        '&rdquo;': '"',
-        '&lsquo;': "'",
-        '&rsquo;': "'",
-        '&nbsp;': ' ',
-        '&mdash;': '—',
-        '&ndash;': '–',
-    };
-
-    return text.replace(/&[#\w]+;/g, (entity) => entities[entity] || entity);
-}
+import { decodeHTMLEntities } from "./utils";
 
 export async function getVOTD() {
     try {
@@ -91,8 +67,8 @@ export async function getVOTD() {
         }
 
         return {
-            text: votd?.content || votd?.text?.replace(/&ldquo;|&rdquo;/g, '"') || "Trust in the LORD with all your heart and lean not on your own understanding; in all your ways submit to him, and he will make your paths straight.",
-            reference: votd?.display_ref || votd?.reference || "Proverbs 3:5-6",
+            text: decodeHTMLEntities(votd?.content || votd?.text || "Trust in the LORD with all your heart and lean not on your own understanding; in all your ways submit to him, and he will make your paths straight."),
+            reference: decodeHTMLEntities(votd?.display_ref || votd?.reference || "Proverbs 3:5-6"),
             version: votd?.version || "New International Version",
             audioUrl: votd?.audiolink,
             permalink: votd?.permalink,
