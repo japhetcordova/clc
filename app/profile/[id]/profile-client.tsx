@@ -40,7 +40,7 @@ function useMediaQuery(query: string) {
     return value;
 }
 
-export default function ProfileClient({ user, qrValue }: ProfileClientProps) {
+export function ProfileIDPreview({ user, qrValue, trigger }: ProfileClientProps & { trigger?: React.ReactNode }) {
     const profileUrl = typeof window !== "undefined" ? `${window.location.origin}/profile/${qrValue}` : "";
     const [bgVariant, setBgVariant] = useState(0);
     const isDark = bgVariant === 0 || bgVariant === 2;
@@ -168,31 +168,42 @@ export default function ProfileClient({ user, qrValue }: ProfileClientProps) {
         </div>
     );
 
+    const TriggerButton = () => (
+        <Button variant="outline" className="w-full border-2 border-primary/10 hover:bg-primary/5 rounded-2xl font-black flex items-center justify-center gap-3 px-6 h-10 uppercase text-[10px] tracking-[0.2em] shadow-lg shadow-black/5 hover:scale-[1.02] active:scale-95 transition-all">
+            <Eye className="w-4 h-4 text-primary" />
+            Download ID
+        </Button>
+    );
+
     if (isDesktop) {
         return (
-            <div className="flex flex-col items-center gap-6 w-full max-w-sm mx-auto">
-                {/* Main QR Display */}
-                <div className="relative group w-full">
-                    <div className="absolute -inset-4 bg-linear-to-r from-primary/20 to-rose-500/20 rounded-[2.5rem] blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                    <div className="relative p-6 bg-white rounded-[2.5rem] shadow-xl ring-1 ring-border flex justify-center">
-                        <QRCodeSVG value={profileUrl || qrValue} size={180} level="H" includeMargin />
-                    </div>
-                </div>
-
-                <Dialog open={open} onOpenChange={setOpen}>
-                    <DialogTrigger asChild>
-                        <Button variant="outline" className="w-full border-2 border-primary/10 hover:bg-primary/5 rounded-2xl font-black flex items-center justify-center gap-3 h-14 uppercase text-[10px] tracking-[0.2em] shadow-lg shadow-black/5 hover:scale-[1.02] active:scale-95 transition-all">
-                            <Eye className="w-5 h-5 text-primary" />
-                            Preview & Download
-                        </Button>
-                    </DialogTrigger>
-                    <DialogContent className="sm:max-w-[1000px] w-[95vw] h-[90vh] lg:h-[750px] overflow-hidden p-0 border-none bg-background/95 backdrop-blur-2xl rounded-[2.5rem] shadow-2xl block">
-                        <Content />
-                    </DialogContent>
-                </Dialog>
-            </div>
+            <Dialog open={open} onOpenChange={setOpen}>
+                <DialogTrigger asChild>
+                    {trigger || <TriggerButton />}
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[1000px] w-[95vw] h-[90vh] lg:h-[750px] overflow-hidden p-0 border-none bg-background/95 backdrop-blur-2xl rounded-[2.5rem] shadow-2xl block">
+                    <Content />
+                </DialogContent>
+            </Dialog>
         );
     }
+
+    return (
+        <Drawer open={open} onOpenChange={setOpen}>
+            <DrawerTrigger asChild>
+                {trigger || <TriggerButton />}
+            </DrawerTrigger>
+            <DrawerContent className="max-h-[96vh] rounded-t-[2.5rem]">
+                <div className="overflow-y-auto">
+                    <Content />
+                </div>
+            </DrawerContent>
+        </Drawer>
+    );
+}
+
+export default function ProfileQRCode({ user, qrValue }: ProfileClientProps) {
+    const profileUrl = typeof window !== "undefined" ? `${window.location.origin}/profile/${qrValue}` : "";
 
     return (
         <div className="flex flex-col items-center gap-6 w-full max-w-sm mx-auto">
@@ -203,20 +214,6 @@ export default function ProfileClient({ user, qrValue }: ProfileClientProps) {
                     <QRCodeSVG value={profileUrl || qrValue} size={180} level="H" includeMargin />
                 </div>
             </div>
-
-            <Drawer open={open} onOpenChange={setOpen}>
-                <DrawerTrigger asChild>
-                    <Button variant="outline" className="w-full border-2 border-primary/10 hover:bg-primary/5 rounded-2xl font-black flex items-center justify-center gap-3 h-14 uppercase text-[10px] tracking-[0.2em] shadow-lg shadow-black/5 hover:scale-[1.02] active:scale-95 transition-all">
-                        <Eye className="w-5 h-5 text-primary" />
-                        Preview & Download
-                    </Button>
-                </DrawerTrigger>
-                <DrawerContent className="max-h-[96vh] rounded-t-[2.5rem]">
-                    <div className="overflow-y-auto">
-                        <Content />
-                    </div>
-                </DrawerContent>
-            </Drawer>
         </div>
     );
 }

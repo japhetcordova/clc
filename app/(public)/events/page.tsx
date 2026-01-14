@@ -48,13 +48,13 @@ export default async function EventsPage() {
     return (
         <div className="flex flex-col min-h-screen bg-background relative overflow-hidden">
             {/* HEADER */}
-            <section className="relative pt-32 pb-20 overflow-hidden">
+            <section className="relative pt-24 pb-12 md:pt-32 md:pb-20 overflow-hidden">
                 <div className="absolute inset-0 z-0 pointer-events-none">
                     <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-rose-500/20 rounded-full blur-[150px]" />
                     <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-primary/10 rounded-full blur-[120px]" />
                 </div>
 
-                <div className="relative z-10 max-w-7xl mx-auto px-6 space-y-8">
+                <div className="relative z-10 max-w-[1920px] mx-auto px-4 md:px-8 space-y-8 md:pt-4">
                     <div className="text-center space-y-6">
                         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-rose-500/10 border border-rose-500/20 backdrop-blur-md mb-4">
                             <Bell className="w-4 h-4 text-rose-500 animate-bounce" />
@@ -75,8 +75,8 @@ export default async function EventsPage() {
             </section>
 
             {/* ANNOUNCEMENT BOARD */}
-            <section className="py-24 px-6 bg-muted/20 relative">
-                <div className="max-w-7xl mx-auto space-y-16 relative z-10">
+            <section className="py-12 md:py-20 px-4 md:px-8 bg-muted/20 relative">
+                <div className="max-w-[1920px] mx-auto space-y-16 relative z-10">
                     <div className="flex items-end justify-between gap-8">
                         <div className="space-y-4">
                             <h2 className="text-4xl font-black uppercase italic tracking-tight">Recent <span className="text-rose-500">Updates</span></h2>
@@ -111,7 +111,7 @@ export default async function EventsPage() {
             </section>
 
             {/* NEWSLETTER CTA */}
-            <section className="py-24 px-6 bg-rose-500 text-white relative">
+            <section className="py-12 md:py-20 px-4 md:px-8 bg-rose-500 text-white relative">
                 <div className="max-w-4xl mx-auto text-center space-y-8">
                     <Megaphone className="w-12 h-12 mx-auto rotate-[-15deg] opacity-50" />
                     <h2 className="text-4xl md:text-5xl font-black uppercase italic tracking-tighter">Never Miss a Moment</h2>

@@ -42,16 +42,16 @@ export default async function VOTDPage() {
     ]);
 
     return (
-        <div className="min-h-screen pt-24 pb-20 px-6">
-            <div className="max-w-7xl mx-auto">
+        <div className="min-h-screen pt-20 pb-10 px-4 md:px-8">
+            <div className="max-w-[1920px] mx-auto">
                 {/* HEADER */}
-                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
-                    <div className="space-y-4">
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary">
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
+                    <div className="space-y-2">
+                        <div className="inline-flex items-center md:mt-4 gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary">
                             <BookOpen className="w-4 h-4" />
-                            <span className="text-[10px] font-bold uppercase tracking-widest text-primary">Daily Inspiration</span>
+                            <span className="text-[10px] font-bold uppercase tracking-widest text-primary">Daily Bread</span>
                         </div>
-                        <h1 className="text-5xl md:text-7xl font-black tracking-tighter text-foreground uppercase italic leading-none">
+                        <h1 className="text-4xl md:text-6xl font-black tracking-tighter text-foreground uppercase italic leading-none">
                             Verse of the <span className="text-primary">Day</span>
                         </h1>
                         <div className="flex flex-wrap items-center gap-4 text-muted-foreground">
@@ -59,109 +59,117 @@ export default async function VOTDPage() {
                                 <Calendar className="w-4 h-4 text-primary" />
                                 <p className="font-bold uppercase tracking-widest text-xs italic">{data?.fullDate}</p>
                             </div>
-                            <Link href="#" className="text-[10px] font-black uppercase tracking-widest text-primary hover:underline flex items-center gap-1 group">
-                                Previous Devotionals
+                            <Link href="/word/archive" className="text-[10px] font-black uppercase tracking-widest text-primary hover:underline flex items-center gap-1 group">
+                                Previous Verse of the Day
                                 <ChevronRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
                             </Link>
                         </div>
                     </div>
                 </div>
 
-                <div className="grid lg:grid-cols-3 gap-12">
+                <div className="grid lg:grid-cols-12 gap-6">
                     {/* MAIN CONTENT */}
-                    <div className="lg:col-span-2 space-y-12">
+                    <div className="lg:col-span-9 space-y-6">
                         {/* VERSE CARD */}
                         <div className="relative">
                             <div className="absolute -inset-4 bg-primary/20 blur-3xl opacity-20 -z-10 animate-pulse" />
-                            <Card id="verse-card-content" className="bg-background/40 backdrop-blur-3xl border-primary/20 shadow-2xl rounded-[3rem] overflow-hidden group">
-                                <CardContent className="p-8 md:p-16 space-y-10">
+                            <Card id="verse-card-content" className="bg-background/40 backdrop-blur-3xl border-primary/20 shadow-2xl rounded-[2.5rem] overflow-hidden group">
+                                <CardContent className="p-8 md:p-12 space-y-8">
                                     <div className="absolute top-10 right-10 text-primary/10 group-hover:text-primary/20 transition-colors hidden md:block">
                                         <Quote className="w-24 h-24 rotate-180" />
                                     </div>
 
-                                    <blockquote className="space-y-10 relative z-10">
-                                        <p className="text-3xl md:text-5xl font-black italic tracking-tight leading-[1] text-foreground">
+                                    <blockquote className="space-y-8 relative z-10">
+                                        <p className="text-xl md:text-3xl font-medium italic tracking-tight leading-[1.3] text-foreground">
                                             "{data?.text ? data.text.charAt(0).toUpperCase() + data.text.slice(1) : ''}"
                                         </p>
                                         <footer className="flex items-center gap-6">
                                             <div className="h-px w-16 bg-primary" />
                                             <div className="space-y-1">
-                                                <cite className="text-xl md:text-2xl font-black uppercase tracking-widest text-primary not-italic">
+                                                <cite className="text-lg md:text-xl font-bold uppercase tracking-widest text-primary not-italic">
                                                     {data?.reference}
                                                 </cite>
                                                 <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">{data?.version}</p>
                                             </div>
                                         </footer>
                                     </blockquote>
-
-                                    <div className="capture-exclude">
-                                        <VOTDClient
-                                            verseText={data?.text || ""}
-                                            reference={data?.reference || ""}
-                                            audioUrl={data?.audioUrl}
-                                        />
-                                    </div>
                                 </CardContent>
                             </Card>
                         </div>
 
                         {/* AUDIO PLAYER SECTION */}
-                        <section className="bg-muted/30 border border-border/50 rounded-[2.5rem] p-8 md:p-10">
-                            <div className="flex flex-col md:flex-row items-center gap-8">
-                                <div className="p-6 bg-primary/10 rounded-3xl text-primary animate-pulse">
-                                    <Music className="w-8 h-8" />
+                        <section className="bg-muted/30 border border-border/50 rounded-[2rem] p-6 md:p-8">
+                            <div className="flex flex-col md:flex-row items-center gap-6">
+                                <div className="p-4 bg-primary/10 rounded-2xl text-primary animate-pulse">
+                                    <Music className="w-6 h-6" />
                                 </div>
-                                <div className="flex-1 space-y-4 w-full">
-                                    <h3 className="font-black uppercase italic tracking-tighter text-xl text-center md:text-left">Listen to Verse of the Day</h3>
+                                <div className="flex-1 space-y-2 w-full">
+                                    <h3 className="font-black uppercase italic tracking-tighter text-lg text-center md:text-left">Listen to Verse of the Day</h3>
                                     <VOTDClient
                                         verseText={data?.text || ""}
                                         reference={data?.reference || ""}
                                         audioUrl={data?.audioUrl}
                                     />
-                                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest text-center md:text-left">Audio is provided by BibleGateway. Click play to listen.</p>
+                                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest text-center md:text-left">Audio is provided by CLCLTAGUM. Click play to listen.</p>
                                 </div>
                             </div>
                         </section>
 
                         {/* DEVOTIONAL CONTENT */}
-                        <div className="grid md:grid-cols-2 gap-12">
-                            <section className="space-y-6">
+                        <div className="grid md:grid-cols-2 gap-6">
+                            <section className="space-y-4">
                                 <div className="flex items-center gap-3">
-                                    <div className="w-2 h-8 bg-primary rounded-full" />
-                                    <h2 className="text-3xl font-black uppercase italic tracking-tighter">Thoughts on <span className="text-primary">Today's Verse</span></h2>
+                                    <div className="w-2 h-6 bg-primary rounded-full" />
+                                    <h2 className="text-2xl font-black uppercase italic tracking-tighter">Thoughts on <span className="text-primary">Today's Verse</span></h2>
                                 </div>
-                                <div className="space-y-4 text-muted-foreground leading-relaxed font-medium">
-                                    {data?.thoughts.split('\n').filter((p: string) => p.trim()).map((para: string, i: number) => (
-                                        <p key={i}>{para}</p>
-                                    ))}
+                                <div className="space-y-3 text-muted-foreground leading-relaxed font-medium">
+                                    {data?.thoughts.split('\n').filter((p: string) => p.trim()).map((para: string, i: number) => {
+                                        const isReference = para.trim().startsWith('*');
+                                        const content = para.replace(/\*/g, '').trim();
+                                        if (!content) return null;
+
+                                        return (
+                                            <p key={i} className={isReference ? "text-xs font-semibold text-primary/70 italic mt-3" : ""}>
+                                                {content}
+                                            </p>
+                                        );
+                                    })}
                                 </div>
                             </section>
 
-                            <section className="space-y-6">
+                            <section className="space-y-4">
                                 <div className="flex items-center gap-3">
-                                    <div className="w-2 h-8 bg-rose-500 rounded-full" />
-                                    <h2 className="text-3xl font-black uppercase italic tracking-tighter">My <span className="text-rose-500">Prayer</span></h2>
+                                    <div className="w-2 h-6 bg-rose-500 rounded-full" />
+                                    <h2 className="text-2xl font-black uppercase italic tracking-tighter">My <span className="text-rose-500">Prayer</span></h2>
                                 </div>
-                                <div className="p-8 bg-rose-500/5 border border-rose-500/10 rounded-[2rem] space-y-4 text-muted-foreground leading-relaxed font-medium italic relative overflow-hidden">
+                                <div className="p-6 bg-rose-500/5 border border-rose-500/10 rounded-[2rem] space-y-3 text-muted-foreground leading-relaxed font-medium italic relative overflow-hidden">
                                     <div className="absolute -top-4 -right-4 text-rose-500/10">
-                                        <Heart className="w-24 h-24" />
+                                        <Heart className="w-20 h-20" />
                                     </div>
-                                    {data?.prayer.split('\n').filter((p: string) => p.trim()).map((para: string, i: number) => (
-                                        <p key={i} className="relative z-10">{para}</p>
-                                    ))}
+                                    {data?.prayer.split('\n').filter((p: string) => p.trim()).map((para: string, i: number) => {
+                                        const isReference = para.trim().startsWith('*');
+                                        const content = para.replace(/\*/g, '').trim();
+                                        if (!content) return null;
+
+                                        return (
+                                            <p key={i} className={`relative z-10 ${isReference ? "text-xs font-semibold text-rose-500/70 opacity-90 mt-3 not-italic" : ""}`}>
+                                                {content}
+                                            </p>
+                                        );
+                                    })}
                                 </div>
                             </section>
                         </div>
                     </div>
 
                     {/* SIDEBAR */}
-                    <div className="space-y-12">
+                    <div className="lg:col-span-3 space-y-6">
                         {/* SUBSCRIBE CARD */}
                         <section>
-                            <Card className="bg-card/50 border-border/50 rounded-[2.5rem] overflow-hidden shadow-xl">
-                                <CardContent className="p-8 md:p-10 space-y-8">
-                                    <h3 className="text-2xl font-black uppercase italic tracking-tighter border-b border-border/50 pb-4">Subscribe</h3>
-                                    <div className="space-y-4">
+                            <Card className="bg-card/50 border-border/50 rounded-[2rem] overflow-hidden shadow-xl">
+                                <CardContent className="p-6 space-y-6">
+                                    <h3 className="text-xl font-black uppercase italic tracking-tighter border-b border-border/50 pb-3">Subscribe</h3>
+                                    <div className="space-y-3">
                                         {[
                                             { icon: Mail, label: "Subscribe by Email", color: "text-blue-500", href: "mailto:hello@clctagum.org" },
                                             { icon: Facebook, label: "Facebook", color: "text-blue-600", href: "https://www.facebook.com/clctagum" },
@@ -171,9 +179,9 @@ export default async function VOTDPage() {
                                             <Link key={i} href={item.href} target={item.href.startsWith('http') ? "_blank" : undefined} rel={item.href.startsWith('http') ? "noopener noreferrer" : undefined}>
                                                 <Button
                                                     variant="ghost"
-                                                    className="w-full justify-start gap-4 h-12 rounded-2xl hover:bg-muted hover:text-foreground transition-all group px-4"
+                                                    className="w-full justify-start gap-3 h-10 rounded-xl hover:bg-muted hover:text-foreground transition-all group px-3"
                                                 >
-                                                    <item.icon className={`w-5 h-5 ${item.color} group-hover:scale-110 transition-transform shrink-0`} />
+                                                    <item.icon className={`w-4 h-4 ${item.color} group-hover:scale-110 transition-transform shrink-0`} />
                                                     <span className="font-bold uppercase tracking-widest text-[10px] truncate">{item.label}</span>
                                                 </Button>
                                             </Link>
@@ -184,26 +192,26 @@ export default async function VOTDPage() {
                         </section>
 
                         {/* PREVIOUS DEVOTIONALS */}
-                        <section className="space-y-6">
-                            <h3 className="text-2xl font-black uppercase italic tracking-tighter border-b border-border/50 pb-4">Previous Devotionals</h3>
-                            <div className="space-y-4">
-                                {previousDevotionals.slice(0, 3).map((devotional) => (
+                        <section className="space-y-4">
+                            <h3 className="text-xl font-black uppercase italic tracking-tighter border-b border-border/50 pb-3">Previous Verse of the Day</h3>
+                            <div className="space-y-3">
+                                {previousDevotionals.slice(0, 4).map((devotional) => (
                                     <Link
                                         key={devotional.dateKey}
                                         href={`/word/${devotional.dateKey}`}
-                                        className="group cursor-pointer p-6 rounded-3xl bg-muted/30 border border-border/50 hover:border-primary/50 hover:bg-muted/50 transition-all flex items-center justify-between"
+                                        className="group cursor-pointer p-4 rounded-2xl bg-muted/30 border border-border/50 hover:border-primary/50 hover:bg-muted/50 transition-all flex items-center justify-between"
                                     >
                                         <div className="space-y-1">
                                             <p className="text-[10px] font-black uppercase text-primary tracking-widest">{devotional.shortDate}</p>
-                                            <h4 className="font-bold uppercase italic tracking-tight text-sm">
-                                                {devotional.dayOfWeek}'s Devotional
+                                            <h4 className="font-bold uppercase italic tracking-tight text-xs">
+                                                {devotional.dayOfWeek}'s verse of the day
                                             </h4>
                                         </div>
                                         <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
                                     </Link>
                                 ))}
                                 <Link href="/word/archive">
-                                    <Button variant="ghost" className="w-full gap-2 font-black uppercase text-[10px] tracking-widest text-primary hover:bg-primary/5 hover:text-primary rounded-2xl h-12">
+                                    <Button variant="ghost" className="w-full gap-2 font-black uppercase text-[10px] tracking-widest text-primary hover:bg-primary/5 hover:text-primary rounded-xl h-10">
                                         Browse by Date
                                         <ArrowRight className="w-4 h-4" />
                                     </Button>

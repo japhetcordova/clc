@@ -28,13 +28,13 @@ export default function AboutPage() {
     return (
         <div className="flex flex-col min-h-screen bg-background relative overflow-hidden">
             {/* SUB-PAGE HEADER */}
-            <section className="relative pt-32 pb-20 overflow-hidden">
+            <section className="relative pt-24 pb-12 md:pt-32 md:pb-20 overflow-hidden">
                 <div className="absolute inset-0 z-0 pointer-events-none">
                     <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-primary/20 rounded-full blur-[150px]" />
                     <div className="absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-indigo-500/10 rounded-full blur-[180px]" />
                 </div>
 
-                <div className="relative z-10 max-w-7xl mx-auto px-6 text-center space-y-6">
+                <div className="relative z-10 max-w-[1920px] mx-auto px-4 md:px-8 text-center space-y-6 md:pt-4">
                     <motion.div
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
@@ -55,8 +55,8 @@ export default function AboutPage() {
             </section>
 
             {/* OUR STORY SECTION */}
-            <section className="py-24 px-6 relative bg-muted/20">
-                <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
+            <section className="py-12 md:py-20 px-4 md:px-8 relative bg-muted/20">
+                <div className="max-w-[1920px] mx-auto grid lg:grid-cols-2 gap-8 md:gap-16 items-center">
                     <motion.div {...fadeIn} className="space-y-8">
                         <div className="space-y-4">
                             <h2 className="text-4xl font-black uppercase italic tracking-tight">How It <span className="text-primary">All Started</span></h2>
@@ -102,12 +102,12 @@ export default function AboutPage() {
             </section>
 
             {/* OUR PASTORS / LEADERSHIP */}
-            <section className="py-24 px-6 relative overflow-hidden">
+            <section className="py-12 md:py-20 px-4 md:px-8 relative overflow-hidden">
                 <div className="absolute inset-0 z-0 pointer-events-none">
                     <div className="absolute top-1/2 left-0 w-[400px] h-[400px] bg-primary/5 rounded-full blur-[120px]" />
                 </div>
 
-                <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center flex-row-reverse">
+                <div className="max-w-[1920px] mx-auto grid lg:grid-cols-2 gap-8 md:gap-16 items-center flex-row-reverse">
                     <motion.div {...fadeIn} className="space-y-8 lg:order-2">
                         <div className="space-y-4">
                             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20">
@@ -164,10 +164,10 @@ export default function AboutPage() {
             </section>
 
             {/* G12 LADDER OF SUCCESS */}
-            <section className="py-24 px-6 bg-muted/20 relative overflow-hidden">
+            <section className="py-12 md:py-20 px-4 md:px-8 bg-muted/20 relative overflow-hidden">
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[150px] -z-10" />
 
-                <div className="max-w-7xl mx-auto space-y-20">
+                <div className="max-w-[1920px] mx-auto space-y-16">
                     <motion.div {...fadeIn} className="text-center space-y-4 max-w-3xl mx-auto">
                         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mx-auto">
                             <Target className="w-4 h-4 text-primary" />
@@ -215,8 +215,8 @@ export default function AboutPage() {
             </section>
 
             {/* CORE BELIEFS */}
-            <section className="py-24 px-6 relative">
-                <div className="max-w-7xl mx-auto space-y-16">
+            <section className="py-12 md:py-20 px-4 md:px-8 relative">
+                <div className="max-w-[1920px] mx-auto space-y-16">
                     <motion.div {...fadeIn} className="space-y-4 max-w-2xl">
                         <h2 className="text-4xl md:text-5xl font-black tracking-tight uppercase italic leading-none">
                             What We <span className="text-primary">Believe</span>
@@ -257,7 +257,7 @@ export default function AboutPage() {
             </section>
 
             {/* QUOTE SECTION */}
-            <section className="py-24 px-6 bg-primary/5 relative">
+            <section className="py-12 md:py-20 px-4 md:px-8 bg-primary/5 relative">
                 <div className="max-w-4xl mx-auto text-center space-y-8">
                     <Quote className="w-12 h-12 text-primary mx-auto opacity-30" />
                     <motion.p
@@ -276,7 +276,7 @@ export default function AboutPage() {
             </section>
 
             {/* CALL TO ACTION */}
-            <section className="py-24 px-6 text-center">
+            <section className="py-12 md:py-20 px-4 md:px-8 text-center">
                 <div className="max-w-2xl mx-auto space-y-8">
                     <h2 className="text-4xl font-black uppercase italic tracking-tight">Join Our Journey</h2>
                     <p className="text-muted-foreground font-medium leading-relaxed">

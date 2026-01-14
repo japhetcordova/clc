@@ -60,13 +60,20 @@ export async function getVOTDByDate(dateInput: string) {
         const prayerMatch = html.match(/<h3>My Prayer...<\/h3>([\s\S]*?)<h3>/i) ||
             html.match(/<h[23]>My Prayer[\s\S]*?<\/h[23]>([\s\S]*?)<h/i);
 
-        const thoughts = thoughtsMatch
-            ? decodeHTMLEntities(thoughtsMatch[1].replace(/<[^>]*>/g, '').trim().split("The Thoughts and Prayer")[0].trim())
-            : "";
+        const cleanContent = (content: string) => {
+            let text = content
+                .replace(/<br\s*\/?>/gi, '\n')
+                .replace(/<\/p>/gi, '\n')
+                .replace(/<[^>]*>/g, '')
+                // Only split if asterisks are preceded by whitespace (likely a footer)
+                // and strictly not if they are attached to a word (likely a marker)
+                .replace(/\s+(\*{1,4})/g, '\n$1');
 
-        const prayer = prayerMatch
-            ? decodeHTMLEntities(prayerMatch[1].replace(/<[^>]*>/g, '').trim().split("The Thoughts and Prayer")[0].trim())
-            : "";
+            return decodeHTMLEntities(text.split("The Thoughts and Prayer")[0].trim());
+        };
+
+        const thoughts = thoughtsMatch ? cleanContent(thoughtsMatch[1]) : "";
+        const prayer = prayerMatch ? cleanContent(prayerMatch[1]) : "";
 
         // 4. Extract audio URL
         const audioMatch = html.match(/<source\s+src="([^"]+)"\s+type="audio\/mpeg"/i);

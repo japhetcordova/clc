@@ -69,20 +69,20 @@ export default function SuggestionsClient({ initialSuggestions, currentUser }: S
     };
 
     return (
-        <div className="container max-w-4xl mx-auto px-4 py-8 space-y-8">
+        <div className="max-w-[1920px] mx-auto px-4 md:px-8 py-12 md:py-20 space-y-12 md:pt-32">
             {/* Header */}
             <div className="space-y-6">
-                <div className="flex items-center justify-between flex-wrap gap-4">
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                     <div className="space-y-2">
-                        <h1 className="text-4xl md:text-5xl font-black italic uppercase tracking-tighter flex items-center gap-3">
-                            <Lightbulb className="w-10 h-10 text-primary" />
+                        <h1 className="text-5xl md:text-7xl font-black italic uppercase tracking-tighter flex items-center gap-4 text-foreground leading-none">
+                            <Lightbulb className="w-12 h-12 md:w-16 md:h-16 text-primary" />
                             Suggestions
                         </h1>
-                        <p className="text-muted-foreground text-sm md:text-base font-medium">
-                            Share your ideas and help us improve together
+                        <p className="text-muted-foreground text-lg font-medium max-w-2xl">
+                            Share your ideas and help us improve together. Your voice matters in building our community.
                         </p>
                     </div>
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-4">
                         <BackButton
                             href={`/profile/${currentUser.qrCodeId}`}
                             label="Back to Profile"
@@ -91,92 +91,88 @@ export default function SuggestionsClient({ initialSuggestions, currentUser }: S
                     </div>
                 </div>
 
-                <div className="h-[2px] w-20 bg-primary rounded-full" />
+                <div className="h-[2px] w-full bg-border/50 rounded-full" />
             </div>
 
             {/* Suggestions Feed */}
-            <div className="space-y-4">
+            <div className="">
                 {suggestions.length === 0 ? (
-                    <div className="text-center py-16 space-y-4">
-                        <div className="w-20 h-20 mx-auto rounded-full bg-muted/50 flex items-center justify-center">
-                            <Lightbulb className="w-10 h-10 text-muted-foreground/50" />
+                    <div className="text-center py-20 space-y-6 bg-muted/30 rounded-[3rem] border border-border/50">
+                        <div className="w-24 h-24 mx-auto rounded-full bg-muted/50 flex items-center justify-center">
+                            <Lightbulb className="w-12 h-12 text-muted-foreground/50" />
                         </div>
                         <div className="space-y-2">
-                            <h3 className="text-xl font-bold text-muted-foreground">No suggestions yet</h3>
-                            <p className="text-sm text-muted-foreground/70">Be the first to share your ideas!</p>
+                            <h3 className="text-2xl font-bold text-muted-foreground uppercase tracking-tight">No suggestions yet</h3>
+                            <p className="text-base text-muted-foreground/70">Be the first to share your ideas!</p>
                         </div>
                     </div>
                 ) : (
-                    suggestions.map((suggestion) => (
-                        <div
-                            key={suggestion.id}
-                            className="group relative p-6 rounded-[2rem] bg-card border-2 border-border/50 hover:border-primary/30 transition-all duration-300 hover:shadow-xl hover:shadow-primary/5"
-                        >
-                            {/* Suggestion Header */}
-                            <div className="flex items-start justify-between gap-4 mb-4">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                                        <User className="w-5 h-5 text-primary" />
-                                    </div>
-                                    <div>
-                                        <p className="font-bold text-sm">
-                                            {suggestion.isAnonymous
-                                                ? "Anonymous"
-                                                : `${suggestion.author?.firstName} ${suggestion.author?.lastName}`
-                                            }
-                                        </p>
-                                        <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                                            <Clock className="w-3 h-3" />
-                                            <span>
+                    <div className="columns-1 md:columns-2 lg:columns-3 xl:columns-4 gap-6 space-y-6">
+                        {suggestions.map((suggestion) => (
+                            <div
+                                key={suggestion.id}
+                                className="break-inside-avoid mb-6 bg-muted/20 hover:bg-muted/40 transition-colors rounded-3xl p-6 group relative"
+                            >
+                                {/* Header */}
+                                <div className="flex items-center justify-between gap-4 mb-4">
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                                            <User className="w-4 h-4 text-primary" />
+                                        </div>
+                                        <div>
+                                            <p className="font-bold text-sm tracking-tight leading-none">
+                                                {suggestion.isAnonymous
+                                                    ? "Anonymous"
+                                                    : `${suggestion.author?.firstName} ${suggestion.author?.lastName}`
+                                                }
+                                            </p>
+                                            <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/60">
                                                 {formatDistanceToNow(new Date(suggestion.createdAt), { addSuffix: true })}
                                             </span>
                                         </div>
                                     </div>
+
+                                    {/* Compact Like */}
+                                    <button
+                                        onClick={() => handleLike(suggestion.id)}
+                                        disabled={isPending}
+                                        className={cn(
+                                            "flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-all text-xs font-bold",
+                                            suggestion.isLikedByCurrentUser
+                                                ? "bg-rose-500/10 text-rose-500 hover:bg-rose-500/20"
+                                                : "bg-transparent text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+                                        )}
+                                    >
+                                        <Heart
+                                            className={cn(
+                                                "w-3.5 h-3.5 transition-transform group-active:scale-90",
+                                                suggestion.isLikedByCurrentUser && "fill-current"
+                                            )}
+                                        />
+                                        {suggestion.likeCount > 0 && <span>{suggestion.likeCount}</span>}
+                                    </button>
                                 </div>
 
-                                {/* Like Button */}
-                                <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={() => handleLike(suggestion.id)}
-                                    disabled={isPending}
-                                    className={cn(
-                                        "rounded-full gap-2 transition-all",
-                                        suggestion.isLikedByCurrentUser
-                                            ? "text-rose-500 hover:text-rose-600"
-                                            : "text-muted-foreground hover:text-rose-500"
-                                    )}
-                                >
-                                    <Heart
-                                        className={cn(
-                                            "w-5 h-5 transition-all",
-                                            suggestion.isLikedByCurrentUser && "fill-current"
-                                        )}
-                                    />
-                                    <span className="font-bold text-sm">{suggestion.likeCount}</span>
-                                </Button>
+                                {/* Content */}
+                                <p className="text-foreground/90 leading-relaxed text-sm whitespace-pre-wrap font-medium">
+                                    {suggestion.content}
+                                </p>
                             </div>
-
-                            {/* Suggestion Content */}
-                            <p className="text-foreground leading-relaxed whitespace-pre-wrap">
-                                {suggestion.content}
-                            </p>
-
-                            {/* Decorative gradient on hover */}
-                            <div className="absolute inset-0 rounded-[2rem] bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
-                        </div>
-                    ))
+                        ))}
+                    </div>
                 )}
             </div>
 
             {/* Footer Info */}
-            {suggestions.length > 0 && (
-                <div className="text-center pt-8 pb-4">
-                    <p className="text-sm text-muted-foreground">
-                        Showing {suggestions.length} {suggestions.length === 1 ? 'suggestion' : 'suggestions'}
-                    </p>
-                </div>
-            )}
-        </div>
+            {
+                suggestions.length > 0 && (
+                    <div className="text-center pt-8 pb-4 border-t border-border/50">
+                        <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest">
+                            Showing {suggestions.length} {suggestions.length === 1 ? 'suggestion' : 'suggestions'}
+                        </p>
+                    </div>
+                )
+            }
+        </div >
     );
 }

@@ -48,21 +48,23 @@ export default async function DevotionalPage({ params }: { params: Promise<{ slu
     }
 
     return (
-        <div className="min-h-screen pt-24 pb-20 px-6">
-            <div className="max-w-7xl mx-auto">
+        <div className="min-h-screen pt-24 pb-12 md:pt-32 md:pb-20 px-4 md:px-8 relative overflow-hidden">
+            {/* BACKGROUND DECORATION matches other pages */}
+            <div className="absolute inset-0 z-0 pointer-events-none">
+                <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[150px]" />
+                <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-indigo-500/5 rounded-full blur-[120px]" />
+            </div>
+
+            <div className="max-w-[1920px] mx-auto relative z-10 md:pt-4">
                 {/* HEADERS & BACK BUTTON */}
-                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 md:mb-12">
                     <div className="space-y-4">
-                        <Link href="/word" className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground hover:text-primary transition-colors mb-4 group">
+                        <Link href="/word" className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground hover:text-primary transition-colors mb-2 group">
                             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
                             Return to Today
                         </Link>
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary">
-                            <BookOpen className="w-4 h-4" />
-                            <span className="text-[10px] font-bold uppercase tracking-widest text-primary">Daily Inspiration Archive</span>
-                        </div>
                         <h1 className="text-5xl md:text-7xl font-black tracking-tighter text-foreground uppercase italic leading-none">
-                            Daily <span className="text-primary">Devotional</span>
+                            Daily <span className="text-primary">Verse of the Day</span>
                         </h1>
                         <div className="flex flex-wrap items-center gap-4 text-muted-foreground">
                             <div className="flex items-center gap-2">
@@ -73,75 +75,75 @@ export default async function DevotionalPage({ params }: { params: Promise<{ slu
                     </div>
                 </div>
 
-                <div className="grid lg:grid-cols-3 gap-12">
+                <div className="grid lg:grid-cols-3 gap-8 md:gap-16">
                     {/* MAIN CONTENT */}
-                    <div className="lg:col-span-2 space-y-12">
+                    <div className="lg:col-span-2 space-y-8 md:space-y-12">
                         {/* VERSE CARD */}
                         <div className="relative">
                             <div className="absolute -inset-4 bg-primary/20 blur-3xl opacity-20 -z-10 animate-pulse" />
-                            <Card id="verse-card-content" className="bg-background/40 backdrop-blur-3xl border-primary/20 shadow-2xl rounded-[3rem] overflow-hidden group">
-                                <CardContent className="p-8 md:p-16 space-y-10">
+                            <Card id="verse-card-content" className="bg-background/40 backdrop-blur-3xl border-primary/20 shadow-2xl rounded-[2.5rem] md:rounded-[3rem] overflow-hidden group">
+                                <CardContent className="p-8 md:p-12 space-y-8 md:space-y-10">
                                     <div className="absolute top-10 right-10 text-primary/10 group-hover:text-primary/20 transition-colors hidden md:block">
                                         <Quote className="w-24 h-24 rotate-180" />
                                     </div>
 
-                                    <blockquote className="space-y-10 relative z-10">
-                                        <p className="text-3xl md:text-5xl font-black italic tracking-tight leading-[1] text-foreground">
+                                    <blockquote className="space-y-8 md:space-y-10 relative z-10">
+                                        <p className="text-2xl md:text-4xl font-medium italic tracking-tight leading-[1.2] text-foreground">
                                             "{data.text ? data.text.charAt(0).toUpperCase() + data.text.slice(1) : ''}"
                                         </p>
                                         <footer className="flex items-center gap-6">
                                             <div className="h-px w-16 bg-primary" />
                                             <div className="space-y-1">
-                                                <cite className="text-xl md:text-2xl font-black uppercase tracking-widest text-primary not-italic">
+                                                <cite className="text-lg md:text-xl font-bold uppercase tracking-widest text-primary not-italic">
                                                     {data.reference}
                                                 </cite>
                                                 <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">{data.version}</p>
                                             </div>
                                         </footer>
                                     </blockquote>
-
-                                    <div className="capture-exclude">
-                                        <VOTDClient
-                                            verseText={data.text || ""}
-                                            reference={data.reference || ""}
-                                            audioUrl={data.audioUrl}
-                                        />
-                                    </div>
                                 </CardContent>
                             </Card>
                         </div>
 
                         {/* AUDIO PLAYER SECTION */}
-                        <section className="bg-muted/30 border border-border/50 rounded-[2.5rem] p-8 md:p-10">
-                            <div className="flex flex-col md:flex-row items-center gap-8">
-                                <div className="p-6 bg-primary/10 rounded-3xl text-primary animate-pulse">
+                        <section className="bg-muted/30 border border-border/50 rounded-[2.5rem] p-6 md:p-10">
+                            <div className="flex flex-col md:flex-row items-center gap-6 md:gap-8">
+                                <div className="p-5 md:p-6 bg-primary/10 rounded-3xl text-primary animate-pulse">
                                     <Music className="w-8 h-8" />
                                 </div>
                                 <div className="flex-1 space-y-4 w-full">
-                                    <h3 className="font-black uppercase italic tracking-tighter text-xl text-center md:text-left">Listen to the Devotional</h3>
+                                    <h3 className="font-black uppercase italic tracking-tighter text-xl text-center md:text-left">Listen to the Verse of the Day</h3>
                                     <VOTDClient
                                         verseText={data.text || ""}
                                         reference={data.reference || ""}
                                         audioUrl={data.audioUrl}
                                     />
-                                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest text-center md:text-left">Audio is provided by BibleGateway. Click play to listen.</p>
+                                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest text-center md:text-left">Audio is provided by CLCTAGUM. Click play to listen.</p>
                                 </div>
                             </div>
                         </section>
 
                         {/* DEVOTIONAL CONTENT */}
                         {(data.thoughts || data.prayer) && (
-                            <div className="grid md:grid-cols-2 gap-12">
+                            <div className="grid md:grid-cols-2 gap-8 md:gap-12">
                                 {data.thoughts && (
                                     <section className="space-y-6">
                                         <div className="flex items-center gap-3">
                                             <div className="w-2 h-8 bg-primary rounded-full" />
-                                            <h2 className="text-3xl font-black uppercase italic tracking-tighter">Thoughts on <span className="text-primary">Today's Verse</span></h2>
+                                            <h2 className="text-2xl md:text-3xl font-black uppercase italic tracking-tighter">Thoughts on <span className="text-primary">Today's Verse</span></h2>
                                         </div>
                                         <div className="space-y-4 text-muted-foreground leading-relaxed font-medium">
-                                            {data.thoughts.split('\n').filter((p: string) => p.trim()).map((para: string, i: number) => (
-                                                <p key={i}>{para}</p>
-                                            ))}
+                                            {data.thoughts.split('\n').filter((p: string) => p.trim()).map((para: string, i: number) => {
+                                                const isReference = para.trim().startsWith('*');
+                                                const content = para.replace(/\*/g, '').trim();
+                                                if (!content) return null;
+
+                                                return (
+                                                    <p key={i} className={isReference ? "text-xs font-semibold text-primary/70 italic mt-3" : ""}>
+                                                        {content}
+                                                    </p>
+                                                );
+                                            })}
                                         </div>
                                     </section>
                                 )}
@@ -150,15 +152,23 @@ export default async function DevotionalPage({ params }: { params: Promise<{ slu
                                     <section className="space-y-6">
                                         <div className="flex items-center gap-3">
                                             <div className="w-2 h-8 bg-rose-500 rounded-full" />
-                                            <h2 className="text-3xl font-black uppercase italic tracking-tighter">My <span className="text-rose-500">Prayer</span></h2>
+                                            <h2 className="text-2xl md:text-3xl font-black uppercase italic tracking-tighter">My <span className="text-rose-500">Prayer</span></h2>
                                         </div>
                                         <div className="p-8 bg-rose-500/5 border border-rose-500/10 rounded-[2rem] space-y-4 text-muted-foreground leading-relaxed font-medium italic relative overflow-hidden">
                                             <div className="absolute -top-4 -right-4 text-rose-500/10">
                                                 <Heart className="w-24 h-24" />
                                             </div>
-                                            {data.prayer.split('\n').filter((p: string) => p.trim()).map((para: string, i: number) => (
-                                                <p key={i} className="relative z-10">{para}</p>
-                                            ))}
+                                            {data.prayer.split('\n').filter((p: string) => p.trim()).map((para: string, i: number) => {
+                                                const isReference = para.trim().startsWith('*');
+                                                const content = para.replace(/\*/g, '').trim();
+                                                if (!content) return null;
+
+                                                return (
+                                                    <p key={i} className={`relative z-10 ${isReference ? "text-xs font-semibold text-rose-500/70 opacity-90 mt-3 not-italic" : ""}`}>
+                                                        {content}
+                                                    </p>
+                                                );
+                                            })}
                                         </div>
                                     </section>
                                 )}
@@ -167,11 +177,11 @@ export default async function DevotionalPage({ params }: { params: Promise<{ slu
                     </div>
 
                     {/* SIDEBAR */}
-                    <div className="space-y-12">
+                    <div className="space-y-8 md:space-y-12">
                         {/* SUBSCRIBE CARD */}
                         <section>
                             <Card className="bg-card/50 border-border/50 rounded-[2.5rem] overflow-hidden shadow-xl">
-                                <CardContent className="p-8 md:p-10 space-y-8">
+                                <CardContent className="p-8 space-y-8">
                                     <h3 className="text-2xl font-black uppercase italic tracking-tighter border-b border-border/50 pb-4">Subscribe</h3>
                                     <div className="space-y-4">
                                         {[
@@ -197,7 +207,7 @@ export default async function DevotionalPage({ params }: { params: Promise<{ slu
 
                         {/* PREVIOUS DEVOTIONALS */}
                         <section className="space-y-6">
-                            <h3 className="text-2xl font-black uppercase italic tracking-tighter border-b border-border/50 pb-4">Previous Devotionals</h3>
+                            <h3 className="text-2xl font-black uppercase italic tracking-tighter border-b border-border/50 pb-4">Previous Verse of the Day</h3>
                             <div className="space-y-4">
                                 {previousDevotionals.slice(0, 3).map((devotional) => (
                                     <Link

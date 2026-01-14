@@ -37,19 +37,22 @@ export default function Footer() {
     ];
 
     return (
-        <footer className="relative bg-card border-t border-border overflow-hidden pt-20 pb-10">
+        <footer className="relative bg-card border-t border-border overflow-hidden pt-12 md:pt-20 pb-10">
             {/* Background Decorations */}
             <div className="absolute top-0 left-1/4 w-64 h-64 bg-primary/5 rounded-full blur-[100px] pointer-events-none" />
             <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-indigo-500/5 rounded-full blur-[120px] pointer-events-none" />
 
-            <div className="max-w-7xl mx-auto px-6 relative z-10">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+            <div className="max-w-[1920px] mx-auto px-4 md:px-8 relative z-10">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12 mb-12 md:mb-16">
                     {/* Brand Section */}
                     <div className="space-y-6">
-                        <div className="flex items-center gap-2">
-                            <Image src="/logo.png" alt="CLC Logo" width={40} height={40} className="rounded-full shadow-lg shadow-primary/20" />
-                            <span className="font-black italic uppercase tracking-tighter text-2xl">CLC</span>
-                        </div>
+                        <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
+                            <Image src="/logo.png" alt="CLC Logo" width={40} height={40} className="rounded-full shadow-lg" />
+                            <div className="flex flex-col -space-y-1">
+                                <span className="font-black italic uppercase tracking-tighter text-xl leading-none">Christian Life Center</span>
+                                <span className="text-[10px] pt-1 font-black uppercase tracking-[0.3em] text-primary leading-none ml-0.5">Tagum</span>
+                            </div>
+                        </Link>
                         <p className="text-sm text-muted-foreground font-medium leading-relaxed">
                             Dedicated to fostering spiritual growth, community impact, and authentic worship in Tagum City since inception. Join our global family today.
                         </p>
@@ -72,7 +75,7 @@ export default function Footer() {
                         <h4 className="font-black uppercase text-xs tracking-[0.2em] text-foreground">Navigation</h4>
                         <ul className="space-y-4">
                             {[
-                                { name: "About CLC", href: "/about" },
+                                { name: "About Christian Life Center Tagum ", href: "/about" },
                                 { name: "Our Locations", href: "/locations" },
                                 { name: "Ministries", href: "/ministries" },
                                 { name: "Giving", href: "/giving" },

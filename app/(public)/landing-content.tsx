@@ -59,7 +59,7 @@ export default function LandingContent() {
     return (
         <div className="flex flex-col min-h-screen bg-background relative selection:bg-primary/20">
             {/* HERO SECTION */}
-            <section className="relative min-h-screen flex flex-col overflow-hidden pt-20 md:pt-32 px-6">
+            <section className="relative min-h-screen flex flex-col overflow-hidden pt-20 md:pt-32 px-4 md:px-8">
                 <div className="absolute inset-0 z-0">
                     <Image
                         src="/church_hero_worship_1767400361470.png"
@@ -72,8 +72,8 @@ export default function LandingContent() {
                     <div className="absolute inset-0 bg-linear-to-b from-transparent via-background/60 to-background" />
                 </div>
 
-                <div className="relative z-10 flex-1 flex items-center justify-center w-full">
-                    <div className="max-w-7xl mx-auto w-full mb-12">
+                <div className="relative z-10 flex-1 flex items-center justify-center w-full md:pt-4">
+                    <div className="max-w-[1920px] mx-auto w-full mb-12">
                         <motion.div
                             initial={{ opacity: 0, scale: 0.9 }}
                             animate={{ opacity: 1, scale: 1 }}
@@ -132,9 +132,9 @@ export default function LandingContent() {
             </section>
 
             {/* EXPERIENCE SECTION */}
-            <section className="py-24 bg-card/10 relative overflow-hidden border-b border-border/50">
+            <section className="py-12 md:py-20 bg-card/10 relative overflow-hidden border-b border-border/50">
                 <div className="absolute inset-0 bg-radial-[at_center_center] from-primary/5 via-transparent to-transparent opacity-50" />
-                <div className="max-w-7xl mx-auto px-6 relative z-10 space-y-20">
+                <div className="max-w-[1920px] mx-auto px-4 md:px-8 relative z-10 space-y-12 md:space-y-20">
                     <div className="text-center space-y-4 max-w-3xl mx-auto">
                         <h2 className="text-5xl md:text-7xl font-black tracking-tighter text-foreground uppercase italic leading-none">
                             Find the right <br />
@@ -219,8 +219,8 @@ export default function LandingContent() {
             </section>
 
             {/* GET INVOLVED SECTION */}
-            <section className="py-24 px-6 relative bg-background/50">
-                <div className="max-w-7xl mx-auto space-y-16">
+            <section className="py-12 md:py-20 px-4 md:px-8 relative bg-background/50">
+                <div className="max-w-[1920px] mx-auto space-y-16">
                     <div className="text-center space-y-4">
                         <h2 className="text-5xl md:text-7xl font-black tracking-tighter text-foreground uppercase italic leading-none">
                             How To <span className="text-primary">Get Involved</span>
@@ -284,8 +284,8 @@ export default function LandingContent() {
             </section>
 
             {/* ABOUT SECTION */}
-            <section id="about" className="py-16 md:py-20 px-6 relative">
-                <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+            <section id="about" className="py-12 md:py-20 px-4 md:px-8 relative">
+                <div className="max-w-[1920px] mx-auto grid md:grid-cols-2 gap-12 items-center">
                     <motion.div
                         {...fadeIn}
                         className="space-y-6"
@@ -343,8 +343,8 @@ export default function LandingContent() {
 
 
             {/* SERVICES SECTION */}
-            <section id="services" className="py-16 md:py-20 px-6 relative">
-                <div className="max-w-7xl mx-auto">
+            <section id="services" className="py-12 md:py-20 px-4 md:px-8 relative">
+                <div className="max-w-[1920px] mx-auto">
                     <div className="flex flex-col md:flex-row justify-between items-end gap-8 mb-12">
                         <motion.div {...fadeIn} className="space-y-4">
                             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20">
@@ -429,7 +429,7 @@ export default function LandingContent() {
             </AnimatePresence>
 
             {/* FINAL CTA */}
-            <section className="py-16 md:py-20 px-6 text-center border-t border-border mt-auto">
+            <section className="py-12 md:py-20 px-4 md:px-8 text-center border-t border-border mt-auto">
                 <div className="max-w-2xl mx-auto space-y-8">
                     <motion.div {...fadeIn} className="space-y-4">
                         <h2 className="text-4xl md:text-5xl font-black tracking-tight uppercase italic drop-shadow-sm">Ready to <span className="text-primary underline decoration-primary/20 underline-offset-8">be a part</span> of CLC?</h2>
@@ -451,6 +451,6 @@ export default function LandingContent() {
                     </div>
                 </div>
             </section>
-        </div >
+        </div>
     );
 }

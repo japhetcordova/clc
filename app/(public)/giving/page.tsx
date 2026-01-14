@@ -29,13 +29,13 @@ export default function GivingPage() {
     return (
         <div className="flex flex-col min-h-screen bg-background relative overflow-hidden">
             {/* HEADER */}
-            <section className="relative pt-32 pb-20 overflow-hidden bg-linear-to-b from-indigo-500/10 via-transparent to-transparent">
+            <section className="relative pt-24 pb-12 md:pt-32 md:pb-20 overflow-hidden bg-linear-to-b from-indigo-500/10 via-transparent to-transparent">
                 <div className="absolute inset-0 z-0 pointer-events-none">
                     <div className="absolute top-0 right-1/4 w-[600px] h-[600px] bg-primary/20 rounded-full blur-[180px]" />
                     <div className="absolute bottom-0 left-1/4 w-[400px] h-[400px] bg-indigo-500/10 rounded-full blur-[150px]" />
                 </div>
 
-                <div className="relative z-10 max-w-7xl mx-auto px-6 text-center space-y-6">
+                <div className="relative z-10 max-w-[1920px] mx-auto px-4 md:px-8 text-center space-y-6 md:pt-4">
                     <motion.div
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
@@ -56,9 +56,9 @@ export default function GivingPage() {
             </section>
 
             {/* GIVING OPTIONS */}
-            <section className="py-24 px-6 relative">
-                <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-start">
-                    <motion.div {...fadeIn} className="space-y-12">
+            <section className="py-12 md:py-20 px-4 md:px-8 relative">
+                <div className="max-w-[1920px] mx-auto grid lg:grid-cols-2 gap-8 md:gap-16 items-start">
+                    <motion.div {...fadeIn} className="space-y-8 md:space-y-12">
                         <div className="space-y-4 text-center lg:text-left">
                             <h2 className="text-4xl font-black uppercase italic tracking-tight italic">Why We <span className="text-primary">Give</span></h2>
                             <p className="text-muted-foreground font-medium leading-relaxed italic">
@@ -113,7 +113,7 @@ export default function GivingPage() {
                         whileInView={{ opacity: 1, scale: 1 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.8 }}
-                        className="bg-primary p-12 rounded-[4rem] text-white space-y-8 shadow-2xl relative overflow-hidden group"
+                        className="bg-primary p-8 md:p-12 rounded-[3rem] md:rounded-[4rem] text-white space-y-8 shadow-2xl relative overflow-hidden group"
                     >
                         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-[100px] -mr-32 -mt-32 group-hover:scale-150 transition-transform duration-1000" />
 
@@ -150,8 +150,8 @@ export default function GivingPage() {
             </section>
 
             {/* FAQ ON GIVING */}
-            <section className="py-24 px-6 bg-muted/20 relative">
-                <div className="max-w-3xl mx-auto space-y-12 text-center">
+            <section className="py-12 md:py-20 px-4 md:px-8 bg-muted/20 relative">
+                <div className="max-w-4xl mx-auto space-y-12 text-center">
                     <h2 className="text-3xl font-black uppercase italic tracking-tight italic">Giving <span className="text-primary">Questions</span></h2>
                     <div className="space-y-6 text-left">
                         {[
@@ -171,7 +171,7 @@ export default function GivingPage() {
             </section>
 
             {/* FINAL THOUGHT */}
-            <section className="py-24 px-6 text-center">
+            <section className="py-12 md:py-20 px-4 md:px-8 text-center">
                 <div className="max-w-2xl mx-auto space-y-8">
                     <div className="w-16 h-1 w-16 bg-primary mx-auto rounded-full" />
                     <p className="text-xl font-black italic uppercase tracking-tighter leading-tight">

@@ -54,15 +54,23 @@ export async function getVOTD() {
             const thoughtsMatch = html.match(/<h3>Thoughts on Today's Verse...<\/h3>([\s\S]*?)<h3>/i);
             const prayerMatch = html.match(/<h3>My Prayer...<\/h3>([\s\S]*?)<h3>/i);
 
+            const cleanContent = (content: string) => {
+                let text = content
+                    .replace(/<br\s*\/?>/gi, '\n')
+                    .replace(/<\/p>/gi, '\n')
+                    .replace(/<[^>]*>/g, '')
+                    // Only split if asterisks are preceded by whitespace (likely a footer)
+                    // and strictly not if they are attached to a word (likely a marker)
+                    .replace(/\s+(\*{1,4})/g, '\n$1');
+
+                return decodeHTMLEntities(text.split("The Thoughts and Prayer")[0].trim());
+            };
+
             if (thoughtsMatch) {
-                thoughts = decodeHTMLEntities(
-                    thoughtsMatch[1].replace(/<[^>]*>/g, '').trim().split("The Thoughts and Prayer")[0].trim()
-                );
+                thoughts = cleanContent(thoughtsMatch[1]);
             }
             if (prayerMatch) {
-                prayer = decodeHTMLEntities(
-                    prayerMatch[1].replace(/<[^>]*>/g, '').trim().split("The Thoughts and Prayer")[0].trim()
-                );
+                prayer = cleanContent(prayerMatch[1]);
             }
         }
 
