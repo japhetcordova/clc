@@ -207,6 +207,7 @@ export default function LocationsPage() {
                     locations={filteredLocations}
                     activeLocationId={activeLocationId}
                     onLocationSelect={handleLocationSelect}
+                    view={view}
                 />
             </main>
 

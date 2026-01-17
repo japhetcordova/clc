@@ -15,24 +15,35 @@ export function AboutStory({ fadeIn }: AboutStoryProps) {
                 <motion.div {...fadeIn} className="space-y-8">
                     <div className="space-y-4">
                         <h2 className="text-4xl font-black uppercase italic tracking-tight">How It <span className="text-primary">All Started</span></h2>
-                        <p className="text-muted-foreground font-medium leading-relaxed">
-                            Christian Life Center began with a small group of faithful individuals who shared a vision for a church that would be a beacon of hope in Tagum City. What started as a living room gathering has grown into a global family spanning multiple clusters and networks.
-                        </p>
-                        <p className="text-muted-foreground font-medium leading-relaxed">
-                            Our journey is marked by God's faithfulness, countless transformed lives, and a relentless passion to serve our generation with the Gospel.
-                        </p>
+                        <div className="space-y-4 text-muted-foreground font-medium leading-relaxed">
+                            <p className="text-foreground italic font-black text-lg">
+                                &quot;What started out as a small gathering have grown into a great congregation, and it was all made possible by the God of possibilities.&quot;
+                            </p>
+                            <p>
+                                Our Senior Pastors Jeser and Arlene Molina started forming cell groups in June 2012. They endured travelling from Davao to Tagum on weekdays to shepherd small groups. The calling God put in their hearts made them to do so and set their vision to make Jesus win. They started winning souls in campus, company and community. With the help of several church leaders in Tagum, they have established cell groups in campuses.
+                            </p>
+                            <p>
+                                The very first Sunday Service of CLC Tagum happened last February 2013 attended by 52 persons only. Moving from one place to another, the church finally settled in the big HUB last July 19, 2019. Today, CLC Tagum has a population of about 1000 cell members and a total of 122 cell groups.
+                            </p>
+                            <p>
+                                The world halted for a while because of COVID-19 but cell groups strengthened our leaders. Since people could not go to church, the church went to them instead. With the 122 passionate leaders who are willing to be uncomfortable to comfort others, cell groups continued to flourish. Our biggest breakthrough happened with the launching of our online services, helping us to be unstoppable.
+                            </p>
+                            <p>
+                                CLC Tagum has established outreaches in Mati, Dujali, Asuncion, Pagsabangan, Sto. Tomas and several community outreaches in Barangays of Tagum City. In CLC, we seek to be one church in many locations, passionate to God and compassionate to people, envisioning to be a church that adds value to others.
+                            </p>
+                        </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-6">
                         <div className="space-y-2">
                             <Users className="w-6 h-6 text-primary" />
                             <h3 className="font-black uppercase text-xs tracking-widest">Growing Family</h3>
-                            <p className="text-[10px] text-muted-foreground font-medium leading-relaxed">From 10 members to a global community.</p>
+                            <p className="text-[10px] text-muted-foreground font-medium leading-relaxed">1000+ members and 122 cell groups.</p>
                         </div>
                         <div className="space-y-2">
                             <Award className="w-6 h-6 text-amber-500" />
-                            <h3 className="font-black uppercase text-xs tracking-widest">Faithful Service</h3>
-                            <p className="text-[10px] text-muted-foreground font-medium leading-relaxed">Decades of commitment to our local community.</p>
+                            <h3 className="font-black uppercase text-xs tracking-widest">Historic Move</h3>
+                            <p className="text-[10px] text-muted-foreground font-medium leading-relaxed">Settled in the Big HUB on July 19, 2019.</p>
                         </div>
                     </div>
                 </motion.div>
@@ -73,8 +84,8 @@ export function AboutStory({ fadeIn }: AboutStoryProps) {
                     </div>
                     <div className="absolute -bottom-6 -right-6 p-8 rounded-[2rem] bg-primary text-white shadow-2xl max-w-[200px] hidden xl:block z-10">
                         <History className="w-8 h-8 mb-3" />
-                        <h4 className="font-black text-xl italic uppercase tracking-tighter">Established</h4>
-                        <p className="text-[10px] font-bold opacity-80 uppercase mt-1">Founding years of faith and service.</p>
+                        <h4 className="font-black text-xl italic uppercase tracking-tighter">Feb 2013</h4>
+                        <p className="text-[10px] font-bold opacity-80 uppercase mt-1">First Sunday Service of CLC Tagum.</p>
                     </div>
                 </motion.div>
             </div>

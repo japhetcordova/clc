@@ -27,6 +27,7 @@ interface MapProps {
     locations: Location[];
     activeLocationId?: string | null;
     onLocationSelect?: (id: string | null) => void;
+    view?: "list" | "map";
 }
 
 export default function Map(props: MapProps) {

@@ -21,10 +21,20 @@ interface MapClientProps {
     locations: Location[];
     activeLocationId?: string | null;
     onLocationSelect?: (id: string | null) => void;
+    view?: "list" | "map";
 }
 
-function MapUpdater({ locations, activeLocationId }: { locations: Location[]; activeLocationId?: string | null }) {
+function MapUpdater({ locations, activeLocationId, view }: { locations: Location[]; activeLocationId?: string | null; view?: "list" | "map" }) {
     const map = useMap();
+
+    useEffect(() => {
+        // Force invalidate size when view changes or component mounts
+        const timer = setTimeout(() => {
+            map.invalidateSize();
+        }, 400);
+
+        return () => clearTimeout(timer);
+    }, [map, view]);
 
     useEffect(() => {
         if (activeLocationId) {
@@ -34,6 +44,8 @@ function MapUpdater({ locations, activeLocationId }: { locations: Location[]; ac
                     animate: true,
                     duration: 1
                 });
+                // Invalidate size again after moving to ensure full coverage
+                setTimeout(() => map.invalidateSize(), 500);
             }
         }
     }, [activeLocationId, locations, map]);
@@ -41,12 +53,14 @@ function MapUpdater({ locations, activeLocationId }: { locations: Location[]; ac
     return null;
 }
 
-export default function MapClient({ locations, activeLocationId, onLocationSelect }: MapClientProps) {
+export default function MapClient({ locations, activeLocationId, onLocationSelect, view }: MapClientProps) {
     return (
         <div className="w-full h-full min-h-[500px] overflow-hidden relative z-0">
             <style jsx global>{`
                 .leaflet-container {
                     background: #020617 !important;
+                    height: 100% !important;
+                    width: 100% !important;
                 }
                 .leaflet-popup-content-wrapper {
                     background: rgba(15, 23, 42, 0.8) !important;
@@ -62,7 +76,12 @@ export default function MapClient({ locations, activeLocationId, onLocationSelec
                 }
                 .leaflet-popup-content {
                     margin: 0 !important;
-                    width: 260px !important;
+                    width: 280px !important;
+                }
+                @media (max-width: 640px) {
+                    .leaflet-popup-content {
+                        width: 240px !important;
+                    }
                 }
                 .leaflet-attribution-container {
                     background: rgba(2, 6, 23, 0.6) !important;
@@ -77,7 +96,7 @@ export default function MapClient({ locations, activeLocationId, onLocationSelec
             <MapContainer
                 center={MAP_CONFIG.defaultCenter}
                 zoom={MAP_CONFIG.defaultZoom}
-                scrollWheelZoom={true}
+                scrollWheelZoom={false}
                 className="w-full h-full"
                 zoomControl={false}
                 style={{ height: "100%", width: "100%" }}
@@ -86,7 +105,7 @@ export default function MapClient({ locations, activeLocationId, onLocationSelec
                     attribution={MAP_CONFIG.attribution}
                     url={MAP_CONFIG.tileLayer}
                 />
-                <MapUpdater locations={locations} activeLocationId={activeLocationId} />
+                <MapUpdater locations={locations} activeLocationId={activeLocationId} view={view} />
                 {locations.map((loc) => (
                     <Marker
                         key={loc.id}
