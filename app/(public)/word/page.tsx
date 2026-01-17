@@ -48,7 +48,7 @@ export default async function VOTDPage() {
                 <section className="relative pt-8 pb-12 overflow-hidden mb-8 -mx-4 md:-mx-8 px-4 md:px-8 border-b border-border/50">
                     <div className="absolute inset-0 z-0">
                         <Image
-                            src="/bg/word.png"
+                            src="/bg/word.webp"
                             alt="Word Background"
                             fill
                             className="object-cover opacity-20 scale-105"

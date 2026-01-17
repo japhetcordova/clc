@@ -17,7 +17,7 @@ interface DigitalIDCardProps {
 }
 
 export default function DigitalIDCard({ user, qrValue, backgroundVariant = 0, isDark = true }: DigitalIDCardProps) {
-    const bgImages = ["", "/1.png", "/2.png", "/3.png"];
+    const bgImages = ["", "/1.webp", "/2.webp", "/3.webp"];
     const currentBg = bgImages[backgroundVariant];
     const textColor = isDark ? "text-white" : "text-slate-900";
     const subTextColor = isDark ? "text-white/40" : "text-slate-500";

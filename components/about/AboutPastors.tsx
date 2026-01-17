@@ -82,7 +82,7 @@ export function AboutPastors({ fadeIn }: AboutPastorsProps) {
                     <div className="relative z-10">
                         <div className="aspect-[4/5] rounded-[4rem] overflow-hidden shadow-[0_48px_80px_-16px_rgba(0,0,0,0.6)] ring-1 ring-white/10 relative group">
                             <Image
-                                src="/pastors.png"
+                                src="/pastors.webp"
                                 alt="Ptr Jeser and Ptra Arlene Molina"
                                 fill
                                 className="object-cover transition-transform duration-1000 group-hover:scale-110"

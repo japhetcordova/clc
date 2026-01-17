@@ -32,7 +32,7 @@ export default function GivingPage() {
             <section className="relative pt-24 pb-12 md:pt-32 md:pb-20 overflow-hidden">
                 <div className="absolute inset-0 z-0">
                     <Image
-                        src="/bg/giving.png"
+                        src="/bg/giving.webp"
                         alt="Giving Background"
                         fill
                         className="object-cover opacity-20 scale-105"

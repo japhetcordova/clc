@@ -47,7 +47,7 @@ export default function Footer() {
                     {/* Brand Section */}
                     <div className="space-y-6">
                         <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-                            <Image src="/logo.png" alt="CLC Logo" width={40} height={40} className="rounded-full shadow-lg" />
+                            <Image src="/logo.webp" alt="CLC Logo" width={40} height={40} className="rounded-full shadow-lg" />
                             <div className="flex flex-col -space-y-1">
                                 <span className="font-black italic uppercase tracking-tighter text-xl leading-none">Christian Life Center</span>
                                 <span className="text-[10px] pt-1 font-black uppercase tracking-[0.3em] text-primary leading-none ml-0.5">Tagum</span>

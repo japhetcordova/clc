@@ -13,7 +13,7 @@ const upcomingEvents = [
         date: "Jan 24, 2026",
         time: "6:00 PM",
         location: "Main Sanctuary",
-        image: "/events/youth-night.png",
+        image: "/events/youth-night.webp",
         tag: "Youth"
     },
     {
@@ -21,7 +21,7 @@ const upcomingEvents = [
         date: "Feb 08, 2026",
         time: "7:00 PM",
         location: "Tagum City Pavilion",
-        image: "/events/worship-concert.png",
+        image: "/events/worship-concert.webp",
         tag: "Concert"
     },
     {
@@ -29,7 +29,7 @@ const upcomingEvents = [
         date: "Mar 15, 2026",
         time: "8:00 AM",
         location: "Rotary Park",
-        image: "/events/family-day.png",
+        image: "/events/family-day.webp",
         tag: "Community"
     },
     {
@@ -37,7 +37,7 @@ const upcomingEvents = [
         date: "Apr 12, 2026",
         time: "9:00 AM",
         location: "CLC Conference Hall",
-        image: "/events/youth-night.png",
+        image: "/events/youth-night.webp",
         tag: "Training"
     }
 ];

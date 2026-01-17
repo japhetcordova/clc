@@ -20,7 +20,7 @@ export const DEFAULT_MINISTRIES: Ministry[] = [
             "Maintain spiritual preparation",
             "Collaborate on song selection"
         ],
-        thumbnail: "/location_thumbnails/tagum.png", // Reusing existing thumbnails for now
+        thumbnail: "/location_thumbnails/tagum.webp", // Reusing existing thumbnails for now
         category: "Creative"
     },
     {
@@ -34,7 +34,7 @@ export const DEFAULT_MINISTRIES: Ministry[] = [
             "Live streaming management",
             "Event coverage"
         ],
-        thumbnail: "/location_thumbnails/dujali.png",
+        thumbnail: "/location_thumbnails/dujali.webp",
         category: "Creative"
     },
     {
@@ -48,7 +48,7 @@ export const DEFAULT_MINISTRIES: Ministry[] = [
             "Assist with communion",
             "Maintain auditorium order"
         ],
-        thumbnail: "/location_thumbnails/valencia.png",
+        thumbnail: "/location_thumbnails/valencia.webp",
         category: "Hospitality"
     },
     {
@@ -62,7 +62,7 @@ export const DEFAULT_MINISTRIES: Ministry[] = [
             "Emergency response",
             "Venue safety checks"
         ],
-        thumbnail: "/location_thumbnails/asuncion.png",
+        thumbnail: "/location_thumbnails/asuncion.webp",
         category: "Hospitality"
     },
     {
@@ -76,7 +76,7 @@ export const DEFAULT_MINISTRIES: Ministry[] = [
             "Service flow coordination",
             "Prop and set design"
         ],
-        thumbnail: "/location_thumbnails/kapalong.png",
+        thumbnail: "/location_thumbnails/kapalong.webp",
         category: "Technical"
     },
     {
@@ -90,7 +90,7 @@ export const DEFAULT_MINISTRIES: Ministry[] = [
             "Ensure child safety",
             "Parent communication"
         ],
-        thumbnail: "/location_thumbnails/cubao.png",
+        thumbnail: "/location_thumbnails/cubao.webp",
         category: "Family"
     },
     {
@@ -104,7 +104,7 @@ export const DEFAULT_MINISTRIES: Ministry[] = [
             "Visual assets display",
             "Software operation"
         ],
-        thumbnail: "/location_thumbnails/cebu.png",
+        thumbnail: "/location_thumbnails/cebu.webp",
         category: "Technical"
     },
     {
@@ -118,7 +118,7 @@ export const DEFAULT_MINISTRIES: Ministry[] = [
             "Liaison between speaker and team",
             "Resource & material preparation"
         ],
-        thumbnail: "/location_thumbnails/stotomas.png",
+        thumbnail: "/location_thumbnails/stotomas.webp",
         category: "Operations"
     },
     {
@@ -132,7 +132,7 @@ export const DEFAULT_MINISTRIES: Ministry[] = [
             "Maintain confidentiality",
             "Adhere to financial protocols"
         ],
-        thumbnail: "/location_thumbnails/cdo.png",
+        thumbnail: "/location_thumbnails/cdo.webp",
         category: "Operations"
     },
     {
@@ -146,7 +146,7 @@ export const DEFAULT_MINISTRIES: Ministry[] = [
             "Creative service planning",
             "Costume & prop prep"
         ],
-        thumbnail: "/location_thumbnails/stotomas.png",
+        thumbnail: "/location_thumbnails/stotomas.webp",
         category: "Creative"
     },
     {
@@ -160,7 +160,7 @@ export const DEFAULT_MINISTRIES: Ministry[] = [
             "Congregation engagement",
             "Platform presence"
         ],
-        thumbnail: "/location_thumbnails/mati.png",
+        thumbnail: "/location_thumbnails/mati.webp",
         category: "Operations"
     },
     {
@@ -174,7 +174,7 @@ export const DEFAULT_MINISTRIES: Ministry[] = [
             "Editing & proofreading",
             "Content strategy"
         ],
-        thumbnail: "/location_thumbnails/tagum.png",
+        thumbnail: "/location_thumbnails/tagum.webp",
         category: "Creative"
     },
     {
@@ -188,7 +188,7 @@ export const DEFAULT_MINISTRIES: Ministry[] = [
             "Maintenance repairs",
             "Supply inventory"
         ],
-        thumbnail: "/location_thumbnails/dujali.png",
+        thumbnail: "/location_thumbnails/dujali.webp",
         category: "Hospitality"
     }
 ];
