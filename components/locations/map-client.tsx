@@ -46,23 +46,32 @@ export default function MapClient({ locations, activeLocationId, onLocationSelec
         <div className="w-full h-full min-h-[500px] overflow-hidden relative z-0">
             <style jsx global>{`
                 .leaflet-container {
-                    background: #f8fafc !important;
+                    background: #020617 !important;
                 }
                 .leaflet-popup-content-wrapper {
-                    background: rgba(255, 255, 255, 0.9) !important;
-                    backdrop-filter: blur(12px);
-                    border: 1px solid rgba(0, 0, 0, 0.05);
-                    border-radius: 1.5rem !important;
-                    color: #0f172a !important;
+                    background: rgba(15, 23, 42, 0.8) !important;
+                    backdrop-filter: blur(20px);
+                    border: 1px solid rgba(255, 255, 255, 0.1);
+                    border-radius: 2rem !important;
+                    color: #f8fafc !important;
                     padding: 0 !important;
-                    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1) !important;
+                    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
                 }
                 .leaflet-popup-tip {
-                    background: rgba(255, 255, 255, 0.9) !important;
+                    background: rgba(15, 23, 42, 0.8) !important;
                 }
                 .leaflet-popup-content {
                     margin: 0 !important;
-                    width: 240px !important;
+                    width: 260px !important;
+                }
+                .leaflet-attribution-container {
+                    background: rgba(2, 6, 23, 0.6) !important;
+                    backdrop-filter: blur(4px);
+                    color: #64748b !important;
+                    border: none !important;
+                }
+                .leaflet-attribution-container a {
+                    color: #94a3b8 !important;
                 }
             `}</style>
             <MapContainer
@@ -74,8 +83,8 @@ export default function MapClient({ locations, activeLocationId, onLocationSelec
                 style={{ height: "100%", width: "100%" }}
             >
                 <TileLayer
-                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-                    url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+                    attribution={MAP_CONFIG.attribution}
+                    url={MAP_CONFIG.tileLayer}
                 />
                 <MapUpdater locations={locations} activeLocationId={activeLocationId} />
                 {locations.map((loc) => (
@@ -90,21 +99,21 @@ export default function MapClient({ locations, activeLocationId, onLocationSelec
                         }}
                     >
                         <Popup>
-                            <div className="p-5 space-y-3">
+                            <div className="p-6 space-y-4">
                                 <div>
-                                    <h3 className="font-black uppercase italic text-sm tracking-tight text-slate-900 mb-0.5">{loc.name}</h3>
-                                    <p className="text-[10px] font-bold text-primary uppercase tracking-widest">{loc.type}</p>
+                                    <h3 className="font-black uppercase italic text-base tracking-tight text-white mb-0.5">{loc.name}</h3>
+                                    <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">{loc.type}</p>
                                 </div>
-                                <p className="text-[10px] text-slate-500 font-medium leading-relaxed">{loc.address}</p>
-                                <div className="pt-3 border-t border-slate-100 flex flex-col gap-3">
-                                    <div className="space-y-1.5">
+                                <p className="text-[11px] text-slate-400 font-medium leading-relaxed">{loc.address}</p>
+                                <div className="pt-4 border-t border-white/10 flex flex-col gap-4">
+                                    <div className="space-y-2">
                                         <div className="flex items-center gap-2">
-                                            <div className="w-1 h-1 rounded-full bg-primary"></div>
-                                            <span className="text-[9px] font-black uppercase tracking-widest text-slate-400">Service Times</span>
+                                            <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></div>
+                                            <span className="text-[9px] font-black uppercase tracking-widest text-slate-500">Service Times</span>
                                         </div>
-                                        <div className="flex flex-wrap gap-1.5">
+                                        <div className="flex flex-wrap gap-2">
                                             {loc.serviceTimes.map((time, idx) => (
-                                                <span key={idx} className="text-[8px] font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded-md">
+                                                <span key={idx} className="text-[9px] font-black text-slate-300 bg-white/5 px-2.5 py-1 rounded-lg border border-white/5">
                                                     {time}
                                                 </span>
                                             ))}

@@ -17,6 +17,7 @@ import {
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import Image from "next/image";
 
 export default function GivingPage() {
     const fadeIn = {
@@ -28,11 +29,16 @@ export default function GivingPage() {
 
     return (
         <div className="flex flex-col min-h-screen bg-background relative overflow-hidden">
-            {/* HEADER */}
-            <section className="relative pt-24 pb-12 md:pt-32 md:pb-20 overflow-hidden bg-linear-to-b from-indigo-500/10 via-transparent to-transparent">
-                <div className="absolute inset-0 z-0 pointer-events-none">
-                    <div className="absolute top-0 right-1/4 w-[600px] h-[600px] bg-primary/20 rounded-full blur-[180px]" />
-                    <div className="absolute bottom-0 left-1/4 w-[400px] h-[400px] bg-indigo-500/10 rounded-full blur-[150px]" />
+            <section className="relative pt-24 pb-12 md:pt-32 md:pb-20 overflow-hidden">
+                <div className="absolute inset-0 z-0">
+                    <Image
+                        src="/bg/giving.png"
+                        alt="Giving Background"
+                        fill
+                        className="object-cover opacity-20 scale-105"
+                        priority
+                    />
+                    <div className="absolute inset-0 bg-linear-to-b from-background via-background/80 to-background" />
                 </div>
 
                 <div className="relative z-10 max-w-[1920px] mx-auto px-4 md:px-8 text-center space-y-6 md:pt-4">

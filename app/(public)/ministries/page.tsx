@@ -79,36 +79,48 @@ export default function MinistriesPage() {
                 activeMinistryId && "hidden lg:flex"
             )}>
                 {/* SEARCH & FILTERS HEADER */}
-                <div className="p-6 space-y-6 border-b border-border bg-background/50 backdrop-blur-xl">
-                    <div className="relative group">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
-                        <Input
-                            placeholder="Search ministries..."
-                            className="pl-12 h-12 rounded-full bg-muted/30 border-none focus-visible:ring-1 focus-visible:ring-primary/50 transition-all font-medium"
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
+                <div className="p-6 space-y-6 border-b border-border relative overflow-hidden">
+                    <div className="absolute inset-0 z-0">
+                        <Image
+                            src="/bg/ministries.png"
+                            alt="Ministries Background"
+                            fill
+                            className="object-cover opacity-10 scale-105"
+                            priority
                         />
+                        <div className="absolute inset-0 bg-linear-to-b from-background/80 via-background to-background" />
                     </div>
+                    <div className="relative z-10 space-y-6">
+                        <div className="relative group">
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                            <Input
+                                placeholder="Search ministries..."
+                                className="pl-12 h-12 rounded-full bg-muted/30 border-none focus-visible:ring-1 focus-visible:ring-primary/50 transition-all font-medium"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                            />
+                        </div>
 
-                    <div className="flex gap-6 overflow-x-auto pb-2 custom-scrollbar-horizontal scrollbar-hide">
-                        {categories.map((category) => (
-                            <button
-                                key={category}
-                                onClick={() => setActiveCategory(category)}
-                                className={cn(
-                                    "whitespace-nowrap pb-2 text-[10px] font-black uppercase tracking-[0.2em] transition-all relative shrink-0",
-                                    activeCategory === category ? "text-primary" : "text-muted-foreground hover:text-foreground"
-                                )}
-                            >
-                                {category}
-                                {activeCategory === category && (
-                                    <motion.div
-                                        layoutId="activeTab"
-                                        className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"
-                                    />
-                                )}
-                            </button>
-                        ))}
+                        <div className="flex gap-6 overflow-x-auto pb-2 custom-scrollbar-horizontal scrollbar-hide">
+                            {categories.map((category) => (
+                                <button
+                                    key={category}
+                                    onClick={() => setActiveCategory(category)}
+                                    className={cn(
+                                        "whitespace-nowrap pb-2 text-[10px] font-black uppercase tracking-[0.2em] transition-all relative shrink-0",
+                                        activeCategory === category ? "text-primary" : "text-muted-foreground hover:text-foreground"
+                                    )}
+                                >
+                                    {category}
+                                    {activeCategory === category && (
+                                        <motion.div
+                                            layoutId="activeTab"
+                                            className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"
+                                        />
+                                    )}
+                                </button>
+                            ))}
+                        </div>
                     </div>
                 </div>
 

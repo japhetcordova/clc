@@ -49,9 +49,15 @@ export default async function EventsPage() {
         <div className="flex flex-col min-h-screen bg-background relative overflow-hidden">
             {/* HEADER */}
             <section className="relative pt-24 pb-12 md:pt-32 md:pb-20 overflow-hidden">
-                <div className="absolute inset-0 z-0 pointer-events-none">
-                    <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-rose-500/20 rounded-full blur-[150px]" />
-                    <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-primary/10 rounded-full blur-[120px]" />
+                <div className="absolute inset-0 z-0">
+                    <Image
+                        src="/bg/events.png"
+                        alt="Events Background"
+                        fill
+                        className="object-cover opacity-20 scale-105"
+                        priority
+                    />
+                    <div className="absolute inset-0 bg-linear-to-b from-background via-background/80 to-background" />
                 </div>
 
                 <div className="relative z-10 max-w-[1920px] mx-auto px-4 md:px-8 space-y-8 md:pt-4">

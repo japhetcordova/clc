@@ -22,6 +22,7 @@ import {
     PenTool
 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { useParams } from "next/navigation";
 
@@ -73,9 +74,16 @@ export default function MinistryDetailPage() {
     return (
         <div className="flex flex-col min-h-screen bg-background">
             {/* HEADER */}
-            <section className="relative pt-32 pb-20 overflow-hidden bg-muted/20">
-                <div className="absolute inset-0 z-0 opacity-10">
-                    <div className="absolute top-0 right-0 w-96 h-96 bg-primary rounded-full blur-[120px]" />
+            <section className="relative pt-32 pb-20 overflow-hidden">
+                <div className="absolute inset-0 z-0">
+                    <Image
+                        src="/bg/ministries.png"
+                        alt="Ministry Background"
+                        fill
+                        className="object-cover opacity-10 scale-105"
+                        priority
+                    />
+                    <div className="absolute inset-0 bg-linear-to-b from-background via-background/80 to-background" />
                 </div>
 
                 <div className="relative z-10 max-w-7xl mx-auto px-6">

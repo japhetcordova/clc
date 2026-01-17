@@ -45,27 +45,40 @@ export default async function VOTDPage() {
         <div className="min-h-screen pt-20 pb-10 px-4 md:px-8">
             <div className="max-w-[1920px] mx-auto">
                 {/* HEADER */}
-                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
-                    <div className="space-y-2">
-                        <div className="inline-flex items-center md:mt-4 gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary">
-                            <BookOpen className="w-4 h-4" />
-                            <span className="text-[10px] font-bold uppercase tracking-widest text-primary">Daily Bread</span>
-                        </div>
-                        <h1 className="text-4xl md:text-6xl font-black tracking-tighter text-foreground uppercase italic leading-none">
-                            Verse of the <span className="text-primary">Day</span>
-                        </h1>
-                        <div className="flex flex-wrap items-center gap-4 text-muted-foreground">
-                            <div className="flex items-center gap-2">
-                                <Calendar className="w-4 h-4 text-primary" />
-                                <p className="font-bold uppercase tracking-widest text-xs italic">{data?.fullDate}</p>
+                <section className="relative pt-8 pb-12 overflow-hidden mb-8 -mx-4 md:-mx-8 px-4 md:px-8 border-b border-border/50">
+                    <div className="absolute inset-0 z-0">
+                        <Image
+                            src="/bg/word.png"
+                            alt="Word Background"
+                            fill
+                            className="object-cover opacity-20 scale-105"
+                            priority
+                        />
+                        <div className="absolute inset-0 bg-linear-to-b from-background via-background/80 to-background" />
+                    </div>
+
+                    <div className="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
+                        <div className="space-y-2">
+                            <div className="inline-flex items-center md:mt-4 gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary">
+                                <BookOpen className="w-4 h-4" />
+                                <span className="text-[10px] font-bold uppercase tracking-widest text-primary">Daily Bread</span>
                             </div>
-                            <Link href="/word/archive" className="text-[10px] font-black uppercase tracking-widest text-primary hover:underline flex items-center gap-1 group">
-                                Previous Verse of the Day
-                                <ChevronRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
-                            </Link>
+                            <h1 className="text-4xl md:text-6xl font-black tracking-tighter text-foreground uppercase italic leading-none">
+                                Verse of the <span className="text-primary">Day</span>
+                            </h1>
+                            <div className="flex flex-wrap items-center gap-4 text-muted-foreground">
+                                <div className="flex items-center gap-2">
+                                    <Calendar className="w-4 h-4 text-primary" />
+                                    <p className="font-bold uppercase tracking-widest text-xs italic">{data?.fullDate}</p>
+                                </div>
+                                <Link href="/word/archive" className="text-[10px] font-black uppercase tracking-widest text-primary hover:underline flex items-center gap-1 group">
+                                    Previous Verse of the Day
+                                    <ChevronRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                                </Link>
+                            </div>
                         </div>
                     </div>
-                </div>
+                </section>
 
                 <div className="grid lg:grid-cols-12 gap-6">
                     {/* MAIN CONTENT */}
