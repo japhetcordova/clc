@@ -62,7 +62,7 @@ export default function LandingContent() {
             <section className="relative min-h-screen flex flex-col overflow-hidden pt-20 md:pt-32 px-4 md:px-8">
                 <div className="absolute inset-0 z-0">
                     <Image
-                        src="/church_hero_worship_1767400361470.png"
+                        src="/church_hero_worship_1767400361470.webp"
                         alt="Church Worship"
                         fill
                         className="object-cover opacity-40 scale-110"
@@ -235,17 +235,17 @@ export default function LandingContent() {
                             {
                                 title: "Volunteer",
                                 desc: "Participate in the mission to advance the gospel by serving on a volunteer team.",
-                                image: "/involvement/volunteer.png"
+                                image: "/involvement/volunteer.webp"
                             },
                             {
                                 title: "Lead",
                                 desc: "Lead an eGroup, host a Watch Party or become a student leader.",
-                                image: "/involvement/lead.png"
+                                image: "/involvement/lead.webp"
                             },
                             {
                                 title: "Jobs",
                                 desc: "Explore job opportunities to use your gifts in a ministry setting.",
-                                image: "/involvement/jobs.png"
+                                image: "/involvement/jobs.webp"
                             }
                         ].map((item, i) => (
                             <motion.div
@@ -324,7 +324,7 @@ export default function LandingContent() {
                     >
                         <div className="relative aspect-square rounded-[3rem] overflow-hidden shadow-2xl ring-1 ring-border">
                             <Image
-                                src="/church_hero_worship_1767400361470.png"
+                                src="/church_hero_worship_1767400361470.webp"
                                 alt="Community"
                                 fill
                                 className="object-cover grayscale hover:grayscale-0 transition-all duration-700"
@@ -429,22 +429,34 @@ export default function LandingContent() {
             </AnimatePresence>
 
             {/* FINAL CTA */}
-            <section className="py-12 md:py-20 px-4 md:px-8 text-center border-t border-border mt-auto">
-                <div className="max-w-2xl mx-auto space-y-8">
-                    <motion.div {...fadeIn} className="space-y-4">
-                        <h2 className="text-4xl md:text-5xl font-black tracking-tight uppercase italic drop-shadow-sm">Ready to <span className="text-primary underline decoration-primary/20 underline-offset-8">be a part</span> of CLC?</h2>
-                        <p className="text-muted-foreground font-medium leading-relaxed">
+            <section className="relative py-24 md:py-40 px-4 md:px-8 text-center border-t border-border mt-auto overflow-hidden">
+                <div className="absolute inset-0 z-0">
+                    <Image
+                        src="/church_architecture_exterior_1767400425687.webp"
+                        alt="Church Building"
+                        fill
+                        className="object-cover opacity-30"
+                    />
+                    <div className="absolute inset-0 bg-linear-to-b from-background via-background/90 to-background" />
+                </div>
+
+                <div className="relative z-10 max-w-4xl mx-auto space-y-12">
+                    <motion.div {...fadeIn} className="space-y-6">
+                        <h2 className="text-5xl md:text-7xl font-black tracking-tight uppercase italic drop-shadow-2xl">
+                            Ready to <span className="text-primary underline decoration-primary/20 underline-offset-8">be a part</span> of CLC?
+                        </h2>
+                        <p className="text-muted-foreground text-lg md:text-xl font-medium leading-relaxed max-w-2xl mx-auto">
                             Start your journey with us today. Create your church profile and connect with a local cell network.
                         </p>
                     </motion.div>
-                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
                         <Link href="/registration" className="w-full sm:w-auto">
-                            <Button size="lg" className="h-14 w-full px-12 rounded-2xl bg-primary font-black text-lg shadow-2xl shadow-primary/20 hover:scale-105 transition-all">
-                                Get Started
+                            <Button size="lg" className="h-16 w-full px-12 rounded-2xl bg-primary font-black text-xl shadow-2xl shadow-primary/20 hover:scale-105 transition-all">
+                                Get Started Now
                             </Button>
                         </Link>
                         <Link href="/#about" className="w-full sm:w-auto">
-                            <Button size="lg" variant="ghost" className="h-14 w-full px-12 rounded-2xl font-black text-lg hover:bg-muted transition-all text-muted-foreground">
+                            <Button size="lg" variant="outline" className="h-16 w-full px-12 rounded-2xl font-black text-xl border-white/10 hover:bg-white/5 transition-all text-white backdrop-blur-md">
                                 Learn More
                             </Button>
                         </Link>

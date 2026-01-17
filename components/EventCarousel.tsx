@@ -81,11 +81,7 @@ export function EventCarousel() {
                                 />
                                 <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/20 to-transparent" />
 
-                                <div className="absolute top-4 left-4">
-                                    <span className="px-3 py-1 rounded-full bg-primary/90 backdrop-blur-md text-[9px] font-black uppercase tracking-widest text-white shadow-lg">
-                                        {event.tag}
-                                    </span>
-                                </div>
+
 
                                 <div className="absolute bottom-6 left-6 right-6 space-y-2">
                                     <h3 className="text-xl md:text-2xl font-black italic uppercase tracking-tighter text-white leading-none group-hover:text-primary transition-colors">
