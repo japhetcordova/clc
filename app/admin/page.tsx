@@ -11,6 +11,7 @@ import { TabSwitcher } from "./tab-switcher";
 import { trpcServer } from "@/lib/trpc/server";
 import WeeklyTrendsChart from "./weekly-trends-chart";
 import DemographicsDoubleRing from "./demographics-double-ring";
+import MemberSearch from "./member-search";
 
 import { cache } from "react";
 
@@ -31,6 +32,7 @@ const getAdminData = cache(async (params: {
     atOrder?: "asc" | "desc";
     memSort?: string;
     memOrder?: "asc" | "desc";
+    search?: string;
 }) => {
     const caller = await trpcServer();
     return caller.getAdminDashboard(params);
@@ -56,6 +58,7 @@ export default async function AdminDashboard({
         memSort?: string;
         memOrder?: "asc" | "desc";
         tab?: string;
+        search?: string;
     }>;
 }) {
     const params = await searchParams;
@@ -72,6 +75,7 @@ export default async function AdminDashboard({
             atOrder: params.atOrder,
             memSort: params.memSort,
             memOrder: params.memOrder,
+            search: params.search,
         }),
         getWeeklyTrendsData(),
     ]);
@@ -436,15 +440,19 @@ export default async function AdminDashboard({
 
                 <TabsContent value="members" className="space-y-6 sm:space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
                     <Card className="shadow-2xl border-border bg-card/50 backdrop-blur-xl rounded-[2rem] overflow-hidden">
-                        <CardHeader className="flex flex-row items-center justify-between border-b border-border/50 py-4 sm:py-6 px-4 sm:px-8">
-                            <div className="flex items-center gap-3">
+                        <CardHeader className="flex flex-col md:flex-row items-center justify-between border-b border-border/50 py-4 sm:py-6 px-4 sm:px-8 gap-4">
+                            <div className="flex items-center gap-3 w-full md:w-auto">
                                 <div className="p-2 bg-blue-600/10 rounded-xl">
                                     <Users className="w-5 h-5 text-blue-600" />
                                 </div>
                                 <CardTitle className="font-black text-lg sm:text-xl uppercase tracking-tighter">Registered Members</CardTitle>
                             </div>
-                            <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground bg-muted/50 px-3 py-1 rounded-full border border-border">
-                                {data.totalMembersCount} Total
+
+                            <div className="flex flex-col-reverse sm:flex-row items-center gap-3 w-full md:w-auto">
+                                <MemberSearch />
+                                <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground bg-muted/50 px-3 py-1 rounded-full border border-border shrink-0 ml-auto sm:ml-0">
+                                    {data.totalMembersCount} Total
+                                </div>
                             </div>
                         </CardHeader>
                         <CardContent className="p-0">

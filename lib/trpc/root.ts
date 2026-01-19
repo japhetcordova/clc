@@ -2,7 +2,7 @@ import { router, publicProcedure } from "./trpc";
 import { z } from "zod";
 import { db } from "@/db";
 import { users, attendance, events, dailyPins } from "@/db/schema";
-import { eq, and, desc, sql, count, asc, ilike, inArray } from "drizzle-orm";
+import { eq, and, desc, sql, count, asc, ilike, inArray, or } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 
@@ -127,22 +127,31 @@ export const appRouter = router({
             atOrder: z.enum(["asc", "desc"]).default("desc"),
             memSort: z.string().optional(),
             memOrder: z.enum(["asc", "desc"]).default("desc"),
+            search: z.string().optional(),
         }))
         .query(async ({ input }) => {
             const filterDate = input.date || new Date().toISOString().split('T')[0];
 
-            const filters = [eq(attendance.scanDate, filterDate)];
-            if (input.ministry && input.ministry !== "all") {
-                filters.push(eq(users.ministry, input.ministry));
-            }
-            if (input.network && input.network !== "all") {
-                filters.push(eq(users.network, input.network));
-            }
-            if (input.gender && input.gender !== "all") {
-                filters.push(eq(users.gender, input.gender));
-            }
-            if (input.cluster && input.cluster !== "all") {
-                filters.push(eq(users.cluster, input.cluster));
+            const sharedFilters = [];
+            if (input.ministry && input.ministry !== "all") sharedFilters.push(eq(users.ministry, input.ministry));
+            if (input.network && input.network !== "all") sharedFilters.push(eq(users.network, input.network));
+            if (input.gender && input.gender !== "all") sharedFilters.push(eq(users.gender, input.gender));
+            if (input.cluster && input.cluster !== "all") sharedFilters.push(eq(users.cluster, input.cluster));
+
+            const filters = [eq(attendance.scanDate, filterDate), ...sharedFilters];
+
+            const memberFilters = [...sharedFilters];
+            if (input.search) {
+                const searchCondition = or(
+                    ilike(users.firstName, `%${input.search}%`),
+                    ilike(users.lastName, `%${input.search}%`),
+                    ilike(sql`concat(${users.firstName}, ' ', ${users.lastName})`, `%${input.search}%`),
+                    ilike(users.contactNumber, `%${input.search}%`),
+                    ilike(users.qrCodeId, `%${input.search}%`)
+                );
+                if (searchCondition) {
+                    memberFilters.push(searchCondition);
+                }
             }
 
             const sortFieldMap: Record<string, any> = {
@@ -217,7 +226,10 @@ export const appRouter = router({
                 db.select({ name: users.network, count: count() }).from(users).groupBy(users.network).orderBy(desc(count())),
                 db.select({ name: users.gender, count: count() }).from(users).groupBy(users.gender),
                 db.select({ name: users.cluster, count: count() }).from(users).groupBy(users.cluster),
-                db.select().from(users).orderBy(input.memOrder === 'asc' ? asc(memberSortField) : desc(memberSortField)),
+                db.select()
+                    .from(users)
+                    .where(and(...memberFilters))
+                    .orderBy(input.memOrder === 'asc' ? asc(memberSortField) : desc(memberSortField)),
                 // Trend Stats (sum of last 3 dates)
                 db.select({ name: users.ministry, count: sql<number>`count(distinct ${users.id})` })
                     .from(attendance)
@@ -259,6 +271,35 @@ export const appRouter = router({
                 trendMinistryStats: trendMinistryStats.map(stat => ({ ...stat, count: Number(stat.count) })),
                 trendNetworkStats: trendNetworkStats.map(stat => ({ ...stat, count: Number(stat.count) }))
             };
+        }),
+
+    getMemberSuggestions: publicProcedure
+        .input(z.object({
+            query: z.string()
+        }))
+        .query(async ({ input }) => {
+            if (!input.query || input.query.length < 2) return [];
+
+            const suggestions = await db.select({
+                id: users.id,
+                firstName: users.firstName,
+                lastName: users.lastName,
+                qrCodeId: users.qrCodeId,
+                ministry: users.ministry,
+                network: users.network
+            })
+                .from(users)
+                .where(
+                    or(
+                        ilike(users.firstName, `%${input.query}%`),
+                        ilike(users.lastName, `%${input.query}%`),
+                        ilike(users.ministry, `%${input.query}%`),
+                        ilike(users.qrCodeId, `%${input.query}%`)
+                    )
+                )
+                .limit(5);
+
+            return suggestions;
         }),
 
     getSuggestions: publicProcedure
