@@ -384,7 +384,7 @@ export default async function AdminDashboard({
                                     <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-muted-foreground">Global Count</span>
                                 </div>
                             </CardHeader>
-                            <CardContent className="p-6 sm:p-8 space-y-5">
+                            <CardContent className="p-4 sm:p-8 space-y-3 h-[500px] sm:h-[600px] overflow-y-auto custom-scrollbar">
                                 {data.totalMinistryStats.map((stat) => (
                                     <div key={stat.name} className="space-y-2">
                                         <div className="flex justify-between text-[10px] sm:text-[11px] font-black uppercase tracking-tight text-foreground/80">
@@ -413,21 +413,18 @@ export default async function AdminDashboard({
                                     <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-muted-foreground">Reach</span>
                                 </div>
                             </CardHeader>
-                            <CardContent className="p-4 sm:p-8 space-y-3 max-h-[500px] sm:max-h-[600px] overflow-y-auto custom-scrollbar">
+                            <CardContent className="p-4 sm:p-8 space-y-3 h-[500px] sm:h-[600px] overflow-y-auto custom-scrollbar">
                                 {data.totalNetworkStats.map((stat) => (
-                                    <div key={stat.name} className="flex items-center justify-between p-3 sm:p-4 rounded-2xl bg-muted/20 border border-border/50 hover:bg-muted/40 transition-colors">
-                                        <div className="space-y-1">
-                                            <p className="text-[10px] sm:text-xs font-black uppercase tracking-tight">{stat.name}</p>
-                                            <div className="h-1 w-24 sm:w-32 bg-muted rounded-full">
-                                                <div
-                                                    className="h-full bg-blue-500 rounded-full"
-                                                    style={{ width: `${(stat.count / data.totalUsers) * 100}%` }}
-                                                />
-                                            </div>
+                                    <div key={stat.name} className="space-y-2">
+                                        <div className="flex justify-between text-[10px] sm:text-[11px] font-black uppercase tracking-tight text-foreground/80">
+                                            <span>{stat.name}</span>
+                                            <span className="text-blue-500">{stat.count} members</span>
                                         </div>
-                                        <div className="text-right">
-                                            <p className="text-base sm:text-lg font-black text-blue-600 leading-none">{stat.count}</p>
-                                            <p className="text-[8px] sm:text-[9px] font-bold text-muted-foreground uppercase">{((stat.count / data.totalUsers) * 100).toFixed(1)}%</p>
+                                        <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
+                                            <div
+                                                style={{ width: `${(stat.count / data.totalUsers) * 100}%` }}
+                                                className="h-full bg-blue-500 rounded-full transition-all duration-1000 ease-out"
+                                            />
                                         </div>
                                     </div>
                                 ))}

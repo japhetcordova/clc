@@ -203,12 +203,12 @@ export const appRouter = router({
                     .innerJoin(users, eq(attendance.userId, users.id))
                     .where(and(...filters))
                     .orderBy(input.atOrder === 'asc' ? asc(attendanceSortField) : desc(attendanceSortField)),
-                db.select({ name: users.ministry, count: count() })
+                db.select({ name: users.ministry, count: sql<number>`count(distinct ${users.id})` })
                     .from(attendance)
                     .innerJoin(users, eq(attendance.userId, users.id))
                     .where(and(...filters))
                     .groupBy(users.ministry),
-                db.select({ name: users.network, count: count() })
+                db.select({ name: users.network, count: sql<number>`count(distinct ${users.id})` })
                     .from(attendance)
                     .innerJoin(users, eq(attendance.userId, users.id))
                     .where(and(...filters))
@@ -246,8 +246,8 @@ export const appRouter = router({
                 attendanceList,
                 paginatedList,
                 totalPages,
-                ministryStats,
-                networkStats,
+                ministryStats: ministryStats.map(s => ({ ...s, count: Number(s.count) })),
+                networkStats: networkStats.map(s => ({ ...s, count: Number(s.count) })),
                 totalMinistryStats,
                 totalNetworkStats,
                 totalGenderStats,
