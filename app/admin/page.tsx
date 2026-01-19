@@ -9,11 +9,42 @@ import { PieChart, BarChart3, Map, Heart } from "lucide-react";
 import { SortHeader } from "./sort-header";
 import { TabSwitcher } from "./tab-switcher";
 import { trpcServer } from "@/lib/trpc/server";
+import WeeklyTrendsChart from "./weekly-trends-chart";
+import DemographicsDoubleRing from "./demographics-double-ring";
+
+import { cache } from "react";
+
+// Optimal caching for instant loads without breaking dynamic behavior
+export const revalidate = 60; // Cache for 60 seconds
+export const fetchCache = 'default-cache'; // Prefer cache over network
+export const preferredRegion = 'auto'; // Deploy to optimal region
+
+// Cache expensive data fetches for the duration of the request
+const getAdminData = cache(async (params: {
+    date?: string;
+    ministry?: string;
+    network?: string;
+    gender?: string;
+    cluster?: string;
+    page: number;
+    atSort?: string;
+    atOrder?: "asc" | "desc";
+    memSort?: string;
+    memOrder?: "asc" | "desc";
+}) => {
+    const caller = await trpcServer();
+    return caller.getAdminDashboard(params);
+});
+
+const getWeeklyTrendsData = cache(async () => {
+    const caller = await trpcServer();
+    return caller.getWeeklyTrends();
+});
 
 export default async function AdminDashboard({
     searchParams,
 }: {
-    searchParams: {
+    searchParams: Promise<{
         date?: string;
         ministry?: string;
         network?: string;
@@ -25,23 +56,25 @@ export default async function AdminDashboard({
         memSort?: string;
         memOrder?: "asc" | "desc";
         tab?: string;
-    };
+    }>;
 }) {
     const params = await searchParams;
-    const caller = await trpcServer();
 
-    const data = await caller.getAdminDashboard({
-        date: params.date,
-        ministry: params.ministry,
-        network: params.network,
-        gender: params.gender,
-        cluster: params.cluster,
-        page: Number(params.page) || 1,
-        atSort: params.atSort,
-        atOrder: params.atOrder,
-        memSort: params.memSort,
-        memOrder: params.memOrder,
-    });
+    const [data, weeklyTrends] = await Promise.all([
+        getAdminData({
+            date: params.date,
+            ministry: params.ministry,
+            network: params.network,
+            gender: params.gender,
+            cluster: params.cluster,
+            page: Number(params.page) || 1,
+            atSort: params.atSort,
+            atOrder: params.atOrder,
+            memSort: params.memSort,
+            memOrder: params.memOrder,
+        }),
+        getWeeklyTrendsData(),
+    ]);
 
     const page = Number(params.page) || 1;
 
@@ -401,6 +434,7 @@ export default async function AdminDashboard({
                             </CardContent>
                         </Card>
                     </div>
+
                 </TabsContent>
 
                 <TabsContent value="members" className="space-y-6 sm:space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
@@ -486,6 +520,16 @@ export default async function AdminDashboard({
                             <PaginationControls currentPage={page} totalPages={data.totalMemberPages} />
                         </CardContent>
                     </Card>
+                </TabsContent>
+
+                <TabsContent value="trends" className="space-y-6 sm:space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                    <WeeklyTrendsChart data={weeklyTrends} />
+
+                    <DemographicsDoubleRing
+                        networkStats={data.trendNetworkStats}
+                        ministryStats={data.trendMinistryStats}
+                        periodCount={weeklyTrends.length}
+                    />
                 </TabsContent>
             </Tabs>
         </div>

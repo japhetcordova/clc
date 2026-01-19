@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, uuid, date, uniqueIndex, unique, integer, boolean } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, uuid, date, uniqueIndex, unique, integer, boolean, index } from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
     id: uuid("id").primaryKey().defaultRandom(),
@@ -12,7 +12,13 @@ export const users = pgTable("users", {
     ministry: text("ministry").notNull(), // Worship Team, Media, etc.
     qrCodeId: text("qr_code_id").notNull().unique(), // Hashed/Secure ID for QR
     createdAt: timestamp("created_at").defaultNow().notNull(),
-});
+}, (t) => [
+    // Indexes for demographic filtering and grouping
+    index("users_network_idx").on(t.network),
+    index("users_ministry_idx").on(t.ministry),
+    index("users_gender_idx").on(t.gender),
+    index("users_cluster_idx").on(t.cluster),
+]);
 
 export const attendance = pgTable("attendance", {
     id: uuid("id").primaryKey().defaultRandom(),
@@ -21,6 +27,10 @@ export const attendance = pgTable("attendance", {
     scannedAt: timestamp("scanned_at").defaultNow().notNull(),
 }, (t) => [
     unique().on(t.userId, t.scanDate),
+    // Indexes for performance optimization
+    index("attendance_scan_date_idx").on(t.scanDate), // For date filtering and trending
+    index("attendance_user_id_idx").on(t.userId), // For joins with users table
+    index("attendance_scan_date_user_id_idx").on(t.scanDate, t.userId), // Composite for common queries
 ]);
 
 export const dailyPins = pgTable("daily_pins", {

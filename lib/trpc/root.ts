@@ -2,7 +2,7 @@ import { router, publicProcedure } from "./trpc";
 import { z } from "zod";
 import { db } from "@/db";
 import { users, attendance, events, dailyPins } from "@/db/schema";
-import { eq, and, desc, sql, count, asc, ilike } from "drizzle-orm";
+import { eq, and, desc, sql, count, asc, ilike, inArray } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 
@@ -164,6 +164,13 @@ export const appRouter = router({
             const attendanceSortField = (input.atSort === 'member' || input.atSort === 'name') ? users.lastName : (sortFieldMap[input.atSort!] || attendance.scannedAt);
             const memberSortField = (input.memSort === 'name' || input.memSort === 'member') ? users.lastName : (sortFieldMap[input.memSort!] || users.createdAt);
 
+            const last3DatesResult = await db.select({ date: attendance.scanDate })
+                .from(attendance)
+                .groupBy(attendance.scanDate)
+                .orderBy(desc(attendance.scanDate))
+                .limit(12);
+            const last3Dates = last3DatesResult.map(d => d.date);
+
             const [
                 [totalUsers],
                 [attendanceToday],
@@ -174,7 +181,9 @@ export const appRouter = router({
                 totalNetworkStats,
                 totalGenderStats,
                 totalClusterStats,
-                allMembers
+                allMembers,
+                trendMinistryStats,
+                trendNetworkStats
             ] = await Promise.all([
                 db.select({ value: count() }).from(users),
                 db.select({ value: count() }).from(attendance).where(eq(attendance.scanDate, filterDate)),
@@ -208,7 +217,18 @@ export const appRouter = router({
                 db.select({ name: users.network, count: count() }).from(users).groupBy(users.network).orderBy(desc(count())),
                 db.select({ name: users.gender, count: count() }).from(users).groupBy(users.gender),
                 db.select({ name: users.cluster, count: count() }).from(users).groupBy(users.cluster),
-                db.select().from(users).orderBy(input.memOrder === 'asc' ? asc(memberSortField) : desc(memberSortField))
+                db.select().from(users).orderBy(input.memOrder === 'asc' ? asc(memberSortField) : desc(memberSortField)),
+                // Trend Stats (sum of last 3 dates)
+                db.select({ name: users.ministry, count: sql<number>`count(distinct ${users.id})` })
+                    .from(attendance)
+                    .innerJoin(users, eq(attendance.userId, users.id))
+                    .where(last3Dates.length > 0 ? inArray(attendance.scanDate, last3Dates) : sql`1=0`)
+                    .groupBy(users.ministry),
+                db.select({ name: users.network, count: sql<number>`count(distinct ${users.id})` })
+                    .from(attendance)
+                    .innerJoin(users, eq(attendance.userId, users.id))
+                    .where(last3Dates.length > 0 ? inArray(attendance.scanDate, last3Dates) : sql`1=0`)
+                    .groupBy(users.network),
             ]);
 
             const pageSize = 15;
@@ -235,7 +255,9 @@ export const appRouter = router({
                 paginatedMembers,
                 totalMemberPages,
                 totalMembersCount,
-                filterDate
+                filterDate,
+                trendMinistryStats: trendMinistryStats.map(stat => ({ ...stat, count: Number(stat.count) })),
+                trendNetworkStats: trendNetworkStats.map(stat => ({ ...stat, count: Number(stat.count) }))
             };
         }),
 
@@ -553,6 +575,82 @@ export const appRouter = router({
             const cookieStore = await cookies();
             cookieStore.delete("clc_scanner_session");
             return { success: true };
+        }),
+
+    getWeeklyTrends: publicProcedure
+        .query(async () => {
+            // Fetch attendance grouping by actual scan dates
+            const result = await db
+                .select({
+                    date: attendance.scanDate,
+                    count: count(),
+                })
+                .from(attendance)
+                .groupBy(attendance.scanDate)
+                .orderBy(desc(attendance.scanDate))
+                .limit(12); // Get last 12 recorded dates
+
+            // Format data for the chart, reversing to show chronological order
+            const formattedData = result.reverse().map(record => {
+                // Ensure date string is parsed correctly despite timezone offsets
+                // Create date from YYYY-MM-DD string component only
+                const [year, month, day] = record.date.split('-').map(Number);
+                const dateObj = new Date(year, month - 1, day);
+
+                const dateLabel = dateObj.toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "numeric",
+                    year: "numeric"
+                });
+
+                return {
+                    week: dateLabel,
+                    count: record.count,
+                    fullDate: record.date,
+                };
+            });
+
+            return formattedData;
+        }),
+
+    getTrendMemberDetails: publicProcedure
+        .input(z.object({
+            type: z.enum(["network", "ministry"]),
+            value: z.string(),
+        }))
+        .query(async ({ input }) => {
+            // Get last 12 recorded dates to define the trend period
+            const last12DatesResult = await db.select({ date: attendance.scanDate })
+                .from(attendance)
+                .groupBy(attendance.scanDate)
+                .orderBy(desc(attendance.scanDate))
+                .limit(12);
+
+            if (last12DatesResult.length === 0) return [];
+
+            const last12Dates = last12DatesResult.map(d => d.date);
+
+            const attendees = await db.select({
+                id: users.id,
+                firstName: users.firstName,
+                lastName: users.lastName,
+                contactNumber: users.contactNumber,
+                network: users.network,
+                ministry: users.ministry,
+                qrCodeId: users.qrCodeId,
+            })
+                .from(attendance)
+                .innerJoin(users, eq(attendance.userId, users.id))
+                .where(
+                    and(
+                        inArray(attendance.scanDate, last12Dates),
+                        eq(input.type === "network" ? users.network : users.ministry, input.value)
+                    )
+                )
+                .groupBy(users.id, users.firstName, users.lastName, users.contactNumber, users.network, users.ministry, users.qrCodeId)
+                .orderBy(users.lastName);
+
+            return attendees;
         }),
 });
 
