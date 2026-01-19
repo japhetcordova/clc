@@ -1,18 +1,16 @@
-import { db } from "@/db";
-import { events } from "@/db/schema";
-import { desc } from "drizzle-orm";
-import EventsClient from "./events-client";
-import { ChevronLeft, LayoutDashboard, Calendar } from "lucide-react";
+import { ChevronLeft, Calendar } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import EventsClient from "./events-client";
+import { trpcServer } from "@/lib/trpc/server";
 
 export default async function AdminEventsPage() {
-    // Fetch all events sorted by creation date
-    const allEvents = await db.select().from(events).orderBy(desc(events.createdAt));
+    const caller = await trpcServer();
+    const allEvents = await caller.getEvents();
 
     return (
         <div className="min-h-screen bg-background">
-            <div className="max-w-7xl mx-auto px-6 py-12 space-y-12">
+            <div className="w-full px-4 sm:px-6 md:px-8 py-12 space-y-12">
                 {/* Header Navigation */}
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                     <div className="space-y-4">

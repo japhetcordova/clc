@@ -1,141 +1,52 @@
-import { db } from "@/db";
-import { users, attendance } from "@/db/schema";
-import { count, eq, sql, and, gte, lte, desc } from "drizzle-orm";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Users, UserCheck, Calendar, Filter, TrendingUp, Award } from "lucide-react";
 import AdminClient from "@/app/admin/admin-client";
 import AdminLogout from "@/app/admin/logout-button";
 import PaginationControls from "@/app/admin/pagination-controls";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { LayoutDashboard, Users2, PieChart, BarChart3, Map, Heart } from "lucide-react";
-
-import { getTodayString } from "@/lib/date-utils";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
+import { PieChart, BarChart3, Map, Heart } from "lucide-react";
+import { SortHeader } from "./sort-header";
+import { TabSwitcher } from "./tab-switcher";
+import { trpcServer } from "@/lib/trpc/server";
 
 export default async function AdminDashboard({
     searchParams,
 }: {
-    searchParams: { date?: string; ministry?: string; network?: string; gender?: string; cluster?: string; page?: string };
+    searchParams: {
+        date?: string;
+        ministry?: string;
+        network?: string;
+        gender?: string;
+        cluster?: string;
+        page?: string;
+        atSort?: string;
+        atOrder?: "asc" | "desc";
+        memSort?: string;
+        memOrder?: "asc" | "desc";
+        tab?: string;
+    };
 }) {
     const params = await searchParams;
-    const filterDate = params.date || getTodayString();
+    const caller = await trpcServer();
 
-    const filters = [eq(attendance.scanDate, filterDate)];
-    if (params.ministry && params.ministry !== "all") {
-        filters.push(eq(users.ministry, params.ministry));
-    }
-    if (params.network && params.network !== "all") {
-        filters.push(eq(users.network, params.network));
-    }
-    if (params.gender && params.gender !== "all") {
-        filters.push(eq(users.gender, params.gender));
-    }
-    if (params.cluster && params.cluster !== "all") {
-        filters.push(eq(users.cluster, params.cluster));
-    }
+    const data = await caller.getAdminDashboard({
+        date: params.date,
+        ministry: params.ministry,
+        network: params.network,
+        gender: params.gender,
+        cluster: params.cluster,
+        page: Number(params.page) || 1,
+        atSort: params.atSort,
+        atOrder: params.atOrder,
+        memSort: params.memSort,
+        memOrder: params.memOrder,
+    });
 
-    const [
-        [totalUsers],
-        [attendanceToday],
-        attendanceList,
-        ministryStats,
-        networkStats,
-        totalMinistryStats,
-        totalNetworkStats,
-        totalGenderStats,
-        totalClusterStats
-    ] = await Promise.all([
-        // 1. Total Users
-        db.select({ value: count() }).from(users),
-
-        // 2. Attendance Today
-        db.select({ value: count() })
-            .from(attendance)
-            .where(eq(attendance.scanDate, filterDate)),
-
-        // 3. Attendance List
-        db.select({
-            id: attendance.id,
-            scannedAt: attendance.scannedAt,
-            user: {
-                firstName: users.firstName,
-                lastName: users.lastName,
-                ministry: users.ministry,
-                network: users.network,
-                cluster: users.cluster,
-                gender: users.gender,
-            }
-        })
-            .from(attendance)
-            .innerJoin(users, eq(attendance.userId, users.id))
-            .where(and(...filters))
-            .orderBy(sql`${attendance.scannedAt} DESC`),
-
-        // 4. Ministry Stats (Filtered)
-        db.select({
-            name: users.ministry,
-            count: count(),
-        })
-            .from(attendance)
-            .innerJoin(users, eq(attendance.userId, users.id))
-            .where(and(...filters))
-            .groupBy(users.ministry),
-
-        // 5. Network Stats (Filtered)
-        db.select({
-            name: users.network,
-            count: count(),
-        })
-            .from(attendance)
-            .innerJoin(users, eq(attendance.userId, users.id))
-            .where(and(...filters))
-            .groupBy(users.network),
-
-        // 6. Total Ministry Stats (Demographics)
-        db.select({
-            name: users.ministry,
-            count: count(),
-        })
-            .from(users)
-            .groupBy(users.ministry)
-            .orderBy(desc(count())),
-
-        // 7. Total Network Stats (Demographics)
-        db.select({
-            name: users.network,
-            count: count(),
-        })
-            .from(users)
-            .groupBy(users.network)
-            .orderBy(desc(count())),
-
-        // 8. Total Gender Stats
-        db.select({
-            name: users.gender,
-            count: count(),
-        })
-            .from(users)
-            .groupBy(users.gender),
-
-        // 9. Total Cluster Stats
-        db.select({
-            name: users.cluster,
-            count: count(),
-        })
-            .from(users)
-            .groupBy(users.cluster)
-    ]);
-
-    // Pagination Logic
     const page = Number(params.page) || 1;
-    const pageSize = 15;
-    const totalRecords = attendanceList.length;
-    const totalPages = Math.ceil(totalRecords / pageSize);
-    const paginatedList = attendanceList.slice((page - 1) * pageSize, page * pageSize);
 
     return (
-        <div className="p-4 sm:p-6 space-y-6 sm:space-y-8 max-w-7xl mx-auto min-h-screen bg-background text-foreground transition-colors duration-300">
+        <div className="p-2 sm:p-4 md:p-6 space-y-6 sm:space-y-8 w-full min-h-screen bg-background text-foreground transition-colors duration-300">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                 <div className="space-y-1">
                     <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-foreground">Admin Dashboard</h1>
@@ -144,42 +55,25 @@ export default async function AdminDashboard({
                 <div className="flex items-center gap-3 w-full sm:w-auto">
                     <div className="flex-1 sm:flex-none bg-primary/5 px-3 sm:px-4 py-2 sm:py-2.5 rounded-2xl flex items-center justify-center gap-2 border border-primary/10 ring-1 ring-primary/5 shadow-inner">
                         <Calendar className="w-4 h-4 text-primary" />
-                        <span className="font-bold text-xs sm:text-sm text-foreground whitespace-nowrap">{filterDate}</span>
+                        <span className="font-bold text-xs sm:text-sm text-foreground whitespace-nowrap">{data.filterDate}</span>
                     </div>
                     <AdminLogout />
                 </div>
             </div>
 
-            <Tabs defaultValue="attendance" className="space-y-6 sm:space-y-8">
-                <div className="bg-muted/30 p-1.5 rounded-2xl inline-flex ring-1 ring-border w-full sm:w-auto overflow-x-auto no-scrollbar">
-                    <TabsList className="bg-transparent gap-1.5 h-11 w-full sm:w-auto">
-                        <TabsTrigger
-                            value="attendance"
-                            className="flex-1 sm:flex-none rounded-xl font-black uppercase text-[9px] sm:text-[10px] tracking-widest gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg h-8 px-4"
-                        >
-                            <UserCheck className="w-3.5 h-3.5" />
-                            Attendance
-                        </TabsTrigger>
-                        <TabsTrigger
-                            value="demographics"
-                            className="flex-1 sm:flex-none rounded-xl font-black uppercase text-[9px] sm:text-[10px] tracking-widest gap-2 data-[state=active]:bg-accent data-[state=active]:text-accent-foreground data-[state=active]:shadow-lg h-8 px-4"
-                        >
-                            <Users2 className="w-3.5 h-3.5" />
-                            Demographics
-                        </TabsTrigger>
-                    </TabsList>
-                </div>
+            <Tabs value={params.tab || "attendance"} className="space-y-6 sm:space-y-8">
+                <TabSwitcher />
 
                 <TabsContent value="attendance" className="space-y-6 sm:space-y-8 animate-in fade-in zoom-in-95 duration-500">
 
-                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4 md:gap-6">
                         <Card className="shadow-xl shadow-primary/5 border-primary/10 bg-linear-to-br from-primary/10 to-transparent backdrop-blur-sm rounded-3xl">
                             <CardHeader className="flex flex-row items-center justify-between pb-1 sm:pb-2 p-3 sm:p-6">
                                 <CardTitle className="text-[9px] sm:text-xs font-black uppercase tracking-widest text-muted-foreground">Registered</CardTitle>
                                 <Users className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
                             </CardHeader>
                             <CardContent className="p-3 sm:p-6 pt-0">
-                                <div className="text-2xl sm:text-4xl font-black text-foreground">{totalUsers.value}</div>
+                                <div className="text-2xl sm:text-4xl font-black text-foreground">{data.totalUsers}</div>
                                 <p className="text-[8px] sm:text-[10px] font-bold text-muted-foreground uppercase mt-0.5 sm:mt-1 tracking-tighter">Members</p>
                             </CardContent>
                         </Card>
@@ -190,7 +84,7 @@ export default async function AdminDashboard({
                                 <UserCheck className="h-4 w-4 sm:h-5 sm:w-5 text-accent" />
                             </CardHeader>
                             <CardContent className="p-3 sm:p-6 pt-0">
-                                <div className="text-2xl sm:text-4xl font-black text-foreground">{attendanceToday.value}</div>
+                                <div className="text-2xl sm:text-4xl font-black text-foreground">{data.attendanceToday}</div>
                                 <p className="text-[8px] sm:text-[10px] font-bold text-muted-foreground uppercase mt-0.5 sm:mt-1 tracking-tighter">Unique</p>
                             </CardContent>
                         </Card>
@@ -202,8 +96,8 @@ export default async function AdminDashboard({
                             </CardHeader>
                             <CardContent className="p-3 sm:p-6 pt-0">
                                 <div className="text-base sm:text-xl font-black truncate text-foreground leading-tight">
-                                    {ministryStats.length > 0 ? (
-                                        `${ministryStats.sort((a, b) => b.count - a.count)[0].name}`
+                                    {data.ministryStats.length > 0 ? (
+                                        `${data.ministryStats.sort((a, b) => b.count - a.count)[0].name}`
                                     ) : "---"}
                                 </div>
                                 <p className="text-[8px] sm:text-[10px] font-bold text-muted-foreground uppercase mt-0.5 sm:mt-1 tracking-tighter">Leading Participation</p>
@@ -217,8 +111,8 @@ export default async function AdminDashboard({
                             </CardHeader>
                             <CardContent className="p-3 sm:p-6 pt-0">
                                 <div className="text-base sm:text-xl font-black truncate text-foreground leading-tight">
-                                    {networkStats.length > 0 ? (
-                                        `${networkStats.sort((a, b) => b.count - a.count)[0].name}`
+                                    {data.networkStats.length > 0 ? (
+                                        `${data.networkStats.sort((a, b) => b.count - a.count)[0].name}`
                                     ) : "---"}
                                 </div>
                                 <p className="text-[8px] sm:text-[10px] font-bold text-muted-foreground uppercase mt-0.5 sm:mt-1 tracking-tighter">Collective Reach</p>
@@ -226,7 +120,7 @@ export default async function AdminDashboard({
                         </Card>
                     </div>
 
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8 pb-10 items-start">
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8 pb-10 items-start">
                         <div className="lg:col-span-2 space-y-6">
                             <Card className="shadow-2xl border-border bg-card/50 backdrop-blur-xl rounded-[2rem] overflow-hidden">
                                 <CardHeader className="flex flex-row items-center justify-between border-b border-border/50 py-4 sm:py-6 px-4 sm:px-8">
@@ -245,8 +139,8 @@ export default async function AdminDashboard({
                                             initialNetwork={params.network || "all"}
                                             initialCluster={params.cluster || "all"}
                                             initialGender={params.gender || "all"}
-                                            initialDate={filterDate}
-                                            attendanceData={attendanceList}
+                                            initialDate={data.filterDate}
+                                            attendanceData={data.attendanceList}
                                         />
                                     </div>
 
@@ -254,21 +148,29 @@ export default async function AdminDashboard({
                                         <Table className="relative">
                                             <TableHeader className="bg-muted/30">
                                                 <TableRow className="border-border hover:bg-transparent">
-                                                    <TableHead className="text-[10px] font-black uppercase tracking-widest h-12 pl-4 sm:pl-8">Time/Member</TableHead>
-                                                    <TableHead className="text-[10px] font-black uppercase tracking-widest h-12 hidden sm:table-cell">Cluster</TableHead>
-                                                    <TableHead className="text-[10px] font-black uppercase tracking-widest h-12">Group</TableHead>
-                                                    <TableHead className="text-[10px] font-black uppercase tracking-widest h-12 text-right pr-4 sm:pr-8">Info</TableHead>
+                                                    <TableHead className="text-[10px] font-black uppercase tracking-widest h-12 pl-4 sm:pl-8">
+                                                        <SortHeader label="Time/Member" sortKey="time" currentSort={params.atSort} currentOrder={params.atOrder} paramKey="atSort" orderParamKey="atOrder" />
+                                                    </TableHead>
+                                                    <TableHead className="text-[10px] font-black uppercase tracking-widest h-12 hidden sm:table-cell">
+                                                        <SortHeader label="Cluster" sortKey="cluster" currentSort={params.atSort} currentOrder={params.atOrder} paramKey="atSort" orderParamKey="atOrder" />
+                                                    </TableHead>
+                                                    <TableHead className="text-[10px] font-black uppercase tracking-widest h-12">
+                                                        <SortHeader label="Group" sortKey="ministry" currentSort={params.atSort} currentOrder={params.atOrder} paramKey="atSort" orderParamKey="atOrder" />
+                                                    </TableHead>
+                                                    <TableHead className="text-[10px] font-black uppercase tracking-widest h-12 text-right pr-4 sm:pr-8">
+                                                        <SortHeader label="Info" sortKey="network" className="justify-end" currentSort={params.atSort} currentOrder={params.atOrder} paramKey="atSort" orderParamKey="atOrder" />
+                                                    </TableHead>
                                                 </TableRow>
                                             </TableHeader>
                                             <TableBody>
-                                                {paginatedList.length === 0 ? (
+                                                {data.paginatedList.length === 0 ? (
                                                     <TableRow>
                                                         <TableCell colSpan={4} className="h-40 text-center text-muted-foreground font-bold italic">
                                                             Waiting for scans...
                                                         </TableCell>
                                                     </TableRow>
                                                 ) : (
-                                                    paginatedList.map((record) => (
+                                                    data.paginatedList.map((record) => (
                                                         <TableRow key={record.id} className="border-border hover:bg-primary/5 transition-colors group">
                                                             <TableCell className="pl-4 sm:pl-8 py-4">
                                                                 <div className="flex flex-col gap-0.5">
@@ -305,7 +207,7 @@ export default async function AdminDashboard({
                                             </TableBody>
                                         </Table>
                                     </div>
-                                    <PaginationControls currentPage={page} totalPages={totalPages} />
+                                    <PaginationControls currentPage={page} totalPages={data.totalPages} />
                                 </CardContent>
                             </Card>
                         </div>
@@ -316,10 +218,10 @@ export default async function AdminDashboard({
                                     <CardTitle className="text-xs font-black uppercase tracking-widest text-muted-foreground">Ministry Breakdown</CardTitle>
                                 </CardHeader>
                                 <CardContent className="space-y-6">
-                                    {ministryStats.length === 0 ? (
+                                    {data.ministryStats.length === 0 ? (
                                         <p className="text-xs text-muted-foreground font-bold text-center py-4">No activity recorded</p>
                                     ) : (
-                                        ministryStats.map((stat) => (
+                                        data.ministryStats.map((stat) => (
                                             <div key={stat.name} className="space-y-2">
                                                 <div className="flex justify-between text-[10px] font-black uppercase tracking-wider text-foreground/70">
                                                     <span>{stat.name}</span>
@@ -327,7 +229,7 @@ export default async function AdminDashboard({
                                                 </div>
                                                 <div className="h-2 w-full bg-muted rounded-full overflow-hidden shadow-inner">
                                                     <div
-                                                        style={{ width: `${(stat.count / attendanceToday.value) * 100}%` }}
+                                                        style={{ width: `${(stat.count / data.attendanceToday) * 100}%` }}
                                                         className="h-full bg-primary rounded-full transition-all duration-1000 ease-out"
                                                     />
                                                 </div>
@@ -342,10 +244,10 @@ export default async function AdminDashboard({
                                     <CardTitle className="text-xs font-black uppercase tracking-widest text-muted-foreground">Network Participation</CardTitle>
                                 </CardHeader>
                                 <CardContent className="space-y-6 flex-1 overflow-auto">
-                                    {networkStats.length === 0 ? (
+                                    {data.networkStats.length === 0 ? (
                                         <p className="text-xs text-muted-foreground font-bold text-center py-4">No activity recorded</p>
                                     ) : (
-                                        networkStats.map((stat) => (
+                                        data.networkStats.map((stat) => (
                                             <div key={stat.name} className="space-y-2">
                                                 <div className="flex justify-between text-[10px] font-black uppercase tracking-wider text-foreground/70">
                                                     <span>{stat.name}</span>
@@ -353,7 +255,7 @@ export default async function AdminDashboard({
                                                 </div>
                                                 <div className="h-2 w-full bg-muted rounded-full overflow-hidden shadow-inner">
                                                     <div
-                                                        style={{ width: `${(stat.count / attendanceToday.value) * 100}%` }}
+                                                        style={{ width: `${(stat.count / data.attendanceToday) * 100}%` }}
                                                         className="h-full bg-accent rounded-full transition-all duration-1000 ease-out"
                                                     />
                                                 </div>
@@ -369,7 +271,7 @@ export default async function AdminDashboard({
                                     <h4 className="text-xs font-black uppercase tracking-widest text-primary">Insights</h4>
                                 </div>
                                 <p className="text-xs font-medium text-muted-foreground leading-relaxed">
-                                    Participation is currently at <span className="text-foreground font-black">{attendanceToday.value > 0 ? ((attendanceToday.value / totalUsers.value) * 100).toFixed(1) : 0}%</span> of the total registered church family.
+                                    Participation is currently at <span className="text-foreground font-black">{data.attendanceToday > 0 ? ((data.attendanceToday / data.totalUsers) * 100).toFixed(1) : 0}%</span> of the total registered church family.
                                 </p>
                             </div>
                         </div>
@@ -387,13 +289,13 @@ export default async function AdminDashboard({
                             </CardHeader>
                             <CardContent className="p-4 sm:p-6 pt-0">
                                 <div className="space-y-3">
-                                    {totalGenderStats.map(stat => (
+                                    {data.totalGenderStats.map(stat => (
                                         <div key={stat.name} className="flex items-center justify-between">
                                             <span className="text-xs font-bold text-foreground/80">{stat.name}</span>
                                             <div className="flex items-center gap-2">
                                                 <span className="text-sm sm:text-lg font-black">{stat.count}</span>
                                                 <span className="text-[8px] font-bold text-muted-foreground bg-muted px-1.5 py-0.5 rounded-full">
-                                                    {((stat.count / totalUsers.value) * 100).toFixed(0)}%
+                                                    {((stat.count / data.totalUsers) * 100).toFixed(0)}%
                                                 </span>
                                             </div>
                                         </div>
@@ -411,13 +313,13 @@ export default async function AdminDashboard({
                             </CardHeader>
                             <CardContent className="p-4 sm:p-6 pt-0">
                                 <div className="space-y-3">
-                                    {totalClusterStats.map(stat => (
+                                    {data.totalClusterStats.map(stat => (
                                         <div key={stat.name} className="flex items-center justify-between">
                                             <span className="text-xs font-bold text-foreground/80">{stat.name}</span>
                                             <div className="flex items-center gap-2">
                                                 <span className="text-sm sm:text-lg font-black">{stat.count}</span>
                                                 <span className="text-[8px] font-bold text-muted-foreground bg-muted px-1.5 py-0.5 rounded-full">
-                                                    {((stat.count / totalUsers.value) * 100).toFixed(0)}%
+                                                    {((stat.count / data.totalUsers) * 100).toFixed(0)}%
                                                 </span>
                                             </div>
                                         </div>
@@ -431,8 +333,8 @@ export default async function AdminDashboard({
                                 <Award className="w-5 h-5 text-accent" />
                                 <h4 className="text-xs sm:text-sm font-black uppercase tracking-widest text-accent">Registration Insight</h4>
                             </div>
-                            <p className="text-xs sm:text-sm font-medium text-muted-foreground leading-relaxed max-w-md">
-                                Your church family now consists of <span className="text-foreground font-black">{totalUsers.value}</span> registered members across <span className="text-foreground font-black">2 Clusters</span> and <span className="text-foreground font-black">{totalNetworkStats.length}</span> individual cell networks.
+                            <p className="text-xs sm:text-sm font-medium text-muted-foreground leading-relaxed">
+                                Your church family now consists of <span className="text-foreground font-black">{data.totalUsers}</span> registered members across <span className="text-foreground font-black">2 Clusters</span> and <span className="text-foreground font-black">{data.totalNetworkStats.length}</span> individual cell networks.
                             </p>
                         </div>
                     </div>
@@ -450,7 +352,7 @@ export default async function AdminDashboard({
                                 </div>
                             </CardHeader>
                             <CardContent className="p-6 sm:p-8 space-y-5">
-                                {totalMinistryStats.map((stat) => (
+                                {data.totalMinistryStats.map((stat) => (
                                     <div key={stat.name} className="space-y-2">
                                         <div className="flex justify-between text-[10px] sm:text-[11px] font-black uppercase tracking-tight text-foreground/80">
                                             <span>{stat.name}</span>
@@ -458,7 +360,7 @@ export default async function AdminDashboard({
                                         </div>
                                         <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
                                             <div
-                                                style={{ width: `${(stat.count / totalUsers.value) * 100}%` }}
+                                                style={{ width: `${(stat.count / data.totalUsers) * 100}%` }}
                                                 className="h-full bg-rose-500 rounded-full transition-all duration-1000 ease-out"
                                             />
                                         </div>
@@ -479,26 +381,111 @@ export default async function AdminDashboard({
                                 </div>
                             </CardHeader>
                             <CardContent className="p-4 sm:p-8 space-y-3 max-h-[500px] sm:max-h-[600px] overflow-y-auto custom-scrollbar">
-                                {totalNetworkStats.map((stat) => (
+                                {data.totalNetworkStats.map((stat) => (
                                     <div key={stat.name} className="flex items-center justify-between p-3 sm:p-4 rounded-2xl bg-muted/20 border border-border/50 hover:bg-muted/40 transition-colors">
                                         <div className="space-y-1">
                                             <p className="text-[10px] sm:text-xs font-black uppercase tracking-tight">{stat.name}</p>
                                             <div className="h-1 w-24 sm:w-32 bg-muted rounded-full">
                                                 <div
                                                     className="h-full bg-blue-500 rounded-full"
-                                                    style={{ width: `${(stat.count / totalUsers.value) * 100}%` }}
+                                                    style={{ width: `${(stat.count / data.totalUsers) * 100}%` }}
                                                 />
                                             </div>
                                         </div>
                                         <div className="text-right">
                                             <p className="text-base sm:text-lg font-black text-blue-600 leading-none">{stat.count}</p>
-                                            <p className="text-[8px] sm:text-[9px] font-bold text-muted-foreground uppercase">{((stat.count / totalUsers.value) * 100).toFixed(1)}%</p>
+                                            <p className="text-[8px] sm:text-[9px] font-bold text-muted-foreground uppercase">{((stat.count / data.totalUsers) * 100).toFixed(1)}%</p>
                                         </div>
                                     </div>
                                 ))}
                             </CardContent>
                         </Card>
                     </div>
+                </TabsContent>
+
+                <TabsContent value="members" className="space-y-6 sm:space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
+                    <Card className="shadow-2xl border-border bg-card/50 backdrop-blur-xl rounded-[2rem] overflow-hidden">
+                        <CardHeader className="flex flex-row items-center justify-between border-b border-border/50 py-4 sm:py-6 px-4 sm:px-8">
+                            <div className="flex items-center gap-3">
+                                <div className="p-2 bg-blue-600/10 rounded-xl">
+                                    <Users className="w-5 h-5 text-blue-600" />
+                                </div>
+                                <CardTitle className="font-black text-lg sm:text-xl uppercase tracking-tighter">Registered Members</CardTitle>
+                            </div>
+                            <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground bg-muted/50 px-3 py-1 rounded-full border border-border">
+                                {data.totalMembersCount} Total
+                            </div>
+                        </CardHeader>
+                        <CardContent className="p-0">
+                            <div className="overflow-x-auto">
+                                <Table>
+                                    <TableHeader className="bg-muted/30">
+                                        <TableRow className="border-border hover:bg-transparent">
+                                            <TableHead className="text-[10px] font-black uppercase tracking-widest h-12 pl-4 sm:pl-8">
+                                                <SortHeader label="Member Name" sortKey="name" currentSort={params.memSort} currentOrder={params.memOrder} paramKey="memSort" orderParamKey="memOrder" />
+                                            </TableHead>
+                                            <TableHead className="text-[10px] font-black uppercase tracking-widest h-12">
+                                                <SortHeader label="Contact" sortKey="contact" currentSort={params.memSort} currentOrder={params.memOrder} paramKey="memSort" orderParamKey="memOrder" />
+                                            </TableHead>
+                                            <TableHead className="text-[10px] font-black uppercase tracking-widest h-12 hidden sm:table-cell">
+                                                <SortHeader label="Details" sortKey="gender" currentSort={params.memSort} currentOrder={params.memOrder} paramKey="memSort" orderParamKey="memOrder" />
+                                            </TableHead>
+                                            <TableHead className="text-[10px] font-black uppercase tracking-widest h-12">
+                                                <SortHeader label="Groups" sortKey="ministry" currentSort={params.memSort} currentOrder={params.memOrder} paramKey="memSort" orderParamKey="memOrder" />
+                                            </TableHead>
+                                            <TableHead className="text-[10px] font-black uppercase tracking-widest h-12 text-right pr-4 sm:pr-8">
+                                                <SortHeader label="Joined" sortKey="joined" className="justify-end" currentSort={params.memSort} currentOrder={params.memOrder} paramKey="memSort" orderParamKey="memOrder" />
+                                            </TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {data.paginatedMembers.map((member) => (
+                                            <TableRow key={member.id} className="border-border hover:bg-blue-600/5 transition-colors group">
+                                                <TableCell className="pl-4 sm:pl-8 py-4">
+                                                    <div className="flex flex-col gap-0.5">
+                                                        <span className="font-black text-sm sm:text-base text-foreground group-hover:text-blue-600 transition-colors">
+                                                            {member.firstName} {member.lastName}
+                                                        </span>
+                                                        <span className="text-[9px] font-bold text-muted-foreground uppercase">
+                                                            ID: {member.qrCodeId}
+                                                        </span>
+                                                    </div>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <div className="flex flex-col gap-0.5">
+                                                        <span className="text-xs font-bold text-foreground/80">{member.contactNumber}</span>
+                                                        {member.email && <span className="text-[9px] text-muted-foreground truncate max-w-[150px]">{member.email}</span>}
+                                                    </div>
+                                                </TableCell>
+                                                <TableCell className="hidden sm:table-cell">
+                                                    <div className="flex flex-col gap-0.5">
+                                                        <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">{member.gender}</span>
+                                                        <span className="text-[10px] font-bold text-primary">{member.cluster}</span>
+                                                    </div>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <div className="flex flex-wrap gap-1.5">
+                                                        <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[9px] font-black uppercase tracking-tight ring-1 ring-primary/20">
+                                                            {member.ministry}
+                                                        </span>
+                                                        <span className="px-2 py-0.5 rounded-full bg-accent/10 text-accent text-[9px] font-black uppercase tracking-tight ring-1 ring-accent/20">
+                                                            {member.network}
+                                                        </span>
+                                                    </div>
+                                                </TableCell>
+                                                <TableCell className="text-right pr-4 sm:pr-8 py-4">
+                                                    <span className="text-[10px] font-mono font-bold text-muted-foreground">
+                                                        {new Date(member.createdAt).toLocaleDateString()}
+                                                    </span>
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </div>
+                            <PaginationControls currentPage={page} totalPages={data.totalMemberPages} />
+                        </CardContent>
+                    </Card>
                 </TabsContent>
             </Tabs>
         </div>

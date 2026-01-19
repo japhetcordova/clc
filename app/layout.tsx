@@ -13,6 +13,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 import { Toaster } from "sonner";
+import { TRPCProvider } from "@/lib/trpc/client";
 
 export const metadata: Metadata = {
   title: "Christian Life Center | Registration & Attendance",
@@ -30,7 +31,9 @@ export default function RootLayout({
         className={`${outfit.variable} ${jetbrainsMono.variable} antialiased min-h-screen flex flex-col`}
       >
         <main className="flex-1">
-          {children}
+          <TRPCProvider>
+            {children}
+          </TRPCProvider>
         </main>
         <Toaster position="top-center" richColors />
       </body>

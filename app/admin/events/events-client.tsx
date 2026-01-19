@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { ChurchEvent } from "@/db/schema";
-import { createEvent, updateEvent, deleteEvent } from "@/lib/actions";
+import { trpc } from "@/lib/trpc/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -31,7 +31,6 @@ interface EventsClientProps {
 }
 
 export default function EventsClient({ initialEvents }: EventsClientProps) {
-    const [events, setEvents] = useState(initialEvents);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [editingEvent, setEditingEvent] = useState<ChurchEvent | null>(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -76,30 +75,44 @@ export default function EventsClient({ initialEvents }: EventsClientProps) {
         setIsDialogOpen(true);
     };
 
+    const utils = trpc.useUtils();
+    const createMutation = trpc.createEvent.useMutation({
+        onSuccess: () => {
+            toast.success("Event created successfully");
+            utils.getEvents.invalidate();
+            setIsDialogOpen(false);
+            resetForm();
+        }
+    });
+    const updateMutation = trpc.updateEvent.useMutation({
+        onSuccess: () => {
+            toast.success("Event updated successfully");
+            utils.getEvents.invalidate();
+            setIsDialogOpen(false);
+            resetForm();
+        }
+    });
+    const deleteMutation = trpc.deleteEvent.useMutation({
+        onSuccess: () => {
+            toast.success("Event deleted");
+            utils.getEvents.invalidate();
+        }
+    });
+
+    const { data: events, isLoading: isFetching } = trpc.getEvents.useQuery(undefined, {
+        initialData: initialEvents as any,
+    });
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
 
         try {
             if (editingEvent) {
-                const res = await updateEvent(editingEvent.id, formData);
-                if (res.success) {
-                    toast.success("Event updated successfully");
-                    setEvents(events.map(e => e.id === editingEvent.id ? res.event! : e));
-                } else {
-                    toast.error(res.error || "Failed to update event");
-                }
+                await updateMutation.mutateAsync({ id: editingEvent.id, data: formData });
             } else {
-                const res = await createEvent(formData as any);
-                if (res.success) {
-                    toast.success("Event created successfully");
-                    setEvents([res.event!, ...events]);
-                } else {
-                    toast.error(res.error || "Failed to create event");
-                }
+                await createMutation.mutateAsync(formData as any);
             }
-            setIsDialogOpen(false);
-            resetForm();
         } catch (error) {
             toast.error("An error occurred");
         } finally {
@@ -109,15 +122,8 @@ export default function EventsClient({ initialEvents }: EventsClientProps) {
 
     const handleDelete = async (id: string) => {
         if (!confirm("Are you sure you want to delete this event?")) return;
-
         try {
-            const res = await deleteEvent(id);
-            if (res.success) {
-                toast.success("Event deleted");
-                setEvents(events.filter(e => e.id !== id));
-            } else {
-                toast.error(res.error || "Failed to delete");
-            }
+            await deleteMutation.mutateAsync({ id });
         } catch (error) {
             toast.error("Delete failed");
         }

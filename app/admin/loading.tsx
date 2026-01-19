@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function AdminLoading() {
     return (
-        <div className="p-4 sm:p-6 space-y-6 sm:space-y-8 max-w-7xl mx-auto min-h-screen bg-background">
+        <div className="p-4 sm:p-6 space-y-6 sm:space-y-8 w-full min-h-screen bg-background">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                 <div className="space-y-2">
                     <Skeleton className="h-10 w-48 sm:w-64 rounded-xl" />

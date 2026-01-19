@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import { Html5Qrcode, Html5QrcodeSupportedFormats } from "html5-qrcode";
-import { markAttendance } from "@/lib/actions";
+import { trpc } from "@/lib/trpc/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
@@ -23,6 +23,7 @@ export default function ScannerClient() {
     const html5QrCodeRef = useRef<Html5Qrcode | null>(null);
     const lastScannedId = useRef<string | null>(null);
     const processingRef = useRef(false);
+    const markMutation = trpc.markAttendance.useMutation();
 
     const onScanSuccess = async (decodedText: string) => {
         // 1. Triple-lock to prevent multiple simultaneous processing
@@ -47,8 +48,8 @@ export default function ScannerClient() {
         }
 
         try {
-            const result = await markAttendance(qrCodeId);
-            setLastScan(result);
+            const result = await markMutation.mutateAsync({ qrCodeId });
+            setLastScan(result as any);
             setIsProcessing(false); // Stop loading spinner immediately
 
             if (result.success && result.user) {
@@ -57,16 +58,16 @@ export default function ScannerClient() {
                     id: `success-${qrCodeId}`,
                     icon: <CheckCircle2 className="w-5 h-5 text-emerald-500" />
                 });
-            } else if (result.error) {
+            } else if (!result.success && result.message) {
                 // If it's already scanned, we still show the error but with a unique ID to prevent repeat toasts
                 toast.error("Check-in failed", {
-                    description: result.error,
+                    description: result.message,
                     id: `error-${qrCodeId}`
                 });
             }
-        } catch (err) {
+        } catch (err: any) {
             setIsProcessing(false);
-            toast.error("Network Error", { description: "Failed to reach server." });
+            toast.error("Check-in Error", { description: err.message || "Failed to reach server." });
         }
 
         // 5. Cooldown: Keep the UI blocked for 750ms (reduced from 3000ms) for rapid scanning

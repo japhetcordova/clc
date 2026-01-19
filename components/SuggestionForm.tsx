@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
 import { Label } from "@/components/ui/label";
 import { Lightbulb, Send, UserCircle, UserX } from "lucide-react";
-import { createSuggestion } from "@/lib/actions";
+import { trpc } from "@/lib/trpc/client";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
@@ -23,6 +23,7 @@ export default function SuggestionForm({ userId, onSuccess, triggerButton }: Sug
     const [open, setOpen] = useState(false);
     const [content, setContent] = useState("");
     const [isAnonymous, setIsAnonymous] = useState(false);
+    const suggestionMutation = trpc.createSuggestion.useMutation();
     const [isPending, startTransition] = useTransition();
     const [isDesktop, setIsDesktop] = useState(true);
 
@@ -50,23 +51,25 @@ export default function SuggestionForm({ userId, onSuccess, triggerButton }: Sug
         }
 
         startTransition(async () => {
-            const result = await createSuggestion({
-                content,
-                isAnonymous,
-                userId,
-            });
+            try {
+                const result = await suggestionMutation.mutateAsync({
+                    content,
+                    isAnonymous,
+                    userId,
+                });
 
-            if (result.success) {
-                toast.success("Suggestion submitted successfully!");
-                setContent("");
-                setIsAnonymous(false);
-                setOpen(false);
-                onSuccess?.();
+                if (result.success) {
+                    toast.success("Suggestion submitted successfully!");
+                    setContent("");
+                    setIsAnonymous(false);
+                    setOpen(false);
+                    onSuccess?.();
 
-                // Redirect to suggestions page
-                router.push("/suggestions");
-            } else {
-                toast.error(result.error || "Failed to submit suggestion");
+                    // Redirect to suggestions page
+                    router.push("/suggestions");
+                }
+            } catch (error: any) {
+                toast.error(error.message || "Failed to submit suggestion");
             }
         });
     };

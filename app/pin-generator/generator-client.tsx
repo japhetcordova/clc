@@ -3,9 +3,9 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { RefreshCw, ShieldCheck, Calendar, Clock, AlertCircle, KeyRound, Timer } from "lucide-react";
+import { RefreshCw, ShieldCheck, Calendar, Clock, KeyRound, Timer } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { generateDailyPin } from "@/lib/actions";
+import { trpc } from "@/lib/trpc/client";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -23,13 +23,15 @@ export default function PinGeneratorClient({ initialPin }: PinGeneratorClientPro
     const [activePin, setActivePin] = useState(initialPin);
     const [isGenerating, setIsGenerating] = useState(false);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [securityKey, setSecurityKey] = useState("");
+    const [timeLeft, setTimeLeft] = useState<{ hours: number; minutes: number; seconds: number } | null>(null);
+
+    const generateMutation = trpc.generateDailyPin.useMutation();
 
     // Sync state with props when server data refreshes
     useEffect(() => {
         setActivePin(initialPin);
     }, [initialPin]);
-    const [securityKey, setSecurityKey] = useState("");
-    const [timeLeft, setTimeLeft] = useState<{ hours: number; minutes: number; seconds: number } | null>(null);
 
     useEffect(() => {
         if (!activePin) {
@@ -69,17 +71,17 @@ export default function PinGeneratorClient({ initialPin }: PinGeneratorClientPro
 
         setIsGenerating(true);
         try {
-            const result = await generateDailyPin(securityKey);
-            if (result.success && 'pin' in result && result.pin) {
+            const result = await generateMutation.mutateAsync({ password: securityKey });
+            if (result.success && result.pin) {
                 setActivePin(result.pin as any);
                 toast.success((result as any).message || "Daily PIN generated successfully!");
                 setIsDialogOpen(false);
                 setSecurityKey("");
             } else {
-                toast.error(('error' in result ? result.error : null) || "Failed to generate PIN.");
+                toast.error(result.error || "Failed to generate PIN.");
             }
-        } catch (error) {
-            toast.error("An unexpected error occurred.");
+        } catch (error: any) {
+            toast.error(error.message || "An unexpected error occurred.");
         } finally {
             setIsGenerating(false);
         }
