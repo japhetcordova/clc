@@ -1,19 +1,18 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { Html5Qrcode, Html5QrcodeSupportedFormats } from "html5-qrcode";
+import { Html5Qrcode } from "html5-qrcode";
 import { trpc } from "@/lib/trpc/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
-import { CheckCircle2, Scan, Clock, Loader2, XCircle, Camera, Repeat, ShieldCheck, RefreshCw } from "lucide-react";
+import { CheckCircle2, Scan, Clock, XCircle, Camera, Repeat, ShieldCheck, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 
 export default function ScannerClient() {
     const [lastScan, setLastScan] = useState<{ success: boolean; user?: any; error?: string } | null>(null);
-    const [isProcessing, setIsProcessing] = useState(false);
     const [isScannerReady, setIsScannerReady] = useState(false);
     const [hasPermission, setHasPermission] = useState<boolean | null>(null);
     const [cameras, setCameras] = useState<Array<{ id: string; label: string }>>([]);
@@ -26,70 +25,69 @@ export default function ScannerClient() {
     const markMutation = trpc.markAttendance.useMutation();
 
     const onScanSuccess = async (decodedText: string) => {
-        // 1. Triple-lock to prevent multiple simultaneous processing
-        if (processingRef.current || isProcessing) return;
+        // 1. Lock to prevent multiple simultaneous processing
+        if (processingRef.current) return;
 
         let qrCodeId = decodedText;
         if (decodedText.includes("/profile/")) {
             qrCodeId = decodedText.split("/profile/").pop() || decodedText;
         }
 
-        // 2. Prevent scanning the same ID twice within a session window
+        // 2. Prevent scanning the same ID twice within a short window
         if (lastScannedId.current === qrCodeId) return;
 
-        // 3. Set locks
+        // 3. Set locks (Synchronous for speed)
         processingRef.current = true;
-        setIsProcessing(true);
         lastScannedId.current = qrCodeId;
 
-        // 4. Pause scanner immediately to stop physical detection
-        if (html5QrCodeRef.current?.isScanning) {
-            try { await html5QrCodeRef.current.pause(); } catch (e) { }
+        // Visual feedback - simple flash
+        const readerElement = document.getElementById("reader");
+        if (readerElement) {
+            readerElement.style.transition = "none";
+            readerElement.style.filter = "brightness(1.5) contrast(1.2)";
+            setTimeout(() => {
+                if (readerElement) {
+                    readerElement.style.transition = "filter 0.3s ease-out";
+                    readerElement.style.filter = "none";
+                }
+            }, 100);
         }
 
-        try {
-            const result = await markMutation.mutateAsync({ qrCodeId });
+        // 4. Background tRPC call (don't wait for UI to finish scan state)
+        markMutation.mutateAsync({ qrCodeId }).then((result) => {
             setLastScan(result as any);
-            setIsProcessing(false); // Stop loading spinner immediately
 
             if (result.success && result.user) {
-                toast.success(`Check-in successful!`, {
-                    description: `Welcome, ${result.user.firstName}!`,
+                toast.success(`Welcome, ${result.user.firstName}!`, {
                     id: `success-${qrCodeId}`,
+                    duration: 2000,
                     icon: <CheckCircle2 className="w-5 h-5 text-emerald-500" />
                 });
             } else if (!result.success && result.message) {
-                // If it's already scanned, we still show the error but with a unique ID to prevent repeat toasts
-                toast.error("Check-in failed", {
-                    description: result.message,
-                    id: `error-${qrCodeId}`
+                toast.error(result.message, {
+                    id: `error-${qrCodeId}`,
+                    duration: 2000
                 });
             }
-        } catch (err: any) {
-            setIsProcessing(false);
-            toast.error("Check-in Error", { description: err.message || "Failed to reach server." });
-        }
+        }).catch((err: any) => {
+            toast.error("Network Error", { description: "Check your connection.", id: `err-${qrCodeId}` });
+        }).finally(() => {
+            // Success/Error toast handled, results showed in UI overlay
+        });
 
-        // 5. Cooldown: Keep the UI blocked for 750ms (reduced from 3000ms) for rapid scanning
-        setTimeout(async () => {
-            // Resume scanner
-            if (html5QrCodeRef.current?.isScanning) {
-                try { await html5QrCodeRef.current.resume(); } catch (e) { }
-            }
-
-            // Release locks
+        // 5. Short cooldown before allowing next scan (Global Lock)
+        // This is the "Zero Loading" feel - we allow scanning another code almost immediately
+        setTimeout(() => {
             processingRef.current = false;
-            // setIsProcessing(false); // Already handled above
             setLastScan(null);
+        }, 800);
 
-            // 6. Memory cleanup: Allow the same ID to be scanned again after another 2 seconds
-            // (in case a different admin needs to scan them or they came back later)
-            setTimeout(() => {
-                if (lastScannedId.current === qrCodeId) {
-                    lastScannedId.current = null;
-                }
-            }, 2000);
-        }, 750);
+        // 6. Same-ID memory cleanup: allow scanning same person after 5 seconds
+        setTimeout(() => {
+            if (lastScannedId.current === qrCodeId) {
+                lastScannedId.current = null;
+            }
+        }, 5000);
     };
 
     const startScanner = async (cameraId: string) => {
@@ -103,7 +101,7 @@ export default function ScannerClient() {
             await html5QrCodeRef.current.start(
                 cameraId,
                 {
-                    fps: 20,
+                    fps: 30, // Increased for snappier detection
                     qrbox: { width: 280, height: 280 },
                     aspectRatio: 1.0,
                 },
@@ -214,15 +212,6 @@ export default function ScannerClient() {
                     )}
 
                     <AnimatePresence>
-                        {isProcessing && (
-                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 bg-accent/20 backdrop-blur-2xl flex flex-col items-center justify-center z-40">
-                                <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-background flex items-center justify-center shadow-2xl ring-4 ring-accent z-10 overflow-hidden animate-pulse">
-                                    <Image src="/logo.png" alt="Verifying" width={80} height={80} className="w-full h-full object-cover" />
-                                </div>
-                                <p className="font-black text-xl sm:text-2xl mt-6 sm:mt-8 tracking-tighter text-foreground">Verifying...</p>
-                            </motion.div>
-                        )}
-
                         {lastScan && (
                             <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }} className={cn("absolute inset-x-4 sm:inset-x-6 bottom-4 sm:bottom-6 p-4 sm:p-6 rounded-2xl sm:rounded-[2rem] flex flex-col items-center text-center gap-2 sm:gap-3 border shadow-2xl z-50 backdrop-blur-2xl", lastScan.success ? "bg-emerald-500/20 border-emerald-500/50" : "bg-destructive/20 border-destructive/50")}>
                                 {lastScan.success ? <CheckCircle2 className="w-8 h-8 sm:w-10 sm:h-10 text-emerald-500" /> : <XCircle className="w-8 h-8 sm:w-10 sm:h-10 text-destructive" />}

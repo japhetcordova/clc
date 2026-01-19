@@ -1,6 +1,8 @@
-import { isScannerAuthorized } from "@/lib/actions";
 import ScannerAuthGate from "./ScannerAuthGate";
 import ScannerClient from "./ScannerClient";
+import { trpcServer } from "@/lib/trpc/server";
+
+export const dynamic = "force-dynamic";
 
 export const metadata = {
     title: "Scanner Access | Christian Life Center",
@@ -8,7 +10,8 @@ export const metadata = {
 };
 
 export default async function ScannerPage() {
-    const isAuthorized = await isScannerAuthorized();
+    const caller = await trpcServer();
+    const isAuthorized = await caller.isScannerAuthorized();
 
     return (
         <ScannerAuthGate isAuthorized={isAuthorized}>

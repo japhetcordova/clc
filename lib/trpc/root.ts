@@ -2,8 +2,9 @@ import { router, publicProcedure } from "./trpc";
 import { z } from "zod";
 import { db } from "@/db";
 import { users, attendance, events, dailyPins } from "@/db/schema";
-import { eq, and, desc, sql, count, asc } from "drizzle-orm";
+import { eq, and, desc, sql, count, asc, ilike } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
 
 export const appRouter = router({
     getUsers: publicProcedure
@@ -41,21 +42,28 @@ export const appRouter = router({
         .input(z.object({ qrCodeId: z.string() }))
         .mutation(async ({ input }) => {
             const { qrCodeId } = input;
-            const [user] = await db.select().from(users).where(eq(users.qrCodeId, qrCodeId)).limit(1);
+            const [user] = await db.select({
+                id: users.id,
+                firstName: users.firstName,
+                lastName: users.lastName,
+                ministry: users.ministry,
+            }).from(users).where(eq(users.qrCodeId, qrCodeId)).limit(1);
+
             if (!user) throw new Error("User not found");
 
             const today = new Date().toISOString().split('T')[0];
-            const [existing] = await db.select()
-                .from(attendance)
-                .where(and(eq(attendance.userId, user.id), eq(attendance.scanDate, today)))
-                .limit(1);
 
-            if (existing) return { success: false, message: "Already marked" };
+            const [inserted] = await db.insert(attendance)
+                .values({
+                    userId: user.id,
+                    scanDate: today,
+                })
+                .onConflictDoNothing()
+                .returning();
 
-            await db.insert(attendance).values({
-                userId: user.id,
-                scanDate: today,
-            });
+            if (!inserted) {
+                return { success: false, message: "Already marked today", user };
+            }
 
             revalidatePath("/admin");
             return { success: true, user };
@@ -106,18 +114,6 @@ export const appRouter = router({
             return { success: true };
         }),
 
-    createSuggestion: publicProcedure
-        .input(z.object({
-            content: z.string().min(1).max(500),
-            isAnonymous: z.boolean(),
-            userId: z.string(),
-        }))
-        .mutation(async ({ input }) => {
-            const { suggestions } = await import("@/db/schema");
-            const [created] = await db.insert(suggestions).values(input).returning();
-            revalidatePath("/suggestions");
-            return { success: true, suggestion: created };
-        }),
 
     getAdminDashboard: publicProcedure
         .input(z.object({
@@ -339,6 +335,224 @@ export const appRouter = router({
 
             revalidatePath("/pin-generator");
             return { success: true, pin: newPin };
+        }),
+
+    getUserByQrId: publicProcedure
+        .input(z.object({ qrCodeId: z.string() }))
+        .query(async ({ input }) => {
+            const [user] = await db.select().from(users).where(eq(users.qrCodeId, input.qrCodeId)).limit(1);
+            return user || null;
+        }),
+
+    getProfileData: publicProcedure
+        .input(z.object({ qrCodeId: z.string() }))
+        .query(async ({ input }) => {
+            const [user] = await db.select().from(users).where(eq(users.qrCodeId, input.qrCodeId)).limit(1);
+            if (!user) return null;
+
+            const userAttendance = await db.select()
+                .from(attendance)
+                .where(eq(attendance.userId, user.id))
+                .orderBy(desc(attendance.scannedAt))
+                .limit(10);
+
+            return { user, attendance: userAttendance };
+        }),
+
+    findUser: publicProcedure
+        .input(z.object({ firstName: z.string(), lastName: z.string() }))
+        .mutation(async ({ input }) => {
+            const [user] = await db.select().from(users).where(
+                and(
+                    ilike(users.firstName, input.firstName.trim()),
+                    ilike(users.lastName, input.lastName.trim())
+                )
+            ).limit(1);
+
+            if (!user) return { success: false, error: "Profile not found." };
+
+            // Set cookie if found
+            const cookieStore = await cookies();
+            cookieStore.set("qrCodeId", user.qrCodeId, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === "production",
+                sameSite: "strict",
+                path: "/",
+                maxAge: 60 * 60 * 24 * 400,
+            });
+
+            return { success: true, user };
+        }),
+
+    registerUser: publicProcedure
+        .input(z.object({
+            firstName: z.string(),
+            lastName: z.string(),
+            gender: z.string(),
+            network: z.string(),
+            cluster: z.string(),
+            contactNumber: z.string(),
+            email: z.string().optional(),
+            ministry: z.string()
+        }))
+        .mutation(async ({ input }) => {
+            const { firstName, lastName, contactNumber } = input;
+
+            // Check for existing user
+            const [existingUser] = await db.select().from(users).where(
+                and(
+                    ilike(users.firstName, firstName.trim()),
+                    ilike(users.lastName, lastName.trim())
+                )
+            ).limit(1);
+
+            if (existingUser) {
+                const cookieStore = await cookies();
+                cookieStore.set("qrCodeId", existingUser.qrCodeId, {
+                    httpOnly: true,
+                    secure: process.env.NODE_ENV === "production",
+                    sameSite: "strict",
+                    path: "/",
+                    maxAge: 60 * 60 * 24 * 400,
+                });
+                return { success: true, user: existingUser, alreadyExists: true };
+            }
+
+            const qrCodeId = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+
+            const [newUser] = await db.insert(users).values({
+                ...input,
+                qrCodeId,
+            }).returning();
+
+            const cookieStore = await cookies();
+            cookieStore.set("qrCodeId", qrCodeId, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === "production",
+                sameSite: "strict",
+                path: "/",
+                maxAge: 60 * 60 * 24 * 400,
+            });
+
+            return { success: true, user: newUser };
+        }),
+
+    getPublicEvents: publicProcedure
+        .query(async () => {
+            return await db.select().from(events).orderBy(desc(events.date)).limit(50);
+        }),
+
+    updateUser: publicProcedure
+        .input(z.object({
+            qrCodeId: z.string(),
+            data: z.object({
+                firstName: z.string(),
+                lastName: z.string(),
+                gender: z.string(),
+                network: z.string(),
+                cluster: z.string(),
+                contactNumber: z.string(),
+                email: z.string().optional(),
+                ministry: z.string()
+            })
+        }))
+        .mutation(async ({ input }) => {
+            const { qrCodeId, data } = input;
+            await db.update(users).set(data).where(eq(users.qrCodeId, qrCodeId));
+            revalidatePath(`/profile/${qrCodeId}`);
+            return { success: true };
+        }),
+
+    createSuggestion: publicProcedure
+        .input(z.object({
+            userId: z.string(),
+            content: z.string(),
+            isAnonymous: z.boolean().default(false)
+        }))
+        .mutation(async ({ input }) => {
+            const { suggestions } = await import("@/db/schema");
+            const [newSuggestion] = await db.insert(suggestions).values({
+                ...input,
+                likeCount: 0,
+            }).returning();
+
+            revalidatePath("/suggestions");
+            return { success: true, suggestion: newSuggestion };
+        }),
+
+    toggleSuggestionLike: publicProcedure
+        .input(z.object({
+            suggestionId: z.string(),
+            userId: z.string()
+        }))
+        .mutation(async ({ input }) => {
+            const { suggestionLikes, suggestions } = await import("@/db/schema");
+            const { suggestionId, userId } = input;
+
+            const [existingLike] = await db.select()
+                .from(suggestionLikes)
+                .where(and(eq(suggestionLikes.suggestionId, suggestionId), eq(suggestionLikes.userId, userId)))
+                .limit(1);
+
+            if (existingLike) {
+                await db.delete(suggestionLikes)
+                    .where(and(eq(suggestionLikes.suggestionId, suggestionId), eq(suggestionLikes.userId, userId)));
+
+                const [updated] = await db.update(suggestions)
+                    .set({ likeCount: sql`${suggestions.likeCount} - 1` })
+                    .where(eq(suggestions.id, suggestionId))
+                    .returning();
+
+                return { success: true, liked: false, likeCount: updated.likeCount };
+            } else {
+                await db.insert(suggestionLikes).values({ suggestionId, userId });
+
+                const [updated] = await db.update(suggestions)
+                    .set({ likeCount: sql`${suggestions.likeCount} + 1` })
+                    .where(eq(suggestions.id, suggestionId))
+                    .returning();
+
+                return { success: true, liked: true, likeCount: updated.likeCount };
+            }
+        }),
+
+    isScannerAuthorized: publicProcedure
+        .query(async () => {
+            const cookieStore = await cookies();
+            return cookieStore.get("clc_scanner_session")?.value === "authorized";
+        }),
+
+    validateScannerPin: publicProcedure
+        .input(z.object({ password: z.string() }))
+        .mutation(async ({ input }) => {
+            const { dailyPins } = await import("@/db/schema");
+            const today = new Date().toISOString().split('T')[0];
+
+            const [pinRecord] = await db.select()
+                .from(dailyPins)
+                .where(eq(dailyPins.date, today))
+                .limit(1);
+
+            if (pinRecord && pinRecord.pin === input.password) {
+                const cookieStore = await cookies();
+                cookieStore.set("clc_scanner_session", "authorized", {
+                    httpOnly: true,
+                    secure: process.env.NODE_ENV === "production",
+                    sameSite: "strict",
+                    path: "/",
+                    maxAge: 60 * 60 * 24, // 1 day
+                });
+                return { success: true };
+            }
+
+            return { success: false, error: "Invalid security PIN for today." };
+        }),
+
+    clearScannerSession: publicProcedure
+        .mutation(async () => {
+            const cookieStore = await cookies();
+            cookieStore.delete("clc_scanner_session");
+            return { success: true };
         }),
 });
 

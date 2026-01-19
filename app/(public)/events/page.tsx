@@ -1,6 +1,3 @@
-import { db } from "@/db";
-import { events } from "@/db/schema";
-import { desc } from "drizzle-orm";
 import {
     Bell,
     ArrowUpRight,
@@ -9,13 +6,14 @@ import {
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import EventsGrid from "./events-grid";
+import EventsGrid from "@/app/(public)/events/events-grid";
+import { trpcServer } from "@/lib/trpc/server";
 
 export const revalidate = 1800; // Revalidate every 30 minutes
 
 export default async function EventsPage() {
-    // Fetch events from DB with limit for performance
-    const allEvents = await db.select().from(events).orderBy(desc(events.date)).limit(50);
+    const caller = await trpcServer();
+    const allEvents = await caller.getPublicEvents();
 
     // Fallback Mock Events if DB is empty to prevent empty screen on first load
     const MOCK_EVENTS = [
@@ -43,7 +41,7 @@ export default async function EventsPage() {
         }
     ];
 
-    const displayEvents = allEvents.length > 0 ? allEvents : MOCK_EVENTS;
+    const displayEvents = allEvents && allEvents.length > 0 ? allEvents : MOCK_EVENTS;
 
     return (
         <div className="flex flex-col min-h-screen bg-background relative overflow-hidden">

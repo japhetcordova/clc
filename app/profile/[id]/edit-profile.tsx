@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { updateUser } from "@/lib/actions";
+import { trpc } from "@/lib/trpc/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -33,7 +33,7 @@ interface EditProfileProps {
 
 export default function EditProfile({ user }: EditProfileProps) {
     const [isOpen, setIsOpen] = useState(false);
-    const [isSubmitting, setIsSubmitting] = useState(false);
+    const updateMutation = trpc.updateUser.useMutation();
 
     const {
         register,
@@ -56,16 +56,21 @@ export default function EditProfile({ user }: EditProfileProps) {
     });
 
     const onSubmit = async (data: FormValues) => {
-        setIsSubmitting(true);
-        const result = await updateUser(user.qrCodeId, data);
-        setIsSubmitting(false);
+        try {
+            const result = await updateMutation.mutateAsync({
+                qrCodeId: user.qrCodeId,
+                data
+            });
 
-        if (result.success) {
-            toast.success("Profile updated successfully!");
-            setIsOpen(false);
-            window.location.reload(); // Quick way to refresh server data
-        } else {
-            toast.error("Failed to update profile.");
+            if (result.success) {
+                toast.success("Profile updated successfully!");
+                setIsOpen(false);
+                window.location.reload(); // Quick way to refresh server data
+            } else {
+                toast.error("Failed to update profile.");
+            }
+        } catch (err) {
+            toast.error("An error occurred while updating profile.");
         }
     };
 
@@ -152,8 +157,8 @@ export default function EditProfile({ user }: EditProfileProps) {
 
                         <div className="flex gap-4 pt-4">
                             <Button type="button" variant="ghost" onClick={() => setIsOpen(false)} className="flex-1 h-12 rounded-2xl font-black uppercase tracking-widest">Cancel</Button>
-                            <Button type="submit" disabled={isSubmitting} className="flex-1 h-12 rounded-2xl bg-primary text-primary-foreground font-black uppercase tracking-widest shadow-lg shadow-primary/20">
-                                {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : "Save Changes"}
+                            <Button type="submit" disabled={updateMutation.isPending} className="flex-1 h-12 rounded-2xl bg-primary text-primary-foreground font-black uppercase tracking-widest shadow-lg shadow-primary/20">
+                                {updateMutation.isPending ? <Loader2 className="w-5 h-5 animate-spin" /> : "Save Changes"}
                             </Button>
                         </div>
                     </form>

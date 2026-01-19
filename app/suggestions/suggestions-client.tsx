@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Heart, Lightbulb, User, Clock, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import BackButton from "@/components/BackButton";
-import { toggleSuggestionLike } from "@/lib/actions";
+import { trpc } from "@/lib/trpc/client";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import SuggestionForm from "@/components/SuggestionForm";
@@ -39,26 +39,27 @@ interface SuggestionsClientProps {
 
 export default function SuggestionsClient({ initialSuggestions, currentUser }: SuggestionsClientProps) {
     const [suggestions, setSuggestions] = useState(initialSuggestions);
-    const [isPending, startTransition] = useTransition();
+    const likeMutation = trpc.toggleSuggestionLike.useMutation();
 
     const handleLike = (suggestionId: string) => {
-        startTransition(async () => {
-            const result = await toggleSuggestionLike(suggestionId, currentUser.id);
-
-            if (result.success) {
-                // Optimistically update the UI
-                setSuggestions(prev => prev.map(s => {
-                    if (s.id === suggestionId) {
-                        return {
-                            ...s,
-                            isLikedByCurrentUser: result.liked!,
-                            likeCount: result.liked ? s.likeCount + 1 : s.likeCount - 1,
-                        };
-                    }
-                    return s;
-                }));
-            } else {
-                toast.error(result.error || "Failed to update like");
+        likeMutation.mutate({ suggestionId, userId: currentUser.id }, {
+            onSuccess: (result) => {
+                if (result.success) {
+                    // Optimistically update the UI (already did by mutation logic or manually)
+                    setSuggestions(prev => prev.map(s => {
+                        if (s.id === suggestionId) {
+                            return {
+                                ...s,
+                                isLikedByCurrentUser: result.liked!,
+                                likeCount: result.likeCount!,
+                            };
+                        }
+                        return s;
+                    }));
+                }
+            },
+            onError: (err) => {
+                toast.error("Failed to update like");
             }
         });
     };
@@ -135,7 +136,7 @@ export default function SuggestionsClient({ initialSuggestions, currentUser }: S
                                     {/* Compact Like */}
                                     <button
                                         onClick={() => handleLike(suggestion.id)}
-                                        disabled={isPending}
+                                        disabled={likeMutation.isPending}
                                         className={cn(
                                             "flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-all text-xs font-bold",
                                             suggestion.isLikedByCurrentUser

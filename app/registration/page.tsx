@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { motion, AnimatePresence } from "framer-motion";
-import { registerUser, findUser } from "@/lib/actions";
+import { trpc } from "@/lib/trpc/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -38,7 +38,7 @@ type FormValues = z.infer<typeof formSchema>;
 export default function RegistrationPage() {
     const router = useRouter();
     const [step, setStep] = useState(1);
-    const [activeTab, setActiveTab] = useState<"register" | "login">("register");
+    const [activeTab, setActiveTab] = useState<"register" | "login" | any>("register");
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [registeredUser, setRegisteredUser] = useState<{ firstName: string; lastName: string; qrCodeId: string; ministry: string; network: string; alreadyExists?: boolean; cluster: string } | null>(null);
 
@@ -46,6 +46,9 @@ export default function RegistrationPage() {
     const [loginFName, setLoginFName] = useState("");
     const [loginLName, setLoginLName] = useState("");
     const [isSearching, setIsSearching] = useState(false);
+
+    const registerMutation = trpc.registerUser.useMutation();
+    const findMutation = trpc.findUser.useMutation();
 
     const { register, handleSubmit, formState: { errors }, watch, setValue } = useForm<FormValues>({
         resolver: zodResolver(formSchema),
@@ -60,7 +63,7 @@ export default function RegistrationPage() {
     const onSubmit = async (data: FormValues) => {
         setIsSubmitting(true);
         try {
-            const result = await registerUser(data);
+            const result = await registerMutation.mutateAsync(data);
             if (result.success && result.user) {
                 setRegisteredUser({
                     firstName: result.user.firstName,
@@ -77,7 +80,7 @@ export default function RegistrationPage() {
                     toast.success("Registration successful!");
                 }
             } else {
-                toast.error(result.error || "failed to register.");
+                toast.error((result as any).error || "failed to register.");
             }
         } catch (err) {
             toast.error("Something went wrong.");
@@ -109,7 +112,7 @@ export default function RegistrationPage() {
         }
 
         setIsSearching(true);
-        const result = await findUser(loginFName, loginLName);
+        const result = await findMutation.mutateAsync({ firstName: loginFName, lastName: loginLName });
         setIsSearching(false);
 
         if (result.success && result.user) {
