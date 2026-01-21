@@ -1,6 +1,4 @@
-"use client";
 
-import { motion } from "framer-motion";
 import {
     Calendar,
     MapPin,
@@ -10,130 +8,180 @@ import {
     Bell,
     Map as MapIcon,
     Info,
-    ArrowRight
+    ArrowRight,
+    Users,
+    UserCircle,
+    Link as LinkIcon
 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import { useParams } from "next/navigation";
+import { trpcServer } from "@/lib/trpc/server";
+import { notFound } from "next/navigation";
+import EventCTA from "./event-cta";
 
-// For now, using static data until we fetch from DB in a real scenario
-const MOCK_EVENTS = [
-    {
-        id: "1",
-        title: "Super Sunday: Vision Day",
-        date: "Jan 12, 2026",
-        time: "08:00 AM & 10:30 AM",
-        location: "Tagum HQ Main Sanctuary",
-        category: "special",
-        desc: "A special service where we unveil the roadmap and theme for the entire year. Don't miss this prophetic moment! We will be discussing our kingdom goals, cluster expansions, and community outreach programs for the first quarter. Join us as we align our hearts with God's vision for 2026.",
-        tag: "High Priority",
-        image: "/church_hero_worship_1767400361470.png"
-    },
-    {
-        id: "2",
-        title: "Mid-week Breakthrough",
-        date: "Every Wednesday",
-        time: "05:00 PM",
-        location: "Tagum HQ",
-        category: "regular",
-        desc: "Corporate prayer and worship to refuel your spiritual fire mid-week. This is a time of intense intercession, testimony sharing, and deep intimate worship. Whether you're feeling weary or just want more of God's presence, this gathering is for you.",
-        tag: "Weekly",
-        image: "/church_architecture_exterior_1767400425687.png"
+export const revalidate = 1800; // Revalidate every 30 mins
+
+export default async function EventDetailPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
+    const caller = await trpcServer();
+    const event = await caller.getEventById({ id });
+
+    if (!event) {
+        notFound();
     }
-];
-
-export default function EventDetailPage() {
-    const params = useParams();
-    const event = MOCK_EVENTS.find(e => e.id === params.id) || MOCK_EVENTS[0];
 
     return (
         <div className="flex flex-col min-h-screen bg-background">
-            {/* HERO HERO SECTION */}
-            <section className="relative h-[50vh] min-h-[400px] overflow-hidden">
-                <Image
-                    src={event.image}
-                    alt={event.title}
-                    fill
-                    className="object-cover"
-                    priority
-                />
-                <div className="absolute inset-0 bg-linear-to-t from-background via-background/60 to-transparent" />
+            {/* HERO SECTION - Blurred Background */}
+            <section className="relative min-h-[60vh] flex items-center overflow-hidden py-16 pb-8">
+                {/* Blurred Background Image */}
+                <div className="absolute inset-0 z-0">
+                    <Image
+                        src={event.image || "/bg/events.webp"}
+                        alt={event.title}
+                        fill
+                        className="object-cover"
+                        priority
+                    />
+                    {/* Blur and transparency overlay */}
+                    <div className="absolute inset-0 backdrop-blur-2xl bg-background/60" />
+                    <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-background/30 to-background" />
+                </div>
 
-                <div className="absolute bottom-12 left-0 right-0 z-10">
-                    <div className="max-w-7xl mx-auto px-6 space-y-4">
-                        <Link href="/events">
-                            <Button variant="ghost" className="p-0 h-auto gap-2 text-white/80 hover:text-white hover:bg-transparent mb-4 text-[10px] font-black uppercase tracking-widest">
-                                <ChevronLeft className="w-4 h-4" /> Back to Events
-                            </Button>
-                        </Link>
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="space-y-4"
-                        >
-                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/20 border border-primary/30 backdrop-blur-md">
-                                <span className="text-[9px] font-black uppercase tracking-widest text-primary">{event.tag}</span>
+                <div className="relative z-10 max-w-7xl mx-auto px-2 w-full">
+                    <Link href="/events" className="inline-block mb-8">
+                        <Button variant="ghost" className="p-0 h-auto gap-2 text-foreground/80 hover:text-foreground hover:bg-transparent text-[10px] font-black uppercase tracking-widest">
+                            <ChevronLeft className="w-4 h-4" /> Back to Events
+                        </Button>
+                    </Link>
+
+                    {/* Main Content - Image Left, Title Right */}
+                    <div className="space-y-8">
+                        {/* Flexbox Layout: Image 60% | Content 40% */}
+                        <div className="flex flex-col lg:flex-row lg:items-start gap-6 lg:gap-8">
+                            {/* Left: Image Card (60% width) */}
+                            <div className="relative w-full lg:w-[15%] flex-shrink-0 rounded-2xl overflow-hidden shadow-2xl border-4 border-white/20 backdrop-blur-sm bg-white/5 animate-in fade-in slide-in-from-left-8 duration-700">
+                                <Image
+                                    src={event.image || "/bg/events.webp"}
+                                    alt={event.title}
+                                    width={800}
+                                    height={600}
+                                    className="w-full h-auto object-contain"
+                                    priority
+                                />
                             </div>
-                            <h1 className="text-4xl md:text-6xl font-black tracking-tighter uppercase italic leading-none text-white drop-shadow-2xl">
-                                {event.title}
-                            </h1>
-                        </motion.div>
+
+                            {/* Right: Title + Info (40% width) */}
+                            <div className="flex-1 space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
+                                <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter uppercase italic leading-[0.95] text-foreground drop-shadow-2xl">
+                                    {event.title}
+                                </h1>
+
+                                {/* Quick Info Pills */}
+                                <div className="flex flex-wrap gap-3 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-150">
+                                    <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-card/80 backdrop-blur-md border border-border shadow-lg">
+                                        <Calendar className="w-4 h-4 text-primary" />
+                                        <span className="text-sm font-bold">{event.date}</span>
+                                    </div>
+                                    <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-card/80 backdrop-blur-md border border-border shadow-lg">
+                                        <Clock className="w-4 h-4 text-primary" />
+                                        <span className="text-sm font-bold">{event.time}</span>
+                                    </div>
+                                    <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-card/80 backdrop-blur-md border border-border shadow-lg">
+                                        <MapPin className="w-4 h-4 text-rose-500" />
+                                        <span className="text-sm font-bold">{event.location}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
                     </div>
                 </div>
             </section>
 
             {/* DETAILS SECTION */}
-            <section className="py-20 px-6">
+            <section className="py-8 lg:py-12 px-6">
                 <div className="max-w-7xl mx-auto grid lg:grid-cols-3 gap-12">
                     {/* Main Content */}
                     <div className="lg:col-span-2 space-y-12">
                         <div className="space-y-6">
                             <h2 className="text-3xl font-black uppercase italic tracking-tight">About this <span className="text-primary">Event</span></h2>
-                            <p className="text-lg text-muted-foreground font-medium leading-relaxed">
-                                {event.desc}
+                            <p className="text-lg text-muted-foreground font-medium leading-relaxed whitespace-pre-line">
+                                {event.description}
                             </p>
                         </div>
 
-                        <div className="grid sm:grid-cols-2 gap-8">
-                            <div className="p-8 rounded-[2rem] bg-card border border-border space-y-4">
-                                <Clock className="w-8 h-8 text-primary" />
-                                <div className="space-y-1">
-                                    <h4 className="font-black text-lg uppercase italic">When</h4>
-                                    <p className="text-sm font-bold text-muted-foreground uppercase">{event.date}</p>
-                                    <p className="text-sm font-black text-primary uppercase tracking-widest">{event.time}</p>
+                        <div className="grid sm:grid-cols-1 gap-8">
+                            <div className="p-8 rounded-[2rem] bg-card border border-border space-y-6 hover:border-primary/20 transition-colors">
+                                {/* When Section */}
+                                <div className="flex items-start gap-4">
+                                    <Clock className="w-8 h-8 text-primary flex-shrink-0" />
+                                    <div className="space-y-1">
+                                        <h4 className="font-black text-lg uppercase italic">When</h4>
+                                        <p className="text-sm font-bold text-muted-foreground uppercase">{event.date}</p>
+                                        <p className="text-sm font-black text-primary uppercase tracking-widest">{event.time}</p>
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="p-8 rounded-[2rem] bg-card border border-border space-y-4">
-                                <MapPin className="w-8 h-8 text-rose-500" />
-                                <div className="space-y-1">
-                                    <h4 className="font-black text-lg uppercase italic">Where</h4>
-                                    <p className="text-sm font-bold text-muted-foreground uppercase">{event.location}</p>
-                                    <Link href="/#location" className="text-[10px] font-black text-primary uppercase tracking-[0.2em] flex items-center gap-1 group">
-                                        View on Map <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
-                                    </Link>
+
+                                {/* Divider */}
+                                <div className="border-t border-border" />
+
+                                {/* Where Section */}
+                                <div className="flex items-start gap-4">
+                                    <MapPin className="w-8 h-8 text-rose-500 flex-shrink-0" />
+                                    <div className="space-y-1">
+                                        <h4 className="font-black text-lg uppercase italic">Where</h4>
+                                        <p className="text-sm font-bold text-muted-foreground uppercase">{event.location}</p>
+                                        {event.googleMapsLink && (
+                                            <a
+                                                href={event.googleMapsLink}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="text-[10px] font-black text-primary uppercase tracking-[0.2em] flex items-center gap-1 group w-fit"
+                                            >
+                                                View on Map <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+                                            </a>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                         </div>
+
+                        {/* Extra Details Grid if available */}
+                        {(event.maxCapacity || event.contactPerson) && (
+                            <div className="grid sm:grid-cols-2 gap-8">
+                                {event.maxCapacity && (
+                                    <div className="p-8 rounded-[2rem] bg-card border border-border space-y-4 hover:border-primary/20 transition-colors">
+                                        <Users className="w-8 h-8 text-blue-500" />
+                                        <div className="space-y-1">
+                                            <h4 className="font-black text-lg uppercase italic">Capacity</h4>
+                                            <p className="text-sm font-bold text-muted-foreground uppercase">{event.maxCapacity}</p>
+                                        </div>
+                                    </div>
+                                )}
+                                {event.contactPerson && (
+                                    <div className="p-8 rounded-[2rem] bg-card border border-border space-y-4 hover:border-primary/20 transition-colors">
+                                        <UserCircle className="w-8 h-8 text-green-500" />
+                                        <div className="space-y-1">
+                                            <h4 className="font-black text-lg uppercase italic">Contact</h4>
+                                            <p className="text-sm font-bold text-muted-foreground uppercase">{event.contactPerson}</p>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        )}
                     </div>
 
                     {/* Sidebar / CTA */}
                     <div className="space-y-8">
-                        <div className="p-8 rounded-[3rem] bg-primary text-white shadow-2xl space-y-6 relative overflow-hidden group">
-                            <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-[60px] -mr-16 -mt-16" />
-
-                            <h3 className="text-2xl font-black uppercase italic tracking-tighter relative z-10">Will you be there?</h3>
-                            <p className="text-sm font-medium opacity-80 relative z-10">Let us know if you're coming so we can prepare a seat for you.</p>
-
-                            <div className="space-y-3 relative z-10">
-                                <Button className="w-full h-14 rounded-2xl bg-white text-primary font-black uppercase text-xs tracking-[0.2em] shadow-xl">
-                                    I'm Interested
-                                </Button>
-                                <Button variant="ghost" className="w-full h-14 rounded-2xl border-white/20 bg-white/5 font-black uppercase text-xs tracking-[0.2em] text-white hover:bg-white/10">
-                                    <Share2 className="w-4 h-4 mr-2" /> Share Event
-                                </Button>
-                            </div>
-                        </div>
+                        <EventCTA
+                            eventId={event.id}
+                            eventTitle={event.title}
+                            registrationLink={event.registrationLink}
+                            initialInterestedCount={event.interestedCount || 0}
+                        />
 
                         <div className="p-8 rounded-[2.5rem] bg-card border border-border space-y-4">
                             <div className="flex items-center gap-2 mb-2">
@@ -149,6 +197,12 @@ export default function EventDetailPage() {
                                     <Info className="w-4 h-4 text-primary shrink-0" />
                                     <span>Parking is available at the main gate.</span>
                                 </li>
+                                {event.category === 'special' && (
+                                    <li className="text-xs font-medium text-muted-foreground flex gap-2">
+                                        <Info className="w-4 h-4 text-primary shrink-0" />
+                                        <span>Don't forget to invite your friends and family!</span>
+                                    </li>
+                                )}
                             </ul>
                         </div>
                     </div>

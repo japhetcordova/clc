@@ -50,6 +50,11 @@ export const events = pgTable("events", {
     category: text("category").notNull(), // special, regular, leadership
     tag: text("tag").notNull(),
     image: text("image"),
+    maxCapacity: text("max_capacity"), // Maximum attendees
+    registrationLink: text("registration_link"), // External registration URL
+    contactPerson: text("contact_person"), // Event coordinator/contact
+    googleMapsLink: text("google_maps_link"), // Link to Google Maps location
+    interestedCount: integer("interested_count").default(0).notNull(), // Number of interested people
     createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

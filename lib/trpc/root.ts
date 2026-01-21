@@ -84,6 +84,10 @@ export const appRouter = router({
             category: z.string(),
             tag: z.string(),
             image: z.string().optional(),
+            maxCapacity: z.string().optional(),
+            registrationLink: z.string().optional(),
+            contactPerson: z.string().optional(),
+            googleMapsLink: z.string().optional(),
         }))
         .mutation(async ({ input }) => {
             const [newEvent] = await db.insert(events).values(input).returning();
@@ -112,6 +116,18 @@ export const appRouter = router({
             await db.delete(events).where(eq(events.id, input.id));
             revalidatePath("/admin/events");
             return { success: true };
+        }),
+
+    markEventInterested: publicProcedure
+        .input(z.object({ eventId: z.string() }))
+        .mutation(async ({ input }) => {
+            const [updatedEvent] = await db.update(events)
+                .set({ interestedCount: sql`${events.interestedCount} + 1` })
+                .where(eq(events.id, input.eventId))
+                .returning();
+            revalidatePath(`/events/${input.eventId}`);
+            revalidatePath("/admin/events");
+            return { success: true, interestedCount: updatedEvent.interestedCount };
         }),
 
 
@@ -503,6 +519,13 @@ export const appRouter = router({
     getPublicEvents: publicProcedure
         .query(async () => {
             return await db.select().from(events).orderBy(desc(events.date)).limit(50);
+        }),
+
+    getEventById: publicProcedure
+        .input(z.object({ id: z.string() }))
+        .query(async ({ input }) => {
+            const [event] = await db.select().from(events).where(eq(events.id, input.id)).limit(1);
+            return event || null;
         }),
 
     updateUser: publicProcedure

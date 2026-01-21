@@ -16,6 +16,13 @@ import {
     TableRow
 } from "@/components/ui/table";
 import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
+import {
     Dialog,
     DialogContent,
     DialogHeader,
@@ -43,7 +50,11 @@ export default function EventsClient({ initialEvents }: EventsClientProps) {
         location: "",
         category: "regular",
         tag: "",
-        image: ""
+        image: "",
+        maxCapacity: "",
+        registrationLink: "",
+        contactPerson: "",
+        googleMapsLink: ""
     });
 
     const resetForm = () => {
@@ -55,7 +66,11 @@ export default function EventsClient({ initialEvents }: EventsClientProps) {
             location: "",
             category: "regular",
             tag: "",
-            image: ""
+            image: "",
+            maxCapacity: "",
+            registrationLink: "",
+            contactPerson: "",
+            googleMapsLink: ""
         });
         setEditingEvent(null);
     };
@@ -70,7 +85,11 @@ export default function EventsClient({ initialEvents }: EventsClientProps) {
             location: event.location,
             category: event.category,
             tag: event.tag,
-            image: event.image || ""
+            image: event.image || "",
+            maxCapacity: event.maxCapacity || "",
+            registrationLink: event.registrationLink || "",
+            contactPerson: event.contactPerson || "",
+            googleMapsLink: event.googleMapsLink || ""
         });
         setIsDialogOpen(true);
     };
@@ -188,19 +207,40 @@ export default function EventsClient({ initialEvents }: EventsClientProps) {
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                     <Label className="text-[10px] uppercase font-black">Category</Label>
-                                    <Input
+                                    <Select
                                         value={formData.category}
-                                        onChange={e => setFormData({ ...formData, category: e.target.value.toLowerCase() })}
-                                        placeholder="regular, special, leadership"
-                                    />
+                                        onValueChange={(value) => setFormData({ ...formData, category: value })}
+                                    >
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select category" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="special">Special</SelectItem>
+                                            <SelectItem value="regular">Regular</SelectItem>
+                                            <SelectItem value="leadership">Leadership</SelectItem>
+                                        </SelectContent>
+                                    </Select>
                                 </div>
                                 <div className="space-y-2">
                                     <Label className="text-[10px] uppercase font-black">Display Tag</Label>
-                                    <Input
+                                    <Select
                                         value={formData.tag}
-                                        onChange={e => setFormData({ ...formData, tag: e.target.value })}
-                                        placeholder="e.g. Weekly, High Priority"
-                                    />
+                                        onValueChange={(value) => setFormData({ ...formData, tag: value })}
+                                    >
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select tag" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="Weekly">Weekly</SelectItem>
+                                            <SelectItem value="High Priority">High Priority</SelectItem>
+                                            <SelectItem value="Special Event">Special Event</SelectItem>
+                                            <SelectItem value="Community">Community</SelectItem>
+                                            <SelectItem value="Youth">Youth</SelectItem>
+                                            <SelectItem value="Kids">Kids</SelectItem>
+                                            <SelectItem value="Worship">Worship</SelectItem>
+                                            <SelectItem value="Missions">Missions</SelectItem>
+                                        </SelectContent>
+                                    </Select>
                                 </div>
                             </div>
                             <div className="space-y-2">
@@ -221,6 +261,47 @@ export default function EventsClient({ initialEvents }: EventsClientProps) {
                                     placeholder="/path/to/image.png"
                                 />
                             </div>
+
+                            {/* 5TH SECTION: Event Management & Registration */}
+                            <div className="pt-4 border-t border-border space-y-4">
+                                <h3 className="text-sm font-black uppercase italic text-primary">Event Management & Registration</h3>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <Label className="text-[10px] uppercase font-black">Max Capacity (Optional)</Label>
+                                        <Input
+                                            value={formData.maxCapacity}
+                                            onChange={e => setFormData({ ...formData, maxCapacity: e.target.value })}
+                                            placeholder="e.g. 500 people"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label className="text-[10px] uppercase font-black">Contact Person (Optional)</Label>
+                                        <Input
+                                            value={formData.contactPerson}
+                                            onChange={e => setFormData({ ...formData, contactPerson: e.target.value })}
+                                            placeholder="e.g. Pastor John"
+                                        />
+                                    </div>
+                                </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <Label className="text-[10px] uppercase font-black">Registration Link (Optional)</Label>
+                                        <Input
+                                            value={formData.registrationLink}
+                                            onChange={e => setFormData({ ...formData, registrationLink: e.target.value })}
+                                            placeholder="https://forms.google.com/..."
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label className="text-[10px] uppercase font-black">Google Maps Link (Optional)</Label>
+                                        <Input
+                                            value={formData.googleMapsLink}
+                                            onChange={e => setFormData({ ...formData, googleMapsLink: e.target.value })}
+                                            placeholder="https://maps.google.com/..."
+                                        />
+                                    </div>
+                                </div>
+                            </div>
                             <DialogFooter>
                                 <Button type="submit" disabled={isLoading} className="w-full h-12 rounded-xl bg-primary font-black uppercase text-xs tracking-widest">
                                     {isLoading ? "Saving..." : editingEvent ? "Update Event" : "Create Event"}
@@ -235,16 +316,17 @@ export default function EventsClient({ initialEvents }: EventsClientProps) {
                 <Table>
                     <TableHeader className="bg-muted/50">
                         <TableRow>
-                            <TableHead className="font-black uppercase text-[10px]">Event</TableHead>
+                            <TableHead className="font-black uppercase text-[10px]">Title</TableHead>
                             <TableHead className="font-black uppercase text-[10px]">Date & Time</TableHead>
                             <TableHead className="font-black uppercase text-[10px]">Category</TableHead>
+                            <TableHead className="font-black uppercase text-[10px]">Interested</TableHead>
                             <TableHead className="font-black uppercase text-[10px] text-right">Actions</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {events.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={4} className="h-32 text-center text-muted-foreground font-medium uppercase text-[10px] tracking-widest">
+                                <TableCell colSpan={5} className="h-32 text-center text-muted-foreground font-medium uppercase text-[10px] tracking-widest">
                                     No events found. Start by adding one.
                                 </TableCell>
                             </TableRow>
@@ -278,6 +360,12 @@ export default function EventsClient({ initialEvents }: EventsClientProps) {
                                             <span className="text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full bg-muted border border-border">
                                                 {event.category}
                                             </span>
+                                        </div>
+                                    </TableCell>
+                                    <TableCell>
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-2xl font-black text-primary">{event.interestedCount || 0}</span>
+                                            <span className="text-[10px] text-muted-foreground uppercase">people</span>
                                         </div>
                                     </TableCell>
                                     <TableCell className="text-right">

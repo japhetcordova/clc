@@ -76,7 +76,19 @@ export default function EventsGrid({ initialEvents }: EventsGridProps) {
                                     </h3>
                                     <div className="flex items-center gap-2 text-muted-foreground">
                                         <MapPin className="w-3 h-3 group-hover:text-rose-500 transition-colors" />
-                                        <span className="text-[10px] font-bold uppercase tracking-widest">{event.location}</span>
+                                        {event.googleMapsLink ? (
+                                            <a
+                                                href={event.googleMapsLink}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="text-[10px] font-bold uppercase tracking-widest hover:text-rose-500 hover:underline z-20 relative"
+                                                onClick={(e) => e.stopPropagation()}
+                                            >
+                                                {event.location}
+                                            </a>
+                                        ) : (
+                                            <span className="text-[10px] font-bold uppercase tracking-widest">{event.location}</span>
+                                        )}
                                     </div>
                                 </div>
 
