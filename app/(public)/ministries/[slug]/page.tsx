@@ -77,7 +77,7 @@ export default function MinistryDetailPage() {
             <section className="relative pt-32 pb-20 overflow-hidden">
                 <div className="absolute inset-0 z-0">
                     <Image
-                        src="/bg/ministries.png"
+                        src="/bg/ministries.webp"
                         alt="Ministry Background"
                         fill
                         className="object-cover opacity-10 scale-105"

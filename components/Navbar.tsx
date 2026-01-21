@@ -7,7 +7,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import Image from "next/image";
+import Logo from "./Logo";
 
 export default function Navbar() {
     const [scrolled, setScrolled] = useState(false);
@@ -16,7 +16,7 @@ export default function Navbar() {
 
     const navLinks = [
         { name: "About", href: "/about" },
-        { name: "Locations", href: "/locations" },
+        { name: "Outreach", href: "/locations" },
         { name: "Ministries", href: "/ministries" },
         { name: "Giving", href: "/giving" },
         { name: "Events", href: "/events" },
@@ -75,12 +75,8 @@ export default function Navbar() {
                     : "bg-background/40 backdrop-blur-md border-border/40"
             )}>
                 <div className="max-w-[1920px] mx-auto h-16 md:h-20 px-4 md:px-8 flex items-center justify-between">
-                    <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-                        <Image src="/logo.webp" alt="CLC Logo" width={40} height={40} className="rounded-full shadow-lg" />
-                        <div className="flex flex-col -space-y-1">
-                            <span className="font-black italic uppercase tracking-tighter text-xl leading-none">Christian Life Center</span>
-                            <span className="text-[10px] pt-1 font-black uppercase tracking-[0.3em] text-primary leading-none ml-0.5">Tagum</span>
-                        </div>
+                    <Link href="/" className="hover:opacity-80 transition-opacity">
+                        <Logo />
                     </Link>
 
                     <div className="hidden md:flex items-center gap-8 lg:gap-10 text-[11px] lg:text-xs font-black uppercase tracking-[0.2em] text-muted-foreground">

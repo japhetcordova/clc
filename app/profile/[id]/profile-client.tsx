@@ -74,9 +74,9 @@ export function ProfileIDPreview({ user, qrValue, trigger }: ProfileClientProps 
 
     const bgOptions = [
         { id: 0, name: "Onyx Minimal", color: "bg-[#020617]" },
-        { id: 1, name: "Celestial", image: "/1.png" },
-        { id: 2, name: "Ethereal", image: "/2.png" },
-        { id: 3, name: "Prism", image: "/3.png" },
+        { id: 1, name: "Celestial", image: "/1.webp" },
+        { id: 2, name: "Ethereal", image: "/2.webp" },
+        { id: 3, name: "Prism", image: "/3.webp" },
     ];
 
     const Content = () => (

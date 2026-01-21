@@ -82,7 +82,7 @@ export default function MinistriesPage() {
                 <div className="p-6 space-y-6 border-b border-border relative overflow-hidden">
                     <div className="absolute inset-0 z-0">
                         <Image
-                            src="/bg/ministries.png"
+                            src="/bg/ministries.webp"
                             alt="Ministries Background"
                             fill
                             className="object-cover opacity-10 scale-105"

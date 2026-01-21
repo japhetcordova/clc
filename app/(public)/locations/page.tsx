@@ -94,13 +94,13 @@ export default function LocationsPage() {
                         />
                     </div>
 
-                    <div className="flex gap-8 border-b border-border">
-                        {["All", "Luzon", "Visayas", "Mindanao"].map((category) => (
+                    <div className="flex gap-6 border-b border-border overflow-x-auto no-scrollbar pb-px">
+                        {["All", "Luzon", "Visayas", "Mindanao", "International"].map((category) => (
                             <button
                                 key={category}
                                 onClick={() => setActiveCategory(category)}
                                 className={cn(
-                                    "pb-4 text-[11px] font-black uppercase tracking-[0.2em] transition-all relative",
+                                    "pb-4 text-[10px] font-black uppercase tracking-[0.15em] transition-all relative whitespace-nowrap shrink-0",
                                     activeCategory === category ? "text-primary" : "text-muted-foreground hover:text-foreground"
                                 )}
                             >

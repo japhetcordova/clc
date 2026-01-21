@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import Logo from "./Logo";
 
 // Custom TikTok Icon
 const TikTokIcon = ({ className }: { className?: string }) => (
@@ -46,12 +47,8 @@ export default function Footer() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12 mb-12 md:mb-16">
                     {/* Brand Section */}
                     <div className="space-y-6">
-                        <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-                            <Image src="/logo.webp" alt="CLC Logo" width={40} height={40} className="rounded-full shadow-lg" />
-                            <div className="flex flex-col -space-y-1">
-                                <span className="font-black italic uppercase tracking-tighter text-xl leading-none">Christian Life Center</span>
-                                <span className="text-[10px] pt-1 font-black uppercase tracking-[0.3em] text-primary leading-none ml-0.5">Tagum</span>
-                            </div>
+                        <Link href="/" className="hover:opacity-80 transition-opacity">
+                            <Logo />
                         </Link>
                         <p className="text-sm text-muted-foreground font-medium leading-relaxed">
                             Dedicated to fostering spiritual growth, community impact, and authentic worship in Tagum City since inception. Join our global family today.

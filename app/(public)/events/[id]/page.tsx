@@ -19,6 +19,7 @@ import Image from "next/image";
 import { trpcServer } from "@/lib/trpc/server";
 import { notFound } from "next/navigation";
 import EventCTA from "./event-cta";
+import QRLink from "./qr-link";
 
 export const revalidate = 1800; // Revalidate every 30 mins
 
@@ -72,27 +73,37 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
                                 />
                             </div>
 
-                            {/* Right: Title + Info (40% width) */}
-                            <div className="flex-1 space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
-                                <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter uppercase italic leading-[0.95] text-foreground drop-shadow-2xl">
-                                    {event.title}
-                                </h1>
+                            {/* Right: Title + Info + QR (40% width) */}
+                            <div className="flex-1 flex flex-col lg:flex-row lg:items-center justify-between gap-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+                                <div className="space-y-4">
+                                    <h1 className="text-4xl md:text-5xl lg:text-7xl font-black tracking-tighter uppercase italic leading-[0.85] text-foreground drop-shadow-2xl">
+                                        {event.title}
+                                    </h1>
 
-                                {/* Quick Info Pills */}
-                                <div className="flex flex-wrap gap-3 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-150">
-                                    <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-card/80 backdrop-blur-md border border-border shadow-lg">
-                                        <Calendar className="w-4 h-4 text-primary" />
-                                        <span className="text-sm font-bold">{event.date}</span>
-                                    </div>
-                                    <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-card/80 backdrop-blur-md border border-border shadow-lg">
-                                        <Clock className="w-4 h-4 text-primary" />
-                                        <span className="text-sm font-bold">{event.time}</span>
-                                    </div>
-                                    <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-card/80 backdrop-blur-md border border-border shadow-lg">
-                                        <MapPin className="w-4 h-4 text-rose-500" />
-                                        <span className="text-sm font-bold">{event.location}</span>
+                                    {/* Quick Info Pills */}
+                                    <div className="flex flex-wrap gap-3 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-150">
+                                        <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-card/80 backdrop-blur-md border border-border shadow-lg">
+                                            <Calendar className="w-4 h-4 text-primary" />
+                                            <span className="text-sm font-bold">{event.date}</span>
+                                        </div>
+                                        <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-card/80 backdrop-blur-md border border-border shadow-lg">
+                                            <Clock className="w-4 h-4 text-primary" />
+                                            <span className="text-sm font-bold">{event.time}</span>
+                                        </div>
+                                        <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-card/80 backdrop-blur-md border border-border shadow-lg">
+                                            <MapPin className="w-4 h-4 text-rose-500" />
+                                            <span className="text-sm font-bold">{event.location}</span>
+                                        </div>
                                     </div>
                                 </div>
+
+                                {event.googleMapsLink && (
+                                    <div className="hidden lg:block animate-in fade-in zoom-in duration-1000 delay-300">
+                                        <div className="p-4 rounded-[2rem] bg-white/5 backdrop-blur-md border border-white/10 shadow-2xl">
+                                            <QRLink url={event.googleMapsLink} size={160} />
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         </div>
 
@@ -139,7 +150,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
                                                 href={event.googleMapsLink}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className="text-[10px] font-black text-primary uppercase tracking-[0.2em] flex items-center gap-1 group w-fit"
+                                                className="text-[10px] font-black text-primary uppercase tracking-[0.2em] flex items-center gap-1 group w-fit mt-1"
                                             >
                                                 View on Map <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
                                             </a>

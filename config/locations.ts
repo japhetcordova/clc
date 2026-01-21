@@ -178,6 +178,21 @@ export const DEFAULT_LOCATIONS: Location[] = [
         phone: "0916 461 3649",
         googleMapsLink: "https://maps.app.goo.gl/DqQZUkVMRaG3bd5c8",
         serviceTimes: ["10:00 AM - 11:45 AM"]
+    },
+    {
+        id: "12",
+        name: "Hong Kong",
+        lat: 22.3371,
+        lng: 114.1376,
+        address: "Ling Nan Garden Lai Chi Kok Park Mei foo MTR Exit A",
+        district: "Hong Kong",
+        region: "International",
+        type: "Campus",
+        thumbnail: "/bg/events.webp",
+        hostedBy: "Campus Pastor",
+        phone: "0916 461 3649",
+        googleMapsLink: "https://www.google.com/maps/search/?api=1&query=Ling+Nan+Garden+Lai+Chi+Kok+Park+Mei+Foo+Hong+Kong",
+        serviceTimes: ["2:00 PM - 4:00 PM"]
     }
 ];
 
