@@ -41,10 +41,15 @@ export async function generateMetadata(): Promise<Metadata> {
         ? data.thoughts.split('\n')[0].replace(/\*/g, '').substring(0, 160) + "..."
         : "Receive daily spiritual nourishment with our Verse of the Day.";
 
+    const pageTitle = `${verseText}${reference}`;
+
     return {
-        title: `${verseText}${reference}`,
+        title: pageTitle,
         description: thoughts,
         openGraph: {
+            title: pageTitle,
+            description: thoughts,
+            type: "article",
             images: [
                 {
                     url: "/bg/word.webp",
@@ -53,6 +58,12 @@ export async function generateMetadata(): Promise<Metadata> {
                     alt: "Bible - Verse of the Day",
                 }
             ],
+        },
+        twitter: {
+            card: "summary_large_image",
+            title: pageTitle,
+            description: thoughts,
+            images: ["/bg/word.webp"],
         },
     };
 }
