@@ -61,6 +61,9 @@ export const metadata: Metadata = {
       },
     ],
   },
+  facebook: {
+    appId: "637492048572910", // Placeholder ID to satisfy debugger (user should update if they have one)
+  },
   twitter: {
     card: "summary_large_image",
     title: siteConfig.name,

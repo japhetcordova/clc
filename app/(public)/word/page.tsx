@@ -48,6 +48,7 @@ export async function generateMetadata(): Promise<Metadata> {
         openGraph: {
             title: pageTitle,
             description: thoughts,
+            url: "/word",
             type: "article",
             images: [
                 {
