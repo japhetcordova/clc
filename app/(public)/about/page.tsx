@@ -1,5 +1,3 @@
-"use client";
-
 import { AboutHero } from "@/components/about/AboutHero";
 import { AboutStory } from "@/components/about/AboutStory";
 import { AboutPastors } from "@/components/about/AboutPastors";
@@ -7,6 +5,12 @@ import { AboutG12 } from "@/components/about/AboutG12";
 import { AboutBeliefs } from "@/components/about/AboutBeliefs";
 import { AboutQuote } from "@/components/about/AboutQuote";
 import { AboutCTA } from "@/components/about/AboutCTA";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "About Us",
+    description: "Learn more about Christian Life Center Tagum City, our story, our pastors, and our mission to love God and people.",
+};
 
 export default function AboutPage() {
     const fadeIn = {
@@ -28,3 +32,4 @@ export default function AboutPage() {
         </div>
     );
 }
+

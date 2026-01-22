@@ -30,6 +30,32 @@ import Link from "next/link";
 import { getVOTD } from "@/lib/votd";
 import { getPreviousDevotionals } from "@/lib/votd-archive";
 import VOTDClient from "./votd-client";
+import { Metadata } from "next";
+
+export async function generateMetadata(): Promise<Metadata> {
+    const data = await getVOTD();
+
+    const verseText = data?.text ? `"${data.text}"` : "Verse of the Day";
+    const reference = data?.reference ? ` - ${data.reference}` : "";
+    const thoughts = data?.thoughts
+        ? data.thoughts.split('\n')[0].replace(/\*/g, '').substring(0, 160) + "..."
+        : "Receive daily spiritual nourishment with our Verse of the Day.";
+
+    return {
+        title: `${verseText}${reference}`,
+        description: thoughts,
+        openGraph: {
+            images: [
+                {
+                    url: "/bg/word.webp",
+                    width: 1200,
+                    height: 630,
+                    alt: "Bible - Verse of the Day",
+                }
+            ],
+        },
+    };
+}
 
 
 export const revalidate = 3600; // Revalidate every hour

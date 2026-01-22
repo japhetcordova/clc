@@ -1,5 +1,3 @@
-"use client";
-
 import { motion } from "framer-motion";
 import {
     Coins,
@@ -18,6 +16,12 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "Giving",
+    description: "Support our mission through tithes, offerings, and donations. Your generosity helps Christian Life Center Tagum City impact lives and communities.",
+};
 
 export default function GivingPage() {
     const fadeIn = {

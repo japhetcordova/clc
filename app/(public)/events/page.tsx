@@ -8,6 +8,12 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import EventsGrid from "@/app/(public)/events/events-grid";
 import { trpcServer } from "@/lib/trpc/server";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "News & Events",
+    description: "Stay updated with the latest news and upcoming events at Christian Life Center Tagum City. Join our gatherings and be part of what God is doing.",
+};
 
 export const revalidate = 1800; // Revalidate every 30 minutes
 
