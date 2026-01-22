@@ -4,6 +4,9 @@ import GivingContent from "./giving-content";
 export const metadata: Metadata = {
     title: "Giving",
     description: "Support our mission through tithes, offerings, and donations. Your generosity helps Christian Life Center Tagum City impact lives and communities.",
+    openGraph: {
+        url: "/giving",
+    },
 };
 
 export default function GivingPage() {

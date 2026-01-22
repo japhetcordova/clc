@@ -10,6 +10,9 @@ import { Metadata } from "next";
 export const metadata: Metadata = {
     title: "About Us",
     description: "Learn more about Christian Life Center Tagum City, our story, our pastors, and our mission to love God and people.",
+    openGraph: {
+        url: "/about",
+    },
 };
 
 export default function AboutPage() {

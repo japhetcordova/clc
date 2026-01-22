@@ -4,6 +4,9 @@ import MinistriesContent from "./ministries-content";
 export const metadata: Metadata = {
     title: "Ministries",
     description: "Discover the various ministries at Christian Life Center Tagum City. Find your place to serve and grow in your spiritual journey.",
+    openGraph: {
+        url: "/ministries",
+    },
 };
 
 export default function MinistriesPage() {
