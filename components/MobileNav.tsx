@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { QrCode, Shield, User, Home, Info } from "lucide-react";
+import { QrCode, Shield, User, Home, Info, Scan } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
@@ -11,9 +11,9 @@ export default function MobileNav() {
 
     const links = [
         { name: "App", href: "/mobile", icon: Home },
-        { name: "Scanner", href: "/scanner", icon: QrCode },
+        { name: "Scanner", href: "/scanner", icon: Scan },
         { name: "Admin", href: "/admin", icon: Shield },
-        { name: "Profile", href: "/profile", icon: User },
+        { name: "My QR", href: "/my-qr", icon: QrCode },
     ];
 
     // Only show on mobile

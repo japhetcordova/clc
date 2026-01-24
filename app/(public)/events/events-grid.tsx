@@ -43,7 +43,7 @@ export default function EventsGrid({ initialEvents }: EventsGridProps) {
             </div>
 
             {/* GRID */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-8">
                 <AnimatePresence mode="popLayout">
                     {filteredEvents.map((event) => (
                         <motion.div
@@ -54,52 +54,49 @@ export default function EventsGrid({ initialEvents }: EventsGridProps) {
                             exit={{ opacity: 0, scale: 0.9 }}
                             whileHover={{ y: -8, transition: { duration: 0.2 } }}
                             transition={{ duration: 0.4 }}
-                            className="group p-8 rounded-[3rem] bg-card border border-border flex flex-col justify-between space-y-8 shadow-lg hover:shadow-2xl hover:shadow-rose-500/10 hover:border-rose-500/20 transition-all relative overflow-hidden"
+                            className="group p-6 sm:p-8 rounded-[2rem] sm:rounded-[3rem] bg-card border border-border flex flex-col justify-between space-y-6 sm:space-y-8 shadow-lg hover:shadow-2xl hover:shadow-rose-500/10 hover:border-rose-500/20 transition-all relative overflow-hidden"
                         >
                             <div className="space-y-4 relative z-10">
-                                <div className="flex justify-between items-start">
-                                    <div className="px-3 py-1 bg-muted rounded-full text-[9px] font-black uppercase tracking-widest text-muted-foreground group-hover:bg-rose-500/10 group-hover:text-rose-500 transition-colors">
+                                <div className="flex justify-between items-start gap-4">
+                                    <div className="px-3 py-1 bg-muted rounded-full text-[9px] font-black uppercase tracking-widest text-muted-foreground group-hover:bg-rose-500/10 group-hover:text-rose-500 transition-colors shrink-0">
                                         {event.tag}
                                     </div>
                                     <div className="text-right">
-                                        <p className="text-sm font-black italic uppercase tracking-tight text-rose-500">{event.date}</p>
-                                        <p className="text-[10px] font-bold text-muted-foreground uppercase">{event.time}</p>
+                                        <p className="text-[12px] sm:text-sm font-black italic uppercase tracking-tight text-rose-500 line-clamp-1">{event.date}</p>
+                                        <p className="text-[9px] sm:text-[10px] font-bold text-muted-foreground uppercase">{event.time}</p>
                                     </div>
                                 </div>
 
                                 <div className="space-y-2">
-                                    <h3 className="text-3xl font-black uppercase italic tracking-tighter group-hover:text-rose-500 transition-colors">
-                                        {event.id.length < 5 ? (
-                                            /* Handle mock vs real ID length if needed, but usually just display title */
-                                            event.title
-                                        ) : event.title}
+                                    <h3 className="text-2xl sm:text-3xl font-black uppercase italic tracking-tighter group-hover:text-rose-500 transition-colors leading-[0.9]">
+                                        {event.title}
                                     </h3>
-                                    <div className="flex items-center gap-2 text-muted-foreground">
-                                        <MapPin className="w-3 h-3 group-hover:text-rose-500 transition-colors" />
+                                    <div className="flex items-center gap-2 text-muted-foreground overflow-hidden">
+                                        <MapPin className="w-3 h-3 group-hover:text-rose-500 transition-colors shrink-0" />
                                         {event.googleMapsLink ? (
                                             <a
                                                 href={event.googleMapsLink}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className="text-[10px] font-bold uppercase tracking-widest hover:text-rose-500 hover:underline z-20 relative"
+                                                className="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest hover:text-rose-500 hover:underline z-20 relative truncate"
                                                 onClick={(e) => e.stopPropagation()}
                                             >
                                                 {event.location}
                                             </a>
                                         ) : (
-                                            <span className="text-[10px] font-bold uppercase tracking-widest">{event.location}</span>
+                                            <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest truncate">{event.location}</span>
                                         )}
                                     </div>
                                 </div>
 
-                                <p className="text-sm text-muted-foreground font-medium leading-relaxed max-w-md line-clamp-2">
+                                <p className="text-xs sm:text-sm text-muted-foreground font-medium leading-relaxed max-w-md line-clamp-2">
                                     {event.description}
                                 </p>
                             </div>
 
-                            <div className="flex items-center justify-between pt-6 border-t border-border relative z-10 group-hover:border-rose-500/20 transition-colors">
-                                <Link href={`/events/${event.id}`}>
-                                    <Button variant="ghost" className="p-0 h-auto font-black uppercase text-[10px] tracking-[0.2em] group/btn flex items-center gap-2 hover:bg-transparent text-foreground">
+                            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 sm:pt-6 border-t border-border relative z-10 group-hover:border-rose-500/20 transition-colors">
+                                <Link href={`/events/${event.id}`} className="w-full sm:w-auto">
+                                    <Button variant="ghost" className="w-full sm:w-auto p-0 h-auto font-black uppercase text-[10px] tracking-[0.2em] group/btn flex items-center justify-center sm:justify-start gap-2 hover:bg-transparent text-foreground">
                                         Event Details
                                         <ChevronRight className="w-3 h-3 group-hover/btn:translate-x-1 transition-transform" />
                                     </Button>
@@ -107,7 +104,7 @@ export default function EventsGrid({ initialEvents }: EventsGridProps) {
                                 <motion.button
                                     whileHover={{ scale: 1.05 }}
                                     whileTap={{ scale: 0.95 }}
-                                    className="rounded-xl h-10 px-6 bg-rose-500 text-white font-black uppercase text-[10px] tracking-widest shadow-lg shadow-rose-500/20 hover:bg-rose-600 transition-colors"
+                                    className="w-full sm:w-auto rounded-xl h-10 px-6 bg-rose-500 text-white font-black uppercase text-[10px] tracking-widest shadow-lg shadow-rose-500/20 hover:bg-rose-600 transition-colors"
                                 >
                                     Add to Calendar
                                 </motion.button>

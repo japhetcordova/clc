@@ -16,6 +16,7 @@ import { Toaster } from "sonner";
 import { TRPCProvider } from "@/lib/trpc/client";
 import MobileNav from "@/components/MobileNav";
 import InstallPWA from "@/components/InstallPWA";
+import OfflineAlert from "@/components/OfflineAlert";
 
 const siteConfig = {
   name: "Christian Life Center Tagum City",
@@ -149,6 +150,7 @@ export default function RootLayout({
         />
         <MobileNav />
         <InstallPWA />
+        <OfflineAlert />
         <Toaster position="top-center" richColors />
       </body>
     </html>

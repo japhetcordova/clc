@@ -641,6 +641,34 @@ export const appRouter = router({
             return { success: true };
         }),
 
+    verifyProfilePin: publicProcedure
+        .input(z.object({ qrCodeId: z.string(), pin: z.string() }))
+        .mutation(async ({ input }) => {
+            const [user] = await db.select().from(users).where(eq(users.qrCodeId, input.qrCodeId)).limit(1);
+            if (!user) return { success: false, error: "Profile not found." };
+
+            // For now, use the full contact number as the PIN
+            if (user.contactNumber === input.pin) {
+                const cookieStore = await cookies();
+                cookieStore.set("qrCodeId", user.qrCodeId, {
+                    httpOnly: true,
+                    secure: process.env.NODE_ENV === "production",
+                    sameSite: "strict",
+                    path: "/",
+                    maxAge: 60 * 60 * 24 * 400,
+                });
+                return { success: true };
+            }
+            return { success: false, error: "Invalid contact number." };
+        }),
+
+    logout: publicProcedure
+        .mutation(async () => {
+            const cookieStore = await cookies();
+            cookieStore.delete("qrCodeId");
+            return { success: true };
+        }),
+
     getWeeklyTrends: publicProcedure
         .query(async () => {
             // Fetch attendance grouping by actual scan dates

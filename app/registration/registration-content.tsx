@@ -17,7 +17,7 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { toPng } from "html-to-image";
 import DigitalIDCard from "@/components/DigitalIDCard";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import ConcernNote from "@/components/ConcernNote";
 import { ClusterSelect, NetworkSelect, MinistrySelect } from "@/components/ChurchFormFields";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -37,8 +37,11 @@ type FormValues = z.infer<typeof formSchema>;
 
 export default function RegistrationContent() {
     const router = useRouter();
+    const searchParams = useSearchParams();
     const [step, setStep] = useState(1);
-    const [activeTab, setActiveTab] = useState<"register" | "login" | any>("register");
+    const [activeTab, setActiveTab] = useState<"register" | "login">(
+        (searchParams.get("tab") as "register" | "login") || "register"
+    );
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [registeredUser, setRegisteredUser] = useState<{ firstName: string; lastName: string; qrCodeId: string; ministry: string; network: string; alreadyExists?: boolean; cluster: string } | null>(null);
 

@@ -1,5 +1,8 @@
 "use client";
 
+import { useState, useEffect } from "react";
+import { toast } from "sonner";
+
 import { motion } from "framer-motion";
 import { QrCode, Shield, User, Calendar, MessageSquare, Settings, Bell, Heart } from "lucide-react";
 import Link from "next/link";
@@ -25,10 +28,10 @@ export default function MobileDashboard() {
             textColor: "text-purple-500"
         },
         {
-            title: "My Profile",
+            title: "My QR Code",
             description: "Your digital member ID",
             icon: User,
-            href: "/profile",
+            href: "/my-qr",
             color: "bg-emerald-500",
             textColor: "text-emerald-500"
         },
@@ -49,22 +52,61 @@ export default function MobileDashboard() {
         { icon: Settings, label: "Settings", href: "#" },
     ];
 
+    const [notificationPermission, setNotificationPermission] = useState<NotificationPermission | "unsupported">("default");
+
+    useEffect(() => {
+        if (!("Notification" in window)) {
+            setNotificationPermission("unsupported");
+        } else {
+            setNotificationPermission(Notification.permission);
+        }
+    }, []);
+
+    const handleEnableNotifications = async () => {
+        if (!("Notification" in window)) {
+            toast.error("Notifications not supported", {
+                description: "Your browser does not support desktop notifications."
+            });
+            return;
+        }
+
+        try {
+            const permission = await Notification.requestPermission();
+            setNotificationPermission(permission);
+
+            if (permission === "granted") {
+                toast.success("Notifications Enabled!", {
+                    description: "You will now receive updates from CLC Tagum."
+                });
+                new Notification("Welcome to CLC Digital", {
+                    body: "You have successfully enabled notifications.",
+                    icon: "/logo.webp"
+                });
+            } else if (permission === "denied") {
+                toast.error("Permission Denied", {
+                    description: "Please enable notifications in your browser settings to receive updates."
+                });
+            }
+        } catch (err) {
+            toast.error("Configuration Error", {
+                description: "Failed to request notification permission."
+            });
+        }
+    };
+
     return (
-        <div className="min-h-screen bg-slate-50 pb-32">
+        <div className="min-h-screen bg-background pb-32">
             {/* Header */}
-            <header className="bg-white px-6 pt-16 pb-8 rounded-b-[3rem] shadow-sm">
+            <header className="bg-card px-6 pt-16 pb-8 rounded-b-[3rem] shadow-sm border-b border-border/50">
                 <div className="flex justify-between items-center mb-8">
                     <Logo />
-                    <div className="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center">
-                        <User className="w-5 h-5 text-slate-400" />
-                    </div>
                 </div>
 
                 <div className="space-y-1">
-                    <h1 className="text-3xl font-black tracking-tight text-slate-900 uppercase italic">
+                    <h1 className="text-3xl font-black tracking-tight text-foreground uppercase italic">
                         Hello, Church!
                     </h1>
-                    <p className="text-slate-500 font-bold text-xs uppercase tracking-widest pl-1">
+                    <p className="text-muted-foreground font-bold text-xs uppercase tracking-widest pl-1">
                         Welcome to your digital home
                     </p>
                 </div>
@@ -83,24 +125,24 @@ export default function MobileDashboard() {
                                 transition={{ delay: i * 0.1 }}
                             >
                                 <Link href={item.href}>
-                                    <div className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm flex items-center gap-5 active:scale-[0.98] transition-all group">
-                                        <div className={`${item.color} p-4 rounded-2xl text-white shadow-lg`}>
+                                    <div className="bg-card p-6 rounded-[2rem] border border-border shadow-sm flex items-center gap-5 active:scale-[0.98] transition-all group">
+                                        <div className={`${item.color} p-4 rounded-2xl text-white shadow-lg shadow-black/20`}>
                                             <Icon className="w-6 h-6" />
                                         </div>
                                         <div className="flex-1">
-                                            <h3 className="font-black text-lg uppercase italic tracking-tighter text-slate-800 group-hover:text-primary transition-colors">
+                                            <h3 className="font-black text-lg uppercase italic tracking-tighter text-foreground group-hover:text-primary transition-colors">
                                                 {item.title}
                                             </h3>
-                                            <p className="text-slate-400 font-bold text-[10px] uppercase tracking-wider">
+                                            <p className="text-muted-foreground font-bold text-[10px] uppercase tracking-wider">
                                                 {item.description}
                                             </p>
                                         </div>
-                                        <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center">
+                                        <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
                                             <motion.div
                                                 animate={{ x: [0, 5, 0] }}
                                                 transition={{ repeat: Infinity, duration: 1.5 }}
                                             >
-                                                <Shield className="w-4 h-4 text-slate-300 transform rotate-90" />
+                                                <Shield className="w-4 h-4 text-muted-foreground opacity-50 transform rotate-90" />
                                             </motion.div>
                                         </div>
                                     </div>
@@ -112,7 +154,7 @@ export default function MobileDashboard() {
 
                 {/* Quick Actions Row */}
                 <div className="space-y-4">
-                    <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 pl-2">
+                    <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground pl-2">
                         Quick Connections
                     </h2>
                     <div className="grid grid-cols-4 gap-4">
@@ -120,10 +162,10 @@ export default function MobileDashboard() {
                             const Icon = action.icon;
                             return (
                                 <Link key={action.label} href={action.href} className="flex flex-col items-center gap-2 group">
-                                    <div className="w-14 h-14 bg-white rounded-2xl shadow-sm border border-slate-100 flex items-center justify-center group-active:scale-95 transition-all text-slate-600 group-hover:text-primary group-hover:border-primary/20">
+                                    <div className="w-14 h-14 bg-card rounded-2xl shadow-sm border border-border flex items-center justify-center group-active:scale-95 transition-all text-muted-foreground group-hover:text-primary group-hover:border-primary/20">
                                         <Icon className="w-6 h-6" />
                                     </div>
-                                    <span className="text-[9px] font-black uppercase tracking-widest text-slate-500">
+                                    <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">
                                         {action.label}
                                     </span>
                                 </Link>
@@ -133,15 +175,21 @@ export default function MobileDashboard() {
                 </div>
 
                 {/* Promotional Banner */}
-                <div className="bg-primary p-6 rounded-[2.5rem] text-white relative overflow-hidden shadow-xl shadow-primary/20">
+                <div className="bg-primary p-6 rounded-[2.5rem] text-primary-foreground relative overflow-hidden shadow-xl shadow-primary/20">
                     <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 blur-2xl" />
                     <div className="relative z-10 space-y-4">
                         <div className="space-y-1">
                             <h3 className="text-xl font-black uppercase italic tracking-tighter">Stay Connected</h3>
-                            <p className="text-xs font-bold text-white/80 uppercase tracking-widest">Never miss a blessing from our family.</p>
+                            <p className="text-xs font-bold text-primary-foreground/80 uppercase tracking-widest">Never miss a blessing from our family.</p>
                         </div>
-                        <Button className="bg-white text-primary hover:bg-slate-100 rounded-xl h-10 px-6 font-black uppercase italic tracking-tighter text-xs">
-                            Enable Notifications
+                        <Button
+                            onClick={handleEnableNotifications}
+                            disabled={notificationPermission === "granted" || notificationPermission === "unsupported"}
+                            className="bg-primary-foreground text-primary hover:bg-primary-foreground/90 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl h-10 px-6 font-black uppercase italic tracking-tighter text-xs"
+                        >
+                            {notificationPermission === "granted" ? "Notifications Active" :
+                                notificationPermission === "unsupported" ? "Not Supported" :
+                                    "Enable Notifications"}
                         </Button>
                     </div>
                 </div>

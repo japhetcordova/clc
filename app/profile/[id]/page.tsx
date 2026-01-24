@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import ProfileView from "./profile-view";
 import { trpcServer } from "@/lib/trpc/server";
 import { Metadata } from "next";
+import { cookies } from "next/headers";
 
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
     const { id } = await params;
@@ -15,8 +16,8 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
     }
 
     return {
-        title: `${data.user.firstName} ${data.user.lastName} | Church Profile`,
-        description: `Digital church profile for ${data.user.firstName} ${data.user.lastName} at Christian Life Center Tagum City.`,
+        title: `${data.user.firstName} ${data.user.lastName} | Digital ID`,
+        description: `Official digital member identification for ${data.user.firstName} ${data.user.lastName} at Christian Life Center Tagum City.`,
         robots: {
             index: false, // Don't index individual profiles for privacy
         },
@@ -34,7 +35,11 @@ export default async function ProfilePage({ params }: { params: { id: string } }
             notFound();
         }
 
-        return <ProfileView user={data.user} qrValue={id} attendance={data.attendance} />;
+        const cookieStore = await cookies();
+        const storedQrId = cookieStore.get("qrCodeId")?.value;
+        const isAuthorized = storedQrId === id;
+
+        return <ProfileView user={data.user} qrValue={id} attendance={data.attendance} initialAuthorized={isAuthorized} />;
     } catch (error) {
         console.error("Failed to fetch profile data:", error);
         throw error;
