@@ -14,6 +14,8 @@ const jetbrainsMono = JetBrains_Mono({
 
 import { Toaster } from "sonner";
 import { TRPCProvider } from "@/lib/trpc/client";
+import MobileNav from "@/components/MobileNav";
+import InstallPWA from "@/components/InstallPWA";
 
 const siteConfig = {
   name: "Christian Life Center Tagum City",
@@ -71,9 +73,17 @@ export const metadata: Metadata = {
   icons: {
     icon: "/favicon.ico",
     shortcut: "/favicon.ico",
-    apple: "/apple-touch-icon.png",
+    apple: "/logo.webp",
   },
   manifest: "/site.webmanifest",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: siteConfig.name,
+  },
+  formatDetection: {
+    telephone: false,
+  },
 };
 
 const jsonLd = {
@@ -121,11 +131,24 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        <main className="flex-1">
+        <main className="flex-1 pb-20 md:pb-0">
           <TRPCProvider>
             {children}
           </TRPCProvider>
         </main>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function() {
+                  navigator.serviceWorker.register('/sw.js');
+                });
+              }
+            `,
+          }}
+        />
+        <MobileNav />
+        <InstallPWA />
         <Toaster position="top-center" richColors />
       </body>
     </html>
