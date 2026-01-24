@@ -74,7 +74,7 @@ export default function InstallPWA() {
                                 <h3 className="text-lg font-black uppercase italic tracking-tighter">Download CLC App</h3>
                                 <p className="text-xs font-bold text-white/80 leading-relaxed uppercase tracking-wider">
                                     {isIOS
-                                        ? "Tap the Share icon and 'Add to Home Screen' to install our app."
+                                        ? "Tap the 'Share' icon (bottom bar) and then select 'Add to Home Screen' to launch full-screen."
                                         : "Install our app for a faster and smoother scanning experience."
                                     }
                                 </p>
