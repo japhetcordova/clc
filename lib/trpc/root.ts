@@ -608,6 +608,15 @@ export const appRouter = router({
             return cookieStore.get("clc_scanner_session")?.value === "authorized";
         }),
 
+    getMe: publicProcedure
+        .query(async () => {
+            const cookieStore = await cookies();
+            const qrCodeId = cookieStore.get("qrCodeId")?.value;
+            if (!qrCodeId) return null;
+            const [user] = await db.select().from(users).where(eq(users.qrCodeId, qrCodeId)).limit(1);
+            return user || null;
+        }),
+
     validateScannerPin: publicProcedure
         .input(z.object({ password: z.string() }))
         .mutation(async ({ input }) => {

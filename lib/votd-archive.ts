@@ -80,7 +80,7 @@ export async function getVOTDByDate(dateInput: string) {
         const audioUrl = audioMatch ? audioMatch[1] : undefined;
 
         return {
-            text: decodeHTMLEntities(verse),
+            text: decodeHTMLEntities(verse.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim()),
             reference: decodeHTMLEntities(reference),
             version: "New International Version",
             thoughts,

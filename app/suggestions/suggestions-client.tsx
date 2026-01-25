@@ -70,7 +70,7 @@ export default function SuggestionsClient({ initialSuggestions, currentUser }: S
     };
 
     return (
-        <div className="max-w-[1920px] mx-auto px-4 md:px-8 py-12 md:py-20 space-y-12 md:pt-32">
+        <div className="max-w-[1920px] mx-auto px-4 md:px-8 pt-12 pb-24 md:py-20 space-y-12 md:pt-32">
             {/* Header */}
             <div className="space-y-6">
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">

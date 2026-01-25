@@ -4,28 +4,48 @@ import { useState, useEffect } from "react";
 import { toast } from "sonner";
 
 import { motion } from "framer-motion";
-import { QrCode, Shield, User, Calendar, MessageSquare, Settings, Bell, Heart } from "lucide-react";
+import { QrCode, Shield, User, Calendar, MessageSquare, Settings, Bell, Heart, MapPin, BookOpen, ChevronRight, Scan } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import Logo from "@/components/Logo";
 
+import { useCurrentUser } from "@/hooks/useCurrentUser";
+
 export default function MobileDashboard() {
+    const { isAdmin } = useCurrentUser();
+
     const menuItems = [
         {
-            title: "Scanner",
-            description: "Mark attendance with QR",
-            icon: QrCode,
-            href: "/scanner",
+            title: "Outreaches",
+            description: "Find a location near you",
+            icon: MapPin,
+            href: "/locations",
             color: "bg-blue-500",
             textColor: "text-blue-500"
         },
         {
+            title: "Verse of the Day",
+            description: "Daily spiritual nourishment",
+            icon: BookOpen,
+            href: "/word",
+            color: "bg-purple-500",
+            textColor: "text-purple-500"
+        },
+        ...(isAdmin ? [{
             title: "Admin",
             description: "View church records",
             icon: Shield,
             href: "/admin",
-            color: "bg-purple-500",
-            textColor: "text-purple-500"
+            color: "bg-orange-500",
+            textColor: "text-orange-500"
+        }] : []),
+        {
+            title: "Scanner",
+            description: "Mark attendance with QR",
+            icon: Scan,
+            href: "/scanner",
+            color: "bg-cyan-500",
+            textColor: "text-cyan-500"
         },
         {
             title: "My QR Code",
@@ -138,12 +158,7 @@ export default function MobileDashboard() {
                                             </p>
                                         </div>
                                         <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
-                                            <motion.div
-                                                animate={{ x: [0, 5, 0] }}
-                                                transition={{ repeat: Infinity, duration: 1.5 }}
-                                            >
-                                                <Shield className="w-4 h-4 text-muted-foreground opacity-50 transform rotate-90" />
-                                            </motion.div>
+                                            <ChevronRight className="w-4 h-4 text-muted-foreground opacity-50" />
                                         </div>
                                     </div>
                                 </Link>

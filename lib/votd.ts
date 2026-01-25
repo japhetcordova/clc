@@ -74,8 +74,12 @@ export async function getVOTD() {
             }
         }
 
+        const rawText = votd?.content || votd?.text || "Trust in the LORD with all your heart and lean not on your own understanding; in all your ways submit to him, and he will make your paths straight.";
+        // Replace HTML tags with spaces to avoid merging words, then collapse multiple spaces
+        const textWithoutTags = rawText.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+
         return {
-            text: decodeHTMLEntities(votd?.content || votd?.text || "Trust in the LORD with all your heart and lean not on your own understanding; in all your ways submit to him, and he will make your paths straight."),
+            text: decodeHTMLEntities(textWithoutTags),
             reference: decodeHTMLEntities(votd?.display_ref || votd?.reference || "Proverbs 3:5-6"),
             version: votd?.version || "New International Version",
             audioUrl: votd?.audiolink,

@@ -132,11 +132,12 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        <main className="flex-1 pb-20 md:pb-0">
-          <TRPCProvider>
+        <TRPCProvider>
+          <main className="flex-1 pb-20 md:pb-0">
             {children}
-          </TRPCProvider>
-        </main>
+          </main>
+          <MobileNav />
+        </TRPCProvider>
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -148,7 +149,6 @@ export default function RootLayout({
             `,
           }}
         />
-        <MobileNav />
         <InstallPWA />
         <OfflineAlert />
         <Toaster position="top-center" richColors />
