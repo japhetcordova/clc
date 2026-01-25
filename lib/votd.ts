@@ -55,7 +55,7 @@ export async function getVOTD() {
 
             // Extract reference from title
             const fullTitleMatch = html.match(/<title>([\s\S]*?)<\/title>/i);
-            const fullTitle = fullTitleMatch ? fullTitleMatch[1].trim() : "";
+            const fullTitle = fullTitleMatch ? decodeHTMLEntities(fullTitleMatch[1].trim()) : "";
             reference = fullTitle.split(/[—–-]/)[0].trim();
 
             // Extract verse text from og:description

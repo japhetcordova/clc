@@ -51,7 +51,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
                 </div>
 
                 <div className="relative z-10 max-w-7xl mx-auto px-2 w-full">
-                    <Link href="/events" className="inline-block mb-8">
+                    <Link href="/events" className="inline-block my-4">
                         <Button variant="ghost" className="p-0 h-auto gap-2 text-foreground/80 hover:text-foreground hover:bg-transparent text-[10px] font-black uppercase tracking-widest">
                             <ChevronLeft className="w-4 h-4" /> Back to Events
                         </Button>

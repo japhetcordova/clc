@@ -13,6 +13,7 @@ import WeeklyTrendsChart from "./weekly-trends-chart";
 import DemographicsDoubleRing from "./demographics-double-ring";
 import MemberSearch from "./member-search";
 import MobileHighlightsClient from "./mobile-highlights-client";
+import AnnouncementsAdminClient from "./announcements-admin-client";
 
 import { cache } from "react";
 
@@ -541,7 +542,12 @@ export default async function AdminDashboard({
                 <TabsContent value="highlights" className="space-y-6 sm:space-y-8 animate-in fade-in slide-in-from-top-4 duration-500">
                     <MobileHighlightsClient />
                 </TabsContent>
+
+                <TabsContent value="announcements" className="space-y-6 sm:space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                    <AnnouncementsAdminClient />
+                </TabsContent>
             </Tabs>
         </div>
     );
+
 }

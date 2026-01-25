@@ -30,17 +30,18 @@ export function decodeHTMLEntities(text: string | null | undefined): string {
   };
 
   return text.replace(/&[#\w\d]+;/g, (entity) => {
+    const lowerEntity = entity.toLowerCase();
     // 1. Direct match in dictionary
-    if (entities[entity]) return entities[entity];
+    if (entities[lowerEntity]) return entities[lowerEntity];
 
     // 2. Hex entities (e.g. &#x27;)
-    if (entity.startsWith('&#x')) {
+    if (lowerEntity.startsWith('&#x')) {
       const code = parseInt(entity.slice(3, -1), 16);
       return !isNaN(code) ? String.fromCharCode(code) : entity;
     }
 
     // 3. Decimal entities (e.g. &#8217;)
-    if (entity.startsWith('&#')) {
+    if (lowerEntity.startsWith('&#')) {
       const code = parseInt(entity.slice(2, -1), 10);
       return !isNaN(code) ? String.fromCharCode(code) : entity;
     }

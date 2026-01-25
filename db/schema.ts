@@ -88,6 +88,15 @@ export const mobileHighlights = pgTable("mobile_highlights", {
     createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+export const announcements = pgTable("announcements", {
+    id: uuid("id").primaryKey().defaultRandom(),
+    title: text("title").notNull(),
+    content: text("content").notNull(),
+    type: text("type").notNull(), // Admin, News, Community
+    date: date("date").notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
 export type Attendance = typeof attendance.$inferSelect;
@@ -101,3 +110,5 @@ export type SuggestionLike = typeof suggestionLikes.$inferSelect;
 export type NewSuggestionLike = typeof suggestionLikes.$inferInsert;
 export type MobileHighlight = typeof mobileHighlights.$inferSelect;
 export type NewMobileHighlight = typeof mobileHighlights.$inferInsert;
+export type Announcement = typeof announcements.$inferSelect;
+export type NewAnnouncement = typeof announcements.$inferInsert;

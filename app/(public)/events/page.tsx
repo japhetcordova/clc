@@ -10,6 +10,7 @@ import EventsGrid from "@/app/(public)/events/events-grid";
 import { trpcServer } from "@/lib/trpc/server";
 import { Metadata } from "next";
 import { getPrayerAndFastingDay } from "@/lib/date-utils";
+import NewsletterForm from "./newsletter-form";
 
 export const metadata: Metadata = {
     title: "News & Events",
@@ -21,6 +22,7 @@ export const revalidate = 1800; // Revalidate every 30 minutes
 export default async function EventsPage() {
     const caller = await trpcServer();
     const allEvents = await caller.getPublicEvents();
+    const latestAnnouncements = await caller.getAnnouncements();
     const currentFastingDay = getPrayerAndFastingDay();
 
     return (
@@ -118,38 +120,50 @@ export default async function EventsPage() {
             {/* ANNOUNCEMENT BOARD */}
             <section className="py-12 md:py-20 px-4 md:px-8 bg-muted/20 relative">
                 <div className="max-w-[1920px] mx-auto space-y-16 relative z-10">
-                    <div className="flex items-end justify-between gap-8">
+                    <div className="flex flex-col sm:flex-row items-end justify-between gap-8">
                         <div className="space-y-4">
                             <h2 className="text-4xl font-black uppercase italic tracking-tight">Recent <span className="text-rose-500">Updates</span></h2>
                             <p className="text-muted-foreground font-medium italic">Latest announcements and church news.</p>
                         </div>
-                        <Button variant="outline" className="rounded-2xl h-12 px-8 border-border font-black uppercase text-[10px] tracking-widest bg-background">
-                            View All Archive
-                        </Button>
+                        <Link href="/events/archive">
+                            <Button variant="outline" className="rounded-2xl h-12 px-8 border-border font-black uppercase text-[10px] tracking-widest bg-background">
+                                View News Archive
+                            </Button>
+                        </Link>
                     </div>
 
-                    <div className="grid md:grid-cols-3 gap-8">
-                        {[
-                            { title: "Cluster Reorganization", date: "Jan 01, 2026", type: "Admin" },
-                            { title: "Missions Fund Goal Reached", date: "Dec 28, 2025", type: "News" },
-                            { title: "New Cell Network Opening", date: "Dec 20, 2025", type: "Community" }
-                        ].map((post, i) => (
-                            <div key={i} className="p-8 rounded-[2rem] bg-card border border-border space-y-4 hover:border-rose-500/30 hover:-translate-y-1 hover:shadow-2xl hover:shadow-rose-500/10 transition-all duration-300 cursor-pointer group">
-                                <div className="flex justify-between items-center">
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-rose-500/60">{post.type}</span>
-                                    <span className="text-[10px] font-bold text-muted-foreground">{post.date}</span>
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {latestAnnouncements.slice(0, 3).map((post, i) => (
+                            <Link key={post.id} href={`/events/announcement/${post.id}`}>
+                                <div className="p-8 h-full rounded-[2rem] bg-card border border-border space-y-4 hover:border-rose-500/30 hover:-translate-y-1 hover:shadow-2xl hover:shadow-rose-500/10 transition-all duration-300 cursor-pointer group">
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-[10px] font-black uppercase tracking-widest text-rose-500/60">{post.type}</span>
+                                        <span className="text-[10px] font-bold text-muted-foreground">
+                                            {new Date(post.date).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })}
+                                        </span>
+                                    </div>
+                                    <h4 className="text-xl font-black uppercase italic tracking-tight leading-none group-hover:text-rose-500 transition-colors">{post.title}</h4>
+                                    <p className="text-xs text-muted-foreground line-clamp-2 font-medium">
+                                        {post.content.replace(/<[^>]*>/g, '').substring(0, 100)}...
+                                    </p>
+                                    <div className="flex items-center gap-2 text-rose-500 font-black text-[10px] uppercase tracking-widest opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 delay-75 pt-2">
+                                        Read Article <ArrowUpRight className="w-3 h-3" />
+                                    </div>
                                 </div>
-                                <h4 className="text-xl font-black uppercase italic tracking-tight leading-none group-hover:text-rose-500 transition-colors">{post.title}</h4>
-                                <div className="flex items-center gap-2 text-rose-500 font-black text-[10px] uppercase tracking-widest opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 delay-75">
-                                    Read Article <ArrowUpRight className="w-3 h-3" />
-                                </div>
-                            </div>
+                            </Link>
                         ))}
+                        {latestAnnouncements.length === 0 && (
+                            <div className="md:col-span-3 py-20 text-center">
+                                <p className="text-muted-foreground font-black uppercase tracking-widest">No recent updates at the moment.</p>
+                            </div>
+                        )}
                     </div>
                 </div>
                 {/* SMOOTH TRANSITION TO NEWSLETTER */}
                 <div className="absolute bottom-0 left-0 right-0 h-48 bg-linear-to-b from-transparent to-rose-500 z-0 pointer-events-none" />
             </section>
+
+
 
             {/* NEWSLETTER CTA */}
             <section className="py-12 md:py-20 px-4 md:px-8 bg-rose-500 text-white relative">
@@ -159,16 +173,7 @@ export default async function EventsPage() {
                     <p className="font-medium opacity-80 max-w-xl mx-auto">
                         Subscribe to our digital bulletin and receive weekly updates, event invitations, and spiritual encouragement directly to your inbox.
                     </p>
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-                        <input
-                            type="email"
-                            placeholder="your@email.com"
-                            className="h-14 px-8 rounded-2xl bg-white/10 border border-white/20 placeholder:text-white/40 focus:outline-none focus:ring-2 ring-white/50 w-full sm:w-96 font-medium"
-                        />
-                        <Button className="h-14 px-10 rounded-2xl bg-white text-rose-600 font-black uppercase text-[10px] tracking-widest hover:bg-slate-100 transition-all shrink-0">
-                            Notify Me
-                        </Button>
-                    </div>
+                    <NewsletterForm />
                 </div>
             </section>
         </div>

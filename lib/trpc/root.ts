@@ -1,12 +1,55 @@
 import { router, publicProcedure } from "./trpc";
 import { z } from "zod";
 import { db } from "@/db";
-import { users, attendance, events, dailyPins, mobileHighlights } from "@/db/schema";
+import { users, attendance, events, dailyPins, mobileHighlights, announcements } from "@/db/schema";
 import { eq, and, desc, sql, count, asc, ilike, inArray, or } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 
 export const appRouter = router({
+    getAnnouncements: publicProcedure
+        .query(async () => {
+            return db.select().from(announcements).orderBy(desc(announcements.date));
+        }),
+
+    createAnnouncement: publicProcedure
+        .input(z.object({
+            title: z.string(),
+            content: z.string(),
+            type: z.string(),
+            date: z.string(),
+        }))
+        .mutation(async ({ input }) => {
+            const [newAnnouncement] = await db.insert(announcements).values(input).returning();
+            revalidatePath("/events");
+            revalidatePath("/admin/announcements");
+            return { success: true, announcement: newAnnouncement };
+        }),
+
+    updateAnnouncement: publicProcedure
+        .input(z.object({
+            id: z.string(),
+            data: z.any(),
+        }))
+        .mutation(async ({ input }) => {
+            const [updated] = await db.update(announcements)
+                .set(input.data)
+                .where(eq(announcements.id, input.id))
+                .returning();
+            revalidatePath("/events");
+            revalidatePath("/admin/announcements");
+            return { success: true, announcement: updated };
+        }),
+
+    deleteAnnouncement: publicProcedure
+        .input(z.object({ id: z.string() }))
+        .mutation(async ({ input }) => {
+            await db.delete(announcements).where(eq(announcements.id, input.id));
+            revalidatePath("/events");
+            revalidatePath("/admin/announcements");
+            return { success: true };
+        }),
+
     getMobileHighlights: publicProcedure
         .query(async () => {
             return db.select().from(mobileHighlights).orderBy(desc(mobileHighlights.createdAt));
