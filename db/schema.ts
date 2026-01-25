@@ -76,6 +76,18 @@ export const suggestionLikes = pgTable("suggestion_likes", {
     unique().on(t.suggestionId, t.userId),
 ]);
 
+export const mobileHighlights = pgTable("mobile_highlights", {
+    id: uuid("id").primaryKey().defaultRandom(),
+    titlePrefix: text("title_prefix").notNull(), // e.g. "When you"
+    highlightedWord: text("highlighted_word").notNull(), // e.g. "declare"
+    titleSuffix: text("title_suffix").notNull(), // e.g. "The Lord listens."
+    speaker: text("speaker").notNull(),
+    series: text("series").notNull(),
+    imageUrl: text("image_url").notNull(),
+    isActive: boolean("is_active").notNull().default(false),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
 export type Attendance = typeof attendance.$inferSelect;
@@ -87,3 +99,5 @@ export type Suggestion = typeof suggestions.$inferSelect;
 export type NewSuggestion = typeof suggestions.$inferInsert;
 export type SuggestionLike = typeof suggestionLikes.$inferSelect;
 export type NewSuggestionLike = typeof suggestionLikes.$inferInsert;
+export type MobileHighlight = typeof mobileHighlights.$inferSelect;
+export type NewMobileHighlight = typeof mobileHighlights.$inferInsert;

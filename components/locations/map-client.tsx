@@ -3,7 +3,7 @@
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -24,36 +24,70 @@ interface MapClientProps {
     view?: "list" | "map";
 }
 
-function MapUpdater({ locations, activeLocationId, view }: { locations: Location[]; activeLocationId?: string | null; view?: "list" | "map" }) {
+function MapUpdater({
+    locations,
+    activeLocationId,
+    view,
+    markerRefs
+}: {
+    locations: Location[];
+    activeLocationId?: string | null;
+    view?: "list" | "map";
+    markerRefs: React.RefObject<{ [key: string]: L.Marker | null }>;
+}) {
     const map = useMap();
 
+    // Handle view transitions (List <-> Map)
     useEffect(() => {
-        // Force invalidate size when view changes or component mounts
-        const timer = setTimeout(() => {
+        const invalidate = () => {
             map.invalidateSize();
-        }, 400);
+        };
 
-        return () => clearTimeout(timer);
+        // Invalidate immediately and after transition
+        invalidate();
+        const timers = [
+            setTimeout(invalidate, 100),
+            setTimeout(invalidate, 300),
+            setTimeout(invalidate, 600), // After 500ms CSS transition
+        ];
+
+        return () => timers.forEach(t => clearTimeout(t));
     }, [map, view]);
 
+    // Handle location centering and popup opening
     useEffect(() => {
         if (activeLocationId) {
             const loc = locations.find(l => l.id === activeLocationId);
             if (loc) {
-                map.setView([loc.lat, loc.lng], MAP_CONFIG.activeZoom, {
-                    animate: true,
-                    duration: 1
-                });
-                // Invalidate size again after moving to ensure full coverage
-                setTimeout(() => map.invalidateSize(), 500);
+                // Invalidate size BEFORE setting view to ensure center is calculated on current dimensions
+                map.invalidateSize();
+
+                // Small delay to ensure the browser has finished layouts
+                const timer = setTimeout(() => {
+                    // Offset center slightly to account for popup height
+                    map.setView([loc.lat, loc.lng], MAP_CONFIG.activeZoom, {
+                        animate: true,
+                        duration: 1
+                    });
+
+                    // Open popup automatically
+                    const marker = markerRefs.current?.[activeLocationId];
+                    if (marker) {
+                        marker.openPopup();
+                    }
+                }, 100);
+
+                return () => clearTimeout(timer);
             }
         }
-    }, [activeLocationId, locations, map]);
+    }, [activeLocationId, locations, map, markerRefs]);
 
     return null;
 }
 
 export default function MapClient({ locations, activeLocationId, onLocationSelect, view }: MapClientProps) {
+    const markerRefs = useRef<{ [key: string]: L.Marker | null }>({});
+
     return (
         <div className="w-full h-full min-h-[500px] overflow-hidden relative z-0">
             <style jsx global>{`
@@ -105,12 +139,20 @@ export default function MapClient({ locations, activeLocationId, onLocationSelec
                     attribution={MAP_CONFIG.attribution}
                     url={MAP_CONFIG.tileLayer}
                 />
-                <MapUpdater locations={locations} activeLocationId={activeLocationId} view={view} />
+                <MapUpdater
+                    locations={locations}
+                    activeLocationId={activeLocationId}
+                    view={view}
+                    markerRefs={markerRefs}
+                />
                 {locations.map((loc) => (
                     <Marker
                         key={loc.id}
                         position={[loc.lat, loc.lng]}
                         icon={OrangeMarker}
+                        ref={(ref) => {
+                            if (ref) markerRefs.current[loc.id] = ref;
+                        }}
                         eventHandlers={{
                             click: () => {
                                 onLocationSelect?.(loc.id);

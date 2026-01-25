@@ -4,15 +4,29 @@ import { useState, useEffect } from "react";
 import { toast } from "sonner";
 
 import { motion } from "framer-motion";
-import { QrCode, Shield, User, Calendar, MessageSquare, Settings, Bell, Heart, MapPin, BookOpen, ChevronRight, Scan } from "lucide-react";
+import { QrCode, Shield, User, Users, Calendar, MessageSquare, Settings, Bell, Heart, MapPin, BookOpen, ChevronRight, Scan, Sparkles, Info } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import Logo from "@/components/Logo";
 
 import { useCurrentUser } from "@/hooks/useCurrentUser";
+import { trpc } from "@/lib/trpc/client";
 
 export default function MobileDashboard() {
     const { isAdmin } = useCurrentUser();
+    const { data: activeHighlight } = trpc.getActiveMobileHighlight.useQuery();
+
+    const defaultHighlight = {
+        titlePrefix: "When you",
+        highlightedWord: "declare",
+        titleSuffix: "The Lord listens.",
+        speaker: "Ptr. Arlene B. Molina",
+        series: "Making God Our First",
+        imageUrl: "/mobile-highlight.jpg"
+    };
+
+    const display = activeHighlight || defaultHighlight;
 
     const menuItems = [
         {
@@ -24,21 +38,21 @@ export default function MobileDashboard() {
             textColor: "text-blue-500"
         },
         {
-            title: "Verse of the Day",
-            description: "Daily spiritual nourishment",
-            icon: BookOpen,
-            href: "/word",
-            color: "bg-purple-500",
-            textColor: "text-purple-500"
+            title: "About Us",
+            description: "Our mission and vision",
+            icon: Info,
+            href: "/about",
+            color: "bg-indigo-500",
+            textColor: "text-indigo-500"
         },
-        ...(isAdmin ? [{
-            title: "Admin",
-            description: "View church records",
-            icon: Shield,
-            href: "/admin",
-            color: "bg-orange-500",
-            textColor: "text-orange-500"
-        }] : []),
+        {
+            title: "Ministries",
+            description: "Find where you belong",
+            icon: Users,
+            href: "/ministries",
+            color: "bg-rose-500",
+            textColor: "text-rose-500"
+        },
         {
             title: "Scanner",
             description: "Mark attendance with QR",
@@ -46,29 +60,13 @@ export default function MobileDashboard() {
             href: "/scanner",
             color: "bg-cyan-500",
             textColor: "text-cyan-500"
-        },
-        {
-            title: "My QR Code",
-            description: "Your digital member ID",
-            icon: User,
-            href: "/my-qr",
-            color: "bg-emerald-500",
-            textColor: "text-emerald-500"
-        },
-        {
-            title: "Events",
-            description: "Upcoming gatherings",
-            icon: Calendar,
-            href: "/events",
-            color: "bg-rose-500",
-            textColor: "text-rose-500"
         }
     ];
 
     const quickActions = [
         { icon: MessageSquare, label: "Suggestions", href: "/suggestions" },
         { icon: Heart, label: "Giving", href: "/giving" },
-        { icon: Bell, label: "Updates", href: "#" },
+        { icon: Bell, label: "Updates", href: "/events" },
         { icon: Settings, label: "Settings", href: "#" },
     ];
 
@@ -116,19 +114,45 @@ export default function MobileDashboard() {
 
     return (
         <div className="min-h-screen bg-background pb-32">
-            {/* Header */}
-            <header className="bg-card px-6 pt-16 pb-8 rounded-b-[3rem] shadow-sm border-b border-border/50">
-                <div className="flex justify-between items-center mb-8">
-                    <Logo />
+            {/* Header / Hero Section with Highlight */}
+            <header className="relative min-h-[450px] flex flex-col justify-end overflow-hidden pb-12">
+                {/* Background Image */}
+                <div className="absolute inset-0 z-0">
+                    <Image
+                        src={display.imageUrl}
+                        alt="Sunday Service Highlight"
+                        fill
+                        className="object-cover"
+                        priority
+                    />
+                    {/* Premium Overlays */}
+                    <div className="absolute inset-0 bg-linear-to-b from-background/20 via-background/60 to-background" />
+                    <div className="absolute inset-0 bg-linear-to-r from-background/40 to-transparent" />
                 </div>
 
-                <div className="space-y-1">
-                    <h1 className="text-3xl font-black tracking-tight text-foreground uppercase italic">
-                        Hello, Church!
-                    </h1>
-                    <p className="text-muted-foreground font-bold text-xs uppercase tracking-widest pl-1">
-                        Welcome to your digital home
-                    </p>
+                <div className="relative z-10 px-6 space-y-6">
+
+                    <motion.div
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.3 }}
+                        className="space-y-4"
+                    >
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/20 backdrop-blur-md border border-white/10">
+                            <Sparkles className="w-3 h-3 text-primary" />
+                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white">Sunday Highlight</span>
+                        </div>
+
+                        <div className="space-y-1">
+                            <h2 className="text-3xl font-black tracking-tight text-white uppercase italic leading-[1.1]">
+                                {display.titlePrefix} <span className="text-primary italic">{display.highlightedWord}</span>,<br />
+                                <span className="text-4xl">{display.titleSuffix}</span>
+                            </h2>
+                            <p className="text-white/60 font-bold text-[10px] uppercase tracking-widest pl-1">
+                                {display.speaker} • {display.series}
+                            </p>
+                        </div>
+                    </motion.div>
                 </div>
             </header>
 

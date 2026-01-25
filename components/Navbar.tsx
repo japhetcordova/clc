@@ -155,9 +155,9 @@ export default function Navbar() {
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -20 }}
                         transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                        className="fixed inset-0 z-[45] bg-background/95 backdrop-blur-2xl md:hidden pt-32 px-6"
+                        className="fixed inset-0 z-[45] bg-background/95 backdrop-blur-2xl md:hidden pt-32 px-6 overflow-y-auto"
                     >
-                        <div className="flex flex-col gap-4">
+                        <div className="flex flex-col gap-4 pb-24">
                             {navLinks.map((link, i) => (
                                 <motion.div
                                     key={link.href}
@@ -202,16 +202,10 @@ export default function Navbar() {
                             >
                                 <Link href="/registration">
                                     <Button className="w-full h-16 rounded-2xl bg-primary text-white font-black uppercase italic tracking-tighter text-xl shadow-lg shadow-primary/25">
-                                        Join Our Community
+                                        Join Our Journey
                                     </Button>
                                 </Link>
                             </motion.div>
-                        </div>
-
-                        {/* DECORATIVE ELEMENTS */}
-                        <div className="absolute bottom-12 left-6 right-6 flex justify-between items-center text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-50">
-                            <span>Christian Life Center</span>
-                            <span>© 2026</span>
                         </div>
                     </motion.div>
                 )}

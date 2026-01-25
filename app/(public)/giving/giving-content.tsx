@@ -82,8 +82,8 @@ export default function GivingContent() {
                                 },
                                 {
                                     title: "Bank Transfer",
-                                    desc: "BDO Savings Account",
-                                    details: "CLC Tagum - 1234 5678 9012",
+                                    desc: "Bank of Commerce",
+                                    details: "Christian Life Center • 125-00-0000-199",
                                     icon: <DollarSign className="w-6 h-6 text-indigo-500" />
                                 },
                                 {

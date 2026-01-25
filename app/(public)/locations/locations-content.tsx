@@ -212,7 +212,7 @@ export default function LocationsContent() {
             </main>
 
             {/* MOBILE VIEW TOGGLE FAB */}
-            <div className="fixed bottom-8 left-1/2 -translate-x-1/2 md:hidden z-30">
+            <div className="fixed bottom-[100px] right-6 md:hidden z-50">
                 <Button
                     onClick={() => setView(view === "list" ? "map" : "list")}
                     className="h-12 px-6 rounded-full bg-slate-900 text-white shadow-2xl flex items-center gap-3 border border-white/10 backdrop-blur-xl group active:scale-95 transition-all"

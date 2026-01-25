@@ -1,5 +1,7 @@
 import LandingContent from "../landing-content"
 import { Metadata } from "next";
+import { redirect } from "next/navigation";
+import { headers } from "next/headers";
 
 export const metadata: Metadata = {
     title: "Christian Life Center Tagum City | CLC Tagum",
@@ -10,7 +12,15 @@ export const metadata: Metadata = {
     }
 };
 
-export default function Landing() {
+export default async function Landing() {
+    const headersList = await headers();
+    const userAgent = headersList.get("user-agent") || "";
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent);
+
+    if (isMobile) {
+        redirect("/mobile");
+    }
+
     return (
         <LandingContent />
     )

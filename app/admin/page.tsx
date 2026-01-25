@@ -12,6 +12,7 @@ import { trpcServer } from "@/lib/trpc/server";
 import WeeklyTrendsChart from "./weekly-trends-chart";
 import DemographicsDoubleRing from "./demographics-double-ring";
 import MemberSearch from "./member-search";
+import MobileHighlightsClient from "./mobile-highlights-client";
 
 import { cache } from "react";
 
@@ -535,6 +536,10 @@ export default async function AdminDashboard({
                         ministryStats={data.trendMinistryStats}
                         periodCount={weeklyTrends.length}
                     />
+                </TabsContent>
+
+                <TabsContent value="highlights" className="space-y-6 sm:space-y-8 animate-in fade-in slide-in-from-top-4 duration-500">
+                    <MobileHighlightsClient />
                 </TabsContent>
             </Tabs>
         </div>

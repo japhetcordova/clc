@@ -1,12 +1,73 @@
 import { router, publicProcedure } from "./trpc";
 import { z } from "zod";
 import { db } from "@/db";
-import { users, attendance, events, dailyPins } from "@/db/schema";
+import { users, attendance, events, dailyPins, mobileHighlights } from "@/db/schema";
 import { eq, and, desc, sql, count, asc, ilike, inArray, or } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 
 export const appRouter = router({
+    getMobileHighlights: publicProcedure
+        .query(async () => {
+            return db.select().from(mobileHighlights).orderBy(desc(mobileHighlights.createdAt));
+        }),
+
+    getActiveMobileHighlight: publicProcedure
+        .query(async () => {
+            const [highlight] = await db.select()
+                .from(mobileHighlights)
+                .where(eq(mobileHighlights.isActive, true))
+                .limit(1);
+            return highlight || null;
+        }),
+
+    createMobileHighlight: publicProcedure
+        .input(z.object({
+            titlePrefix: z.string(),
+            highlightedWord: z.string(),
+            titleSuffix: z.string(),
+            speaker: z.string(),
+            series: z.string(),
+            imageUrl: z.string(),
+            isActive: z.boolean().default(false),
+        }))
+        .mutation(async ({ input }) => {
+            if (input.isActive) {
+                await db.update(mobileHighlights).set({ isActive: false });
+            }
+            const [newHighlight] = await db.insert(mobileHighlights).values(input).returning();
+            revalidatePath("/mobile");
+            revalidatePath("/admin/mobile-highlights");
+            return { success: true, highlight: newHighlight };
+        }),
+
+    updateMobileHighlight: publicProcedure
+        .input(z.object({
+            id: z.string(),
+            data: z.any(),
+        }))
+        .mutation(async ({ input }) => {
+            if (input.data.isActive) {
+                await db.update(mobileHighlights).set({ isActive: false });
+            }
+            const [updated] = await db.update(mobileHighlights)
+                .set(input.data)
+                .where(eq(mobileHighlights.id, input.id))
+                .returning();
+            revalidatePath("/mobile");
+            revalidatePath("/admin/mobile-highlights");
+            return { success: true, highlight: updated };
+        }),
+
+    deleteMobileHighlight: publicProcedure
+        .input(z.object({ id: z.string() }))
+        .mutation(async ({ input }) => {
+            await db.delete(mobileHighlights).where(eq(mobileHighlights.id, input.id));
+            revalidatePath("/mobile");
+            revalidatePath("/admin/mobile-highlights");
+            return { success: true };
+        }),
+
     getUsers: publicProcedure
         .input(z.object({
             page: z.number().default(1),
