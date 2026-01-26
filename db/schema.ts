@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, uuid, date, uniqueIndex, unique, integer, boolean, index } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, uuid, date, uniqueIndex, unique, integer, boolean, index, jsonb } from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
     id: uuid("id").primaryKey().defaultRandom(),
@@ -47,6 +47,7 @@ export const events = pgTable("events", {
     date: date("date").notNull(),
     time: text("time").notNull(),
     location: text("location").notNull(),
+    schedules: jsonb("schedules").$type<{ date: string; time: string; location: string }[]>().default([]).notNull(),
     category: text("category").notNull(), // special, regular, leadership
     tag: text("tag").notNull(),
     image: text("image"),

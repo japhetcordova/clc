@@ -48,6 +48,7 @@ export default function EventsClient({ initialEvents }: EventsClientProps) {
         date: "",
         time: "",
         location: "",
+        schedules: [] as { date: string; time: string; location: string }[],
         category: "regular",
         tag: "",
         image: "",
@@ -64,6 +65,7 @@ export default function EventsClient({ initialEvents }: EventsClientProps) {
             date: "",
             time: "",
             location: "",
+            schedules: [],
             category: "regular",
             tag: "",
             image: "",
@@ -83,6 +85,7 @@ export default function EventsClient({ initialEvents }: EventsClientProps) {
             date: event.date,
             time: event.time,
             location: event.location,
+            schedules: (event.schedules as any) || [],
             category: event.category,
             tag: event.tag,
             image: event.image || "",
@@ -148,6 +151,27 @@ export default function EventsClient({ initialEvents }: EventsClientProps) {
         }
     };
 
+    const addSchedule = () => {
+        setFormData(prev => ({
+            ...prev,
+            schedules: [...prev.schedules, { date: "", time: "", location: "" }]
+        }));
+    };
+
+    const removeSchedule = (index: number) => {
+        setFormData(prev => ({
+            ...prev,
+            schedules: prev.schedules.filter((_, i) => i !== index)
+        }));
+    };
+
+    const updateSchedule = (index: number, field: "date" | "time" | "location", value: string) => {
+        setFormData(prev => ({
+            ...prev,
+            schedules: prev.schedules.map((s, i) => i === index ? { ...s, [field]: value } : s)
+        }));
+    };
+
     return (
         <div className="space-y-8">
             <div className="flex justify-between items-center">
@@ -175,35 +199,100 @@ export default function EventsClient({ initialEvents }: EventsClientProps) {
                                     placeholder="e.g. Super Sunday: Vision Day"
                                 />
                             </div>
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="space-y-2">
-                                    <Label className="text-[10px] uppercase font-black">Date</Label>
-                                    <Input
-                                        type="date"
-                                        required
-                                        value={formData.date}
-                                        onChange={e => setFormData({ ...formData, date: e.target.value })}
-                                    />
+                            <div className="space-y-4">
+                                <div className="flex items-center justify-between">
+                                    <Label className="text-[10px] uppercase font-black">Primary Schedule</Label>
+                                </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <Label className="text-[8px] uppercase font-bold text-muted-foreground">Date</Label>
+                                        <Input
+                                            type="date"
+                                            required
+                                            value={formData.date}
+                                            onChange={e => setFormData({ ...formData, date: e.target.value })}
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label className="text-[8px] uppercase font-bold text-muted-foreground">Time</Label>
+                                        <Input
+                                            required
+                                            value={formData.time}
+                                            onChange={e => setFormData({ ...formData, time: e.target.value })}
+                                            placeholder="e.g. 08:00 AM"
+                                        />
+                                    </div>
                                 </div>
                                 <div className="space-y-2">
-                                    <Label className="text-[10px] uppercase font-black">Time</Label>
+                                    <Label className="text-[8px] uppercase font-bold text-muted-foreground">Location</Label>
                                     <Input
                                         required
-                                        value={formData.time}
-                                        onChange={e => setFormData({ ...formData, time: e.target.value })}
-                                        placeholder="e.g. 08:00 AM"
+                                        value={formData.location}
+                                        onChange={e => setFormData({ ...formData, location: e.target.value })}
+                                        placeholder="e.g. Main Sanctuary"
                                     />
                                 </div>
                             </div>
-                            <div className="space-y-2">
-                                <Label className="text-[10px] uppercase font-black">Location</Label>
-                                <Input
-                                    required
-                                    value={formData.location}
-                                    onChange={e => setFormData({ ...formData, location: e.target.value })}
-                                    placeholder="e.g. Main Sanctuary"
-                                />
+
+                            {/* Additional Schedules */}
+                            <div className="space-y-4 pt-4 border-t border-border">
+                                <div className="flex items-center justify-between">
+                                    <Label className="text-[10px] uppercase font-black">Additional Schedules</Label>
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={addSchedule}
+                                        className="h-8 rounded-lg text-[8px] font-black uppercase tracking-widest gap-2"
+                                    >
+                                        <Plus className="w-3 h-3" /> Add Schedule
+                                    </Button>
+                                </div>
+
+                                {formData.schedules.map((schedule, index) => (
+                                    <div key={index} className="space-y-4 p-4 rounded-xl bg-muted/30 border border-border relative group">
+                                        <Button
+                                            type="button"
+                                            variant="ghost"
+                                            size="icon"
+                                            onClick={() => removeSchedule(index)}
+                                            className="absolute top-2 right-2 w-6 h-6 rounded-full hover:bg-rose-500/20 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-opacity"
+                                        >
+                                            <Trash2 className="w-3 h-3" />
+                                        </Button>
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div className="space-y-2">
+                                                <Label className="text-[8px] uppercase font-bold text-muted-foreground">Date</Label>
+                                                <Input
+                                                    type="date"
+                                                    required
+                                                    value={schedule.date}
+                                                    onChange={e => updateSchedule(index, "date", e.target.value)}
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label className="text-[8px] uppercase font-bold text-muted-foreground">Time</Label>
+                                                <Input
+                                                    required
+                                                    value={schedule.time}
+                                                    onChange={e => updateSchedule(index, "time", e.target.value)}
+                                                    placeholder="e.g. 08:00 AM"
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label className="text-[8px] uppercase font-bold text-muted-foreground">Location</Label>
+                                            <Input
+                                                required
+                                                value={schedule.location}
+                                                onChange={e => updateSchedule(index, "location", e.target.value)}
+                                                placeholder="e.g. Level 2, Room A"
+                                            />
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
+
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                     <Label className="text-[10px] uppercase font-black">Category</Label>
@@ -336,22 +425,44 @@ export default function EventsClient({ initialEvents }: EventsClientProps) {
                                     <TableCell>
                                         <div className="space-y-1">
                                             <p className="font-black uppercase italic tracking-tight">{event.title}</p>
-                                            <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
-                                                <MapPin className="w-3 h-3" />
-                                                <span>{event.location}</span>
+                                            <div className="flex flex-col gap-1">
+                                                <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
+                                                    <MapPin className="w-3 h-3" />
+                                                    <span>{event.location}</span>
+                                                </div>
+                                                {((event.schedules as any[]) || []).map((s, idx) => (
+                                                    <div key={idx} className="flex items-center gap-2 text-[8px] text-muted-foreground/60 pl-2">
+                                                        <MapPin className="w-2.5 h-2.5" />
+                                                        <span>{s.location}</span>
+                                                    </div>
+                                                ))}
                                             </div>
                                         </div>
                                     </TableCell>
                                     <TableCell>
-                                        <div className="space-y-1 text-[10px]">
-                                            <div className="flex items-center gap-2 font-bold text-primary">
-                                                <Calendar className="w-3 h-3" />
-                                                <span>{event.date}</span>
+                                        <div className="space-y-2 text-[10px]">
+                                            <div className="space-y-1">
+                                                <div className="flex items-center gap-2 font-bold text-primary">
+                                                    <Calendar className="w-3 h-3" />
+                                                    <span>{event.date}</span>
+                                                </div>
+                                                <div className="flex items-center gap-2 text-muted-foreground">
+                                                    <Clock className="w-3 h-3" />
+                                                    <span>{event.time}</span>
+                                                </div>
                                             </div>
-                                            <div className="flex items-center gap-2 text-muted-foreground">
-                                                <Clock className="w-3 h-3" />
-                                                <span>{event.time}</span>
-                                            </div>
+                                            {((event.schedules as any[]) || []).map((s, idx) => (
+                                                <div key={idx} className="space-y-0.5 opacity-60 pl-2 border-l border-border/50">
+                                                    <div className="flex items-center gap-2 font-semibold">
+                                                        <Calendar className="w-2.5 h-2.5" />
+                                                        <span>{s.date}</span>
+                                                    </div>
+                                                    <div className="flex items-center gap-2 text-[8px]">
+                                                        <Clock className="w-2.5 h-2.5" />
+                                                        <span>{s.time}</span>
+                                                    </div>
+                                                </div>
+                                            ))}
                                         </div>
                                     </TableCell>
                                     <TableCell>

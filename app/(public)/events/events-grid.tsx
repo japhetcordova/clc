@@ -61,11 +61,19 @@ export default function EventsGrid({ initialEvents }: EventsGridProps) {
                                     <div className="px-3 py-1 bg-muted rounded-full text-[9px] font-black uppercase tracking-widest text-muted-foreground group-hover:bg-rose-500/10 group-hover:text-rose-500 transition-colors shrink-0">
                                         {event.tag}
                                     </div>
-                                    <div className="text-right">
-                                        <p className="text-[12px] sm:text-sm font-black uppercase tracking-tight text-rose-500 line-clamp-1">
-                                            {new Date(event.date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
-                                        </p>
+                                    <div className="text-right flex flex-col items-end">
+                                        <div className="flex items-center gap-1.5">
+                                            {((event.schedules as any[]) || []).length > 0 && (
+                                                <div className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" title="Multiple dates available" />
+                                            )}
+                                            <p className="text-[12px] sm:text-sm font-black uppercase tracking-tight text-rose-500 line-clamp-1">
+                                                {new Date(event.date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                                            </p>
+                                        </div>
                                         <p className="text-[9px] sm:text-[10px] font-bold text-muted-foreground uppercase">{event.time}</p>
+                                        {((event.schedules as any[]) || []).length > 0 && (
+                                            <p className="text-[8px] font-black text-rose-500/60 uppercase tracking-tighter mt-0.5">+ Multiple Dates</p>
+                                        )}
                                     </div>
                                 </div>
 
@@ -106,6 +114,42 @@ export default function EventsGrid({ initialEvents }: EventsGridProps) {
                                 <motion.button
                                     whileHover={{ scale: 1.05 }}
                                     whileTap={{ scale: 0.95 }}
+                                    onClick={() => {
+                                        const [year, month, day] = event.date.split("-").map(Number);
+                                        // Simple time parsing for "HH:MM AM/PM"
+                                        const [timeStr, modifier] = event.time.split(" ");
+                                        let [hours, minutes] = timeStr.split(":").map(Number);
+                                        if (modifier === "PM" && hours < 12) hours += 12;
+                                        if (modifier === "AM" && hours === 12) hours = 0;
+
+                                        const startDate = new Date(year, month - 1, day, hours, minutes);
+                                        const endDate = new Date(startDate.getTime() + 60 * 60 * 1000); // Default 1 hour
+
+                                        const formatDate = (date: Date) => {
+                                            return date.toISOString().replace(/-|:|\.\d+/g, "");
+                                        };
+
+                                        const icsContent = [
+                                            "BEGIN:VCALENDAR",
+                                            "VERSION:2.0",
+                                            "BEGIN:VEVENT",
+                                            `DTSTART:${formatDate(startDate)}`,
+                                            `DTEND:${formatDate(endDate)}`,
+                                            `SUMMARY:${event.title}`,
+                                            `DESCRIPTION:${event.description.replace(/\n/g, "\\n")}`,
+                                            `LOCATION:${event.location}`,
+                                            "END:VEVENT",
+                                            "END:VCALENDAR"
+                                        ].join("\n");
+
+                                        const blob = new Blob([icsContent], { type: "text/calendar;charset=utf-8" });
+                                        const link = document.createElement("a");
+                                        link.href = window.URL.createObjectURL(blob);
+                                        link.setAttribute("download", `${event.title.replace(/\s+/g, "_")}.ics`);
+                                        document.body.appendChild(link);
+                                        link.click();
+                                        document.body.removeChild(link);
+                                    }}
                                     className="w-full sm:w-auto rounded-xl h-10 px-6 bg-rose-500 text-white font-black uppercase text-[10px] tracking-widest shadow-lg shadow-rose-500/20 hover:bg-rose-600 transition-colors"
                                 >
                                     Add to Calendar

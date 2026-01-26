@@ -185,6 +185,11 @@ export const appRouter = router({
             date: z.string(),
             time: z.string(),
             location: z.string(),
+            schedules: z.array(z.object({
+                date: z.string(),
+                time: z.string(),
+                location: z.string(),
+            })).optional(),
             category: z.string(),
             tag: z.string(),
             image: z.string().optional(),
@@ -194,7 +199,10 @@ export const appRouter = router({
             googleMapsLink: z.string().optional(),
         }))
         .mutation(async ({ input }) => {
-            const [newEvent] = await db.insert(events).values(input).returning();
+            const [newEvent] = await db.insert(events).values({
+                ...input,
+                schedules: input.schedules || [],
+            }).returning();
             revalidatePath("/admin/events");
             revalidatePath("/events");
             return { success: true, event: newEvent };
@@ -211,6 +219,7 @@ export const appRouter = router({
                 .where(eq(events.id, input.id))
                 .returning();
             revalidatePath("/admin/events");
+            revalidatePath("/events");
             return { success: true, event: updatedEvent };
         }),
 

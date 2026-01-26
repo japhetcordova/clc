@@ -126,37 +126,65 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
 
                         <div className="grid sm:grid-cols-1 gap-8">
                             <div className="p-8 rounded-[2rem] bg-card border border-border space-y-6 hover:border-primary/20 transition-colors">
-                                {/* When Section */}
-                                <div className="flex items-start gap-4">
-                                    <Clock className="w-8 h-8 text-primary flex-shrink-0" />
-                                    <div className="space-y-1">
-                                        <h4 className="font-black text-lg uppercase italic">When</h4>
-                                        <p className="text-sm font-bold text-muted-foreground uppercase">{event.date}</p>
-                                        <p className="text-sm font-black text-primary uppercase tracking-widest">{event.time}</p>
+                                {/* Primary Schedule */}
+                                <div className="space-y-6">
+                                    <div className="flex items-start gap-4">
+                                        <Clock className="w-8 h-8 text-primary flex-shrink-0" />
+                                        <div className="space-y-1">
+                                            <h4 className="font-black text-lg uppercase italic">When</h4>
+                                            <p className="text-sm font-bold text-muted-foreground uppercase">{event.date}</p>
+                                            <p className="text-sm font-black text-primary uppercase tracking-widest">{event.time}</p>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-start gap-4 pl-12 border-l border-border/50">
+                                        <MapPin className="w-6 h-6 text-rose-500 flex-shrink-0" />
+                                        <div className="space-y-1">
+                                            <h4 className="font-bold text-sm uppercase">Where</h4>
+                                            <p className="text-sm font-medium text-muted-foreground uppercase">{event.location}</p>
+                                        </div>
                                     </div>
                                 </div>
 
-                                {/* Divider */}
-                                <div className="border-t border-border" />
+                                {/* Additional Schedules */}
+                                {((event.schedules as any[]) || []).length > 0 && (
+                                    <>
+                                        <div className="border-t border-border pt-6" />
+                                        <div className="space-y-6">
+                                            <h4 className="font-black text-xs uppercase tracking-[0.2em] text-muted-foreground">Additional Schedules</h4>
+                                            {((event.schedules as any[])).map((s, idx) => (
+                                                <div key={idx} className="space-y-4 p-4 rounded-2xl bg-muted/30 border border-border/50">
+                                                    <div className="flex items-start gap-4">
+                                                        <Calendar className="w-5 h-5 text-primary flex-shrink-0" />
+                                                        <div className="space-y-0.5">
+                                                            <p className="text-[10px] font-black uppercase text-muted-foreground">{s.date}</p>
+                                                            <p className="text-xs font-black uppercase text-primary tracking-widest">{s.time}</p>
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex items-start gap-4">
+                                                        <MapPin className="w-5 h-5 text-rose-500 flex-shrink-0" />
+                                                        <div className="space-y-0.5">
+                                                            <p className="text-[10px] font-bold uppercase text-muted-foreground">{s.location}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </>
+                                )}
 
-                                {/* Where Section */}
-                                <div className="flex items-start gap-4">
-                                    <MapPin className="w-8 h-8 text-rose-500 flex-shrink-0" />
-                                    <div className="space-y-1">
-                                        <h4 className="font-black text-lg uppercase italic">Where</h4>
-                                        <p className="text-sm font-bold text-muted-foreground uppercase">{event.location}</p>
-                                        {event.googleMapsLink && (
-                                            <a
-                                                href={event.googleMapsLink}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="text-[10px] font-black text-primary uppercase tracking-[0.2em] flex items-center gap-1 group w-fit mt-1"
-                                            >
-                                                View on Map <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
-                                            </a>
-                                        )}
+                                {/* Google Maps Link if available */}
+                                {event.googleMapsLink && (
+                                    <div className="border-t border-border pt-6">
+                                        <a
+                                            href={event.googleMapsLink}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="text-[10px] font-black text-primary uppercase tracking-[0.2em] flex items-center gap-1 group w-fit mt-1"
+                                        >
+                                            View Main Location on Map <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+                                        </a>
                                     </div>
-                                </div>
+                                )}
                             </div>
                         </div>
 
@@ -192,6 +220,10 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
                             eventTitle={event.title}
                             registrationLink={event.registrationLink}
                             initialInterestedCount={event.interestedCount || 0}
+                            eventDate={event.date}
+                            eventTime={event.time}
+                            location={event.location}
+                            description={event.description}
                         />
 
                         <div className="p-8 rounded-[2.5rem] bg-card border border-border space-y-4">

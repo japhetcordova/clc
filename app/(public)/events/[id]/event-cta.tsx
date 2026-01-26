@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Share2, LinkIcon } from "lucide-react";
+import { Share2, LinkIcon, Calendar } from "lucide-react";
 import { trpc } from "@/lib/trpc/client";
 import { toast } from "sonner";
 
@@ -11,9 +11,22 @@ interface EventCTAProps {
     eventTitle: string;
     registrationLink?: string | null;
     initialInterestedCount: number;
+    eventDate: string;
+    eventTime: string;
+    location: string;
+    description: string;
 }
 
-export default function EventCTA({ eventId, eventTitle, registrationLink, initialInterestedCount }: EventCTAProps) {
+export default function EventCTA({
+    eventId,
+    eventTitle,
+    registrationLink,
+    initialInterestedCount,
+    eventDate,
+    eventTime,
+    location,
+    description
+}: EventCTAProps) {
     const [hasMarkedInterest, setHasMarkedInterest] = useState(false);
     const [interestedCount, setInterestedCount] = useState(initialInterestedCount);
 
@@ -49,14 +62,49 @@ export default function EventCTA({ eventId, eventTitle, registrationLink, initia
                 toast.success("Shared successfully!");
             } catch (err) {
                 if ((err as Error).name !== 'AbortError') {
-                    // Fallback to clipboard
                     copyToClipboard();
                 }
             }
         } else {
-            // Fallback to clipboard
             copyToClipboard();
         }
+    };
+
+    const handleCalendarAdd = () => {
+        const [year, month, day] = eventDate.split("-").map(Number);
+        const [timeStr, modifier] = eventTime.split(" ");
+        let [hours, minutes] = timeStr.split(":").map(Number);
+        if (modifier === "PM" && hours < 12) hours += 12;
+        if (modifier === "AM" && hours === 12) hours = 0;
+
+        const startDate = new Date(year, month - 1, day, hours, minutes);
+        const endDate = new Date(startDate.getTime() + 60 * 60 * 1000);
+
+        const formatDate = (date: Date) => {
+            return date.toISOString().replace(/-|:|\.\d+/g, "");
+        };
+
+        const icsContent = [
+            "BEGIN:VCALENDAR",
+            "VERSION:2.0",
+            "BEGIN:VEVENT",
+            `DTSTART:${formatDate(startDate)}`,
+            `DTEND:${formatDate(endDate)}`,
+            `SUMMARY:${eventTitle}`,
+            `DESCRIPTION:${description.replace(/\n/g, "\\n")}`,
+            `LOCATION:${location}`,
+            "END:VEVENT",
+            "END:VCALENDAR"
+        ].join("\n");
+
+        const blob = new Blob([icsContent], { type: "text/calendar;charset=utf-8" });
+        const link = document.createElement("a");
+        link.href = window.URL.createObjectURL(blob);
+        link.setAttribute("download", `${eventTitle.replace(/\s+/g, "_")}.ics`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        toast.success("Event added to your download queue!");
     };
 
     const copyToClipboard = () => {
@@ -101,13 +149,22 @@ export default function EventCTA({ eventId, eventTitle, registrationLink, initia
                     </Button>
                 )}
 
-                <Button
-                    onClick={handleShare}
-                    variant="ghost"
-                    className="w-full h-14 rounded-2xl border-white/20 bg-white/5 font-black uppercase text-xs tracking-[0.2em] text-white hover:bg-white/10"
-                >
-                    <Share2 className="w-4 h-4 mr-2" /> Share Event
-                </Button>
+                <div className="grid grid-cols-2 gap-3">
+                    <Button
+                        onClick={handleCalendarAdd}
+                        variant="ghost"
+                        className="h-14 rounded-2xl border-white/20 bg-white/5 font-black uppercase text-[10px] tracking-widest text-white hover:bg-white/10"
+                    >
+                        <Calendar className="w-4 h-4 mr-2" /> Add to Calendar
+                    </Button>
+                    <Button
+                        onClick={handleShare}
+                        variant="ghost"
+                        className="h-14 rounded-2xl border-white/20 bg-white/5 font-black uppercase text-[10px] tracking-widest text-white hover:bg-white/10"
+                    >
+                        <Share2 className="w-4 h-4 mr-2" /> Share Event
+                    </Button>
+                </div>
             </div>
         </div>
     );

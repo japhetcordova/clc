@@ -1,5 +1,17 @@
+import LandingContent from "./home-content"
+import { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
+import { trpcServer } from "@/lib/trpc/server";
+
+export const metadata: Metadata = {
+  title: "Christian Life Center Tagum City | CLC Tagum",
+  description: "Welcome to Christian Life Center Tagum City (CLC Tagum). Join us for worship, community, and spiritual growth. Love God. Love People. Make Disciples.",
+  keywords: ["christian life center", "christian life centr", "christian life center tagum city", "clc tagum", "tagum city church"],
+  openGraph: {
+    url: "/",
+  }
+};
 
 export default async function Home() {
   const headersList = await headers();
@@ -8,8 +20,12 @@ export default async function Home() {
 
   if (isMobile) {
     redirect("/mobile");
-  } else {
-    // For desktop, redirect to the main landing page instead of the registration page
-    redirect("/landing");
   }
+
+  const api = await trpcServer();
+  const serverEvents = await api.getPublicEvents().catch(() => []);
+
+  return (
+    <LandingContent serverEvents={serverEvents} />
+  )
 }
