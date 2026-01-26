@@ -1,7 +1,7 @@
 import { router, publicProcedure } from "./trpc";
 import { z } from "zod";
 import { db } from "@/db";
-import { users, attendance, events, dailyPins, mobileHighlights, announcements } from "@/db/schema";
+import { users, attendance, events, dailyPins, mobileHighlights, announcements, cellGroupInterests } from "@/db/schema";
 import { eq, and, desc, sql, count, asc, ilike, inArray, or } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
@@ -856,6 +856,27 @@ export const appRouter = router({
                 .orderBy(users.lastName);
 
             return attendees;
+        }),
+
+    submitCellGroupInterest: publicProcedure
+        .input(z.object({
+            firstName: z.string(),
+            lastName: z.string(),
+            birthdate: z.string(),
+            email: z.string().optional(),
+            phoneNumber: z.string(),
+            gender: z.string(),
+            address: z.string(),
+            preferredService: z.string(),
+        }))
+        .mutation(async ({ input }) => {
+            const [newInterest] = await db.insert(cellGroupInterests).values(input).returning();
+            return { success: true, interest: newInterest };
+        }),
+
+    getCellGroupInterests: publicProcedure
+        .query(async () => {
+            return await db.select().from(cellGroupInterests).orderBy(desc(cellGroupInterests.createdAt));
         }),
 });
 

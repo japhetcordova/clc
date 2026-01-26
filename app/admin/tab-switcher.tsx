@@ -2,7 +2,7 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { UserCheck, Users2, Users, TrendingUp, Sparkles, Megaphone } from "lucide-react";
+import { UserCheck, Users2, Users, TrendingUp, Sparkles, Megaphone, LayoutGrid } from "lucide-react";
 
 export function TabSwitcher() {
     const router = useRouter();
@@ -65,6 +65,14 @@ export function TabSwitcher() {
                 >
                     <Megaphone className="w-3.5 h-3.5" />
                     Updates
+                </TabsTrigger>
+                <TabsTrigger
+                    value="cell-groups"
+                    onClick={() => updateTab("cell-groups")}
+                    className="flex-1 sm:flex-none rounded-xl font-black uppercase text-[9px] sm:text-[10px] tracking-widest gap-2 data-[state=active]:bg-violet-600 data-[state=active]:text-white data-[state=active]:shadow-lg h-8 px-4"
+                >
+                    <LayoutGrid className="w-3.5 h-3.5" />
+                    Cell Groups
                 </TabsTrigger>
             </TabsList>
         </div>

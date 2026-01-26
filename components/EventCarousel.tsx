@@ -6,6 +6,7 @@ import { Calendar, MapPin, Clock } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import useEmblaCarousel from 'embla-carousel-react';
+import { ChurchEvent } from "@/db/schema";
 
 const upcomingEvents = [
     {
@@ -42,7 +43,19 @@ const upcomingEvents = [
     }
 ];
 
-export function EventCarousel() {
+export function EventCarousel({ events }: { events?: ChurchEvent[] }) {
+    // If we have real events from DB, use them first
+    const displayEvents = events && events.length > 0
+        ? events.map(e => ({
+            title: e.title,
+            date: new Date(e.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+            time: e.time,
+            location: e.location,
+            image: e.image || "/events/youth-night.webp",
+            tag: e.tag
+        }))
+        : upcomingEvents;
+
     const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: 'start', skipSnaps: false });
 
     useEffect(() => {
@@ -70,7 +83,7 @@ export function EventCarousel() {
 
             <div className="embla overflow-hidden cursor-grab active:cursor-grabbing" ref={emblaRef}>
                 <div className="embla__container flex">
-                    {upcomingEvents.map((event, i) => (
+                    {displayEvents.map((event, i) => (
                         <div key={i} className="embla__slide flex-[0_0_85%] md:flex-[0_0_40%] lg:flex-[0_0_30%] min-w-0 pl-6 first:pl-6 last:pr-6">
                             <div className="group relative aspect-video md:aspect-[2/1] rounded-3xl overflow-hidden border border-white/10 shadow-2xl transition-all duration-500 hover:border-primary/50">
                                 <Image

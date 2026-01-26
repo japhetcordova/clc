@@ -89,7 +89,7 @@ export default function AdminClient({
 
         const formatDate = (dateStr: string) => {
             const date = new Date(dateStr);
-            return date.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
+            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
         };
 
         // Header

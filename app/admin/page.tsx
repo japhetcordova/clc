@@ -14,6 +14,7 @@ import DemographicsDoubleRing from "./demographics-double-ring";
 import MemberSearch from "./member-search";
 import MobileHighlightsClient from "./mobile-highlights-client";
 import AnnouncementsAdminClient from "./announcements-admin-client";
+import CellGroupAdminClient from "./cell-group-admin-client";
 
 import { cache } from "react";
 
@@ -516,7 +517,7 @@ export default async function AdminDashboard({
                                                 </TableCell>
                                                 <TableCell className="text-right pr-4 sm:pr-8 py-4">
                                                     <span className="text-[10px] font-mono font-bold text-muted-foreground">
-                                                        {new Date(member.createdAt).toLocaleDateString()}
+                                                        {new Date(member.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
                                                     </span>
                                                 </TableCell>
                                             </TableRow>
@@ -545,6 +546,10 @@ export default async function AdminDashboard({
 
                 <TabsContent value="announcements" className="space-y-6 sm:space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
                     <AnnouncementsAdminClient />
+                </TabsContent>
+
+                <TabsContent value="cell-groups" className="space-y-6 sm:space-y-8 animate-in fade-in slide-in-from-top-4 duration-500">
+                    <CellGroupAdminClient />
                 </TabsContent>
             </Tabs>
         </div>

@@ -139,7 +139,7 @@ export default async function EventsPage() {
                                     <div className="flex justify-between items-center">
                                         <span className="text-[10px] font-black uppercase tracking-widest text-rose-500/60">{post.type}</span>
                                         <span className="text-[10px] font-bold text-muted-foreground">
-                                            {new Date(post.date).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })}
+                                            {new Date(post.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                                         </span>
                                     </div>
                                     <h4 className="text-xl font-black uppercase italic tracking-tight leading-none group-hover:text-rose-500 transition-colors">{post.title}</h4>

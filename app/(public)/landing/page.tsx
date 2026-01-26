@@ -2,6 +2,7 @@ import LandingContent from "../landing-content"
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
+import { trpcServer } from "@/lib/trpc/server";
 
 export const metadata: Metadata = {
     title: "Christian Life Center Tagum City | CLC Tagum",
@@ -21,7 +22,10 @@ export default async function Landing() {
         redirect("/mobile");
     }
 
+    const api = await trpcServer();
+    const serverEvents = await api.getPublicEvents().catch(() => []);
+
     return (
-        <LandingContent />
+        <LandingContent serverEvents={serverEvents} />
     )
 }

@@ -97,6 +97,19 @@ export const announcements = pgTable("announcements", {
     createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+export const cellGroupInterests = pgTable("cell_group_interests", {
+    id: uuid("id").primaryKey().defaultRandom(),
+    firstName: text("first_name").notNull(),
+    lastName: text("last_name").notNull(),
+    birthdate: date("birthdate").notNull(),
+    email: text("email"),
+    phoneNumber: text("phone_number").notNull(),
+    gender: text("gender").notNull(),
+    address: text("address").notNull(),
+    preferredService: text("preferred_service").notNull(), // Morning, Afternoon
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
 export type Attendance = typeof attendance.$inferSelect;
@@ -112,3 +125,5 @@ export type MobileHighlight = typeof mobileHighlights.$inferSelect;
 export type NewMobileHighlight = typeof mobileHighlights.$inferInsert;
 export type Announcement = typeof announcements.$inferSelect;
 export type NewAnnouncement = typeof announcements.$inferInsert;
+export type CellGroupInterest = typeof cellGroupInterests.$inferSelect;
+export type NewCellGroupInterest = typeof cellGroupInterests.$inferInsert;

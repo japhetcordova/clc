@@ -51,7 +51,7 @@ export default async function NewsArchivePage() {
                                     <div className="flex justify-between items-center">
                                         <span className="text-[10px] font-black uppercase tracking-widest text-rose-500/60">{announcement.type}</span>
                                         <span className="text-[10px] font-bold text-muted-foreground">
-                                            {new Date(announcement.date).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })}
+                                            {new Date(announcement.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                                         </span>
                                     </div>
                                     <h3 className="text-xl font-black uppercase italic tracking-tight leading-none group-hover:text-rose-500 transition-colors">

@@ -74,6 +74,7 @@ export default function Footer() {
                             {[
                                 { name: "About Christian Life Center Tagum ", href: "/about" },
                                 { name: "Our Locations", href: "/locations" },
+                                { name: "Prayer & Fasting 2026", href: "/prayer-and-fasting" },
                                 { name: "Ministries", href: "/ministries" },
                                 { name: "Giving", href: "/giving" },
                                 { name: "News & Events", href: "/events" }

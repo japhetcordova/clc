@@ -62,7 +62,9 @@ export default function EventsGrid({ initialEvents }: EventsGridProps) {
                                         {event.tag}
                                     </div>
                                     <div className="text-right">
-                                        <p className="text-[12px] sm:text-sm font-black italic uppercase tracking-tight text-rose-500 line-clamp-1">{event.date}</p>
+                                        <p className="text-[12px] sm:text-sm font-black uppercase tracking-tight text-rose-500 line-clamp-1">
+                                            {new Date(event.date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                                        </p>
                                         <p className="text-[9px] sm:text-[10px] font-bold text-muted-foreground uppercase">{event.time}</p>
                                     </div>
                                 </div>

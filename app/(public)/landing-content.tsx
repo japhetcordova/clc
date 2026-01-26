@@ -17,7 +17,8 @@ import {
     Clock,
     Building2,
     MonitorPlay,
-    Globe
+    Globe,
+    Video
 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -27,9 +28,13 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 
 import { AnimatePresence } from "framer-motion";
+import { REGULAR_SERVICES } from "@/config/services";
+import { ChurchEvent } from "@/db/schema";
+import { CellGroupForm } from "@/components/CellGroupForm";
 
-export default function LandingContent() {
+export default function LandingContent({ serverEvents }: { serverEvents?: ChurchEvent[] }) {
     const [cookieConsent, setCookieConsent] = useState(true); // Default hidden until effect
+    const [cellGroupFormOpen, setCellGroupFormOpen] = useState(false);
 
     useEffect(() => {
         // Cookie logic
@@ -91,23 +96,19 @@ export default function LandingContent() {
                             </motion.div>
 
                             <div className="space-y-6">
-                                <h1 className="text-7xl md:text-9xl lg:text-[10rem] font-black tracking-tighter text-foreground uppercase italic leading-[0.8] drop-shadow-2xl">
-                                    Christian <br />
-                                    Life <span className="text-transparent bg-clip-text bg-linear-to-r from-primary via-indigo-500 to-primary bg-[length:200%_auto] animate-gradient-x px-4">Center</span>
+                                <h1 className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter text-foreground uppercase leading-[0.9] drop-shadow-2xl">
+                                    Love God. Love People. <br />
+                                    Make <span className="text-transparent bg-clip-text bg-linear-to-r from-primary via-indigo-500 to-primary bg-[length:200%_auto] animate-gradient-x px-4">Disciples</span>
                                 </h1>
-                                <p className="max-w-2xl mx-auto text-lg md:text-3xl font-black text-muted-foreground/80 leading-relaxed uppercase italic tracking-[0.2em]">
-                                    Love God. Love People. Make Disciples.
-                                </p>
                             </div>
 
                             <div className="flex flex-wrap items-center justify-center gap-8 pt-4">
                                 <Link href="/registration">
                                     <Button size="lg" className="h-20 px-12 rounded-2xl bg-primary text-primary-foreground font-black text-xl shadow-2xl shadow-primary/30 hover:scale-105 hover:shadow-primary/40 transition-all group">
-                                        Join Our Church
-                                        <ArrowRight className="ml-3 w-8 h-8 group-hover:translate-x-1 transition-transform" />
+                                        Join Our Journey
                                     </Button>
                                 </Link>
-                                <Link href="/about" className="text-foreground font-black uppercase italic tracking-widest text-sm hover:text-primary transition-colors flex items-center gap-3 group">
+                                <Link href="/about" className="text-foreground font-black uppercase tracking-widest text-sm hover:text-primary transition-colors flex items-center gap-3 group">
                                     Learn More About Us
                                     <div className="w-12 h-px bg-foreground/20 group-hover:bg-primary/40 group-hover:w-16 transition-all" />
                                 </Link>
@@ -117,7 +118,7 @@ export default function LandingContent() {
                 </div>
 
                 <div className="relative z-10 w-full mb-12">
-                    <EventCarousel />
+                    <EventCarousel events={serverEvents} />
                 </div>
 
                 <motion.div
@@ -130,6 +131,44 @@ export default function LandingContent() {
                     </div>
                 </motion.div>
             </section>
+
+            {/* PRAYER AND FASTING BANNER (Current Event) */}
+            {(() => {
+                const startDate = new Date('2026-01-10');
+                const today = new Date();
+                const diffTime = today.getTime() - startDate.getTime();
+                const dayNumber = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
+
+                if (dayNumber > 0 && dayNumber <= 21) {
+                    return (
+                        <section className="relative py-4 px-4 bg-rose-600 overflow-hidden group">
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                className="max-w-[1920px] mx-auto flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8"
+                            >
+                                <div className="flex items-center gap-3">
+                                    <div className="px-3 py-1 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-[10px] font-black uppercase tracking-widest text-white">
+                                        Active Event
+                                    </div>
+                                    <h3 className="text-sm md:text-base font-black uppercase italic tracking-tighter text-white">
+                                        21 Days of Prayer & Fasting: <span className="underline decoration-white/30 underline-offset-4">Day {dayNumber}</span>
+                                    </h3>
+                                </div>
+                                <Link href="/prayer-and-fasting">
+                                    <Button size="sm" className="bg-white text-rose-600 hover:bg-rose-50 font-black uppercase text-[10px] tracking-widest h-8 rounded-lg">
+                                        Access Prayer Guide
+                                        <ArrowRight className="ml-2 w-3 h-3" />
+                                    </Button>
+                                </Link>
+                            </motion.div>
+                            {/* Decorative background sparks */}
+                            <div className="absolute top-0 right-0 w-32 h-full bg-linear-to-l from-white/10 to-transparent skew-x-[-20deg]" />
+                        </section>
+                    );
+                }
+                return null;
+            })()}
 
             {/* EXPERIENCE SECTION */}
             <section className="py-12 md:py-20 bg-card/10 relative overflow-hidden border-b border-border/50">
@@ -157,23 +196,23 @@ export default function LandingContent() {
                             {
                                 icon: <MonitorPlay className="w-10 h-10 text-primary" />,
                                 title: "Live Streams",
-                                desc: "eFam is our online community who stream church from wherever they are.",
-                                link: "Find a time",
-                                href: "/watch"
+                                desc: "Join our online community for live worship experiences from wherever you are.",
+                                link: "Watch Live",
+                                href: "https://www.youtube.com/@clctagum"
+                            },
+                            {
+                                icon: <Video className="w-10 h-10 text-primary" />,
+                                title: "Zoom Gatherings",
+                                desc: "Connect with us through our interactive online prayer meetings and services.",
+                                link: "Join a meeting",
+                                href: "/events"
                             },
                             {
                                 icon: <Users className="w-10 h-10 text-primary" />,
-                                title: "Watch Party",
-                                desc: "Watch Parties are groups of eFam that stream the worship experience together.",
-                                link: "Find a watch party",
-                                href: "/watch-parties"
-                            },
-                            {
-                                icon: <Globe className="w-10 h-10 text-primary" />,
-                                title: "Pop-Up",
-                                desc: "A Pop-Up is where we bring church to different cities across the nation.",
-                                link: "Find a pop-up",
-                                href: "/popups"
+                                title: "Cell Groups",
+                                desc: "Small groups meeting across the city for fellowship and disciple-making.",
+                                link: "Find a group",
+                                href: "/locations"
                             }
                         ].map((item, i) => (
                             <motion.div
@@ -195,10 +234,20 @@ export default function LandingContent() {
                                         {item.desc}
                                     </p>
                                 </div>
-                                <Link href={item.href} className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-foreground hover:text-primary transition-colors group/link">
-                                    <span className="border-b-2 border-primary/20 group-hover/link:border-primary transition-all pb-1">{item.link}</span>
-                                    <ChevronRight className="w-4 h-4 group-hover/link:translate-x-1 transition-transform text-primary" />
-                                </Link>
+                                {item.title === "Cell Groups" ? (
+                                    <button
+                                        onClick={() => setCellGroupFormOpen(true)}
+                                        className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-foreground hover:text-primary transition-colors group/link cursor-pointer"
+                                    >
+                                        <span className="border-b-2 border-primary/20 group-hover/link:border-primary transition-all pb-1">{item.link}</span>
+                                        <ChevronRight className="w-4 h-4 group-hover/link:translate-x-1 transition-transform text-primary" />
+                                    </button>
+                                ) : (
+                                    <Link href={item.href} className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-foreground hover:text-primary transition-colors group/link">
+                                        <span className="border-b-2 border-primary/20 group-hover/link:border-primary transition-all pb-1">{item.link}</span>
+                                        <ChevronRight className="w-4 h-4 group-hover/link:translate-x-1 transition-transform text-primary" />
+                                    </Link>
+                                )}
                             </motion.div>
                         ))}
                     </div>
@@ -216,128 +265,6 @@ export default function LandingContent() {
                         </Link>
                     </div>
                 </div>
-            </section>
-
-            {/* GET INVOLVED SECTION */}
-            <section className="py-12 md:py-20 px-4 md:px-8 relative bg-background/50">
-                <div className="max-w-[1920px] mx-auto space-y-16">
-                    <div className="text-center space-y-4">
-                        <h2 className="text-5xl md:text-7xl font-black tracking-tighter text-foreground uppercase italic leading-none">
-                            How To <span className="text-primary">Get Involved</span>
-                        </h2>
-                        <p className="text-lg md:text-xl text-muted-foreground font-medium max-w-2xl mx-auto italic">
-                            See how God can use your gifts to make an eternal impact.
-                        </p>
-                    </div>
-
-                    <div className="grid md:grid-cols-3 gap-8">
-                        {[
-                            {
-                                title: "Volunteer",
-                                desc: "Participate in the mission to advance the gospel by serving on a volunteer team.",
-                                image: "/involvement/volunteer.webp"
-                            },
-                            {
-                                title: "Lead",
-                                desc: "Lead an eGroup, host a Watch Party or become a student leader.",
-                                image: "/involvement/lead.webp"
-                            },
-                            {
-                                title: "Jobs",
-                                desc: "Explore job opportunities to use your gifts in a ministry setting.",
-                                image: "/involvement/jobs.webp"
-                            }
-                        ].map((item, i) => (
-                            <motion.div
-                                key={i}
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ delay: i * 0.1, duration: 0.8 }}
-                                className="group relative bg-card/40 backdrop-blur-xl rounded-[2.5rem] overflow-hidden border border-border/50 hover:border-primary/50 transition-all duration-500 shadow-2xl"
-                            >
-                                <div className="aspect-[4/3] relative overflow-hidden">
-                                    <Image
-                                        src={item.image}
-                                        alt={item.title}
-                                        fill
-                                        className="object-cover group-hover:scale-105 transition-transform duration-700"
-                                    />
-                                    <div className="absolute inset-0 bg-linear-to-t from-background/90 via-background/20 to-transparent" />
-                                </div>
-                                <div className="p-8 space-y-4">
-                                    <h3 className="text-3xl font-black uppercase italic tracking-tighter group-hover:text-primary transition-colors">
-                                        {item.title}
-                                    </h3>
-                                    <p className="text-sm text-muted-foreground font-medium leading-relaxed">
-                                        {item.desc}
-                                    </p>
-                                    <Link href="/get-involved" className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-widest text-primary hover:text-primary/80 transition-colors pt-2 group/link">
-                                        Learn more
-                                        <ChevronRight className="w-4 h-4 group-hover/link:translate-x-1 transition-transform" />
-                                    </Link>
-                                </div>
-                            </motion.div>
-                        ))}
-                    </div>
-                </div>
-            </section>
-
-            {/* ABOUT SECTION */}
-            <section id="about" className="py-12 md:py-20 px-4 md:px-8 relative">
-                <div className="max-w-[1920px] mx-auto grid md:grid-cols-2 gap-12 items-center">
-                    <motion.div
-                        {...fadeIn}
-                        className="space-y-6"
-                    >
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20">
-                            <Info className="w-4 h-4 text-indigo-500" />
-                            <span className="text-[10px] font-bold uppercase tracking-widest text-indigo-500">Who We Are</span>
-                        </div>
-                        <h2 className="text-4xl md:text-5xl font-black tracking-tight text-foreground uppercase italic leading-none">
-                            Devoted to God <br />
-                            <span className="text-indigo-500">Connected to People</span>
-                        </h2>
-                        <p className="text-lg text-muted-foreground font-medium leading-relaxed">
-                            Christian Life Center (CLC) is a vibrant community focused on spiritual growth, authentic fellowship, and impactful ministry. We believe that everyone has a purpose and a place in God's family.
-                        </p>
-                        <div className="grid grid-cols-2 gap-4 pt-4">
-                            <div className="p-4 rounded-2xl bg-muted/30 border border-border space-y-2">
-                                <Users className="w-6 h-6 text-primary" />
-                                <h3 className="font-bold uppercase text-xs tracking-widest">Global Family</h3>
-                                <p className="text-[10px] text-muted-foreground font-medium">Part of the worldwide G12 family of churches.</p>
-                            </div>
-                            <div className="p-4 rounded-2xl bg-muted/30 border border-border space-y-2">
-                                <Heart className="w-6 h-6 text-rose-500" />
-                                <h3 className="font-bold uppercase text-xs tracking-widest">Our Heart</h3>
-                                <p className="text-[10px] text-muted-foreground font-medium">Moved by compassion to serve our city.</p>
-                            </div>
-                        </div>
-                    </motion.div>
-
-                    <motion.div
-                        initial={{ opacity: 0, x: 20 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.8 }}
-                        className="relative"
-                    >
-                        <div className="relative aspect-square rounded-[3rem] overflow-hidden shadow-2xl ring-1 ring-border">
-                            <Image
-                                src="/church_hero_worship_1767400361470.webp"
-                                alt="Community"
-                                fill
-                                className="object-cover grayscale hover:grayscale-0 transition-all duration-700"
-                            />
-                        </div>
-                        <div className="absolute -bottom-10 -left-10 p-8 rounded-[2rem] bg-card shadow-2xl border border-border max-w-[240px] hidden md:block backdrop-blur-xl">
-                            <h4 className="font-black text-xl italic uppercase tracking-tighter">Tagum City</h4>
-                            <p className="text-[10px] font-bold text-muted-foreground uppercase mt-1">Our primary location and heart of operation.</p>
-                        </div>
-                    </motion.div>
-                </div>
-                {/* SMOOTH TRANSITION TO VISION */}
-                <div className="absolute bottom-0 left-0 right-0 h-48 bg-linear-to-b from-transparent to-muted/20 z-0 pointer-events-none" />
             </section>
 
 
@@ -362,14 +289,7 @@ export default function LandingContent() {
                     </div>
 
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {[
-                            { time: "08:00 AM", day: "Sunday", title: "First Service", type: "Main Gathering" },
-                            { time: "10:30 AM", day: "Sunday", title: "Second Service", type: "Main Gathering" },
-                            { time: "05:00 PM", day: "Wednesday", title: "Mid-week Prayer", type: "Prayer & Worship" },
-                            { time: "06:00 PM", day: "Friday", title: "Youth Alive", type: "Youth Ministry" },
-                            { time: "08:00 AM", day: "Saturday", title: "Morning Prayer", type: "Corporate Prayer" },
-                            { time: "02:00 PM", day: "Sunday", title: "Kids Church", type: "Children's Ministry" }
-                        ].map((service, i) => (
+                        {REGULAR_SERVICES.map((service, i) => (
                             <motion.div
                                 key={i}
                                 initial={{ opacity: 0, scale: 0.95 }}
@@ -392,7 +312,7 @@ export default function LandingContent() {
                 </div>
             </section>
 
-
+            <CellGroupForm open={cellGroupFormOpen} onOpenChange={setCellGroupFormOpen} />
 
             {/* COOKIE BANNER */}
             <AnimatePresence>
