@@ -134,13 +134,7 @@ export default function MobileDashboard() {
             </header>
 
             <main className="px-6 space-y-8 relative z-20">
-                <div className="space-y-4 -mt-32">
-                    <div className="px-6">
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/20 backdrop-blur-md border border-white/10">
-                            <Sparkles className="w-3 h-3 text-primary" />
-                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white">Upcoming Events</span>
-                        </div>
-                    </div>
+                <div className="space-y-4 -mt-54">
 
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
