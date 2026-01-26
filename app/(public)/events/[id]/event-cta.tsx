@@ -149,20 +149,20 @@ export default function EventCTA({
                     </Button>
                 )}
 
-                <div className="grid grid-cols-2 gap-3">
+                <div className="flex flex-col gap-3">
                     <Button
                         onClick={handleCalendarAdd}
                         variant="ghost"
-                        className="h-14 rounded-2xl border-white/20 bg-white/5 font-black uppercase text-[10px] tracking-widest text-white hover:bg-white/10"
+                        className="w-full h-14 rounded-2xl border-white/20 bg-white/5 font-black uppercase text-[10px] tracking-widest text-white hover:bg-white/10 gap-2"
                     >
-                        <Calendar className="w-4 h-4 mr-2" /> Add to Calendar
+                        <Calendar className="w-4 h-4" /> Add to Calendar
                     </Button>
                     <Button
                         onClick={handleShare}
                         variant="ghost"
-                        className="h-14 rounded-2xl border-white/20 bg-white/5 font-black uppercase text-[10px] tracking-widest text-white hover:bg-white/10"
+                        className="w-full h-14 rounded-2xl border-white/20 bg-white/5 font-black uppercase text-[10px] tracking-widest text-white hover:bg-white/10 gap-2"
                     >
-                        <Share2 className="w-4 h-4 mr-2" /> Share Event
+                        <Share2 className="w-4 h-4" /> Share Event
                     </Button>
                 </div>
             </div>
