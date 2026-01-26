@@ -9,6 +9,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import Logo from "@/components/Logo";
+import { EventCarousel } from "@/components/EventCarousel";
 
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { trpc } from "@/lib/trpc/client";
@@ -16,6 +17,7 @@ import { trpc } from "@/lib/trpc/client";
 export default function MobileDashboard() {
     const { isAdmin } = useCurrentUser();
     const { data: activeHighlight } = trpc.getActiveMobileHighlight.useQuery();
+    const { data: publicEvents } = trpc.getPublicEvents.useQuery();
 
     const defaultHighlight = {
         titlePrefix: "When you",
@@ -115,7 +117,7 @@ export default function MobileDashboard() {
     return (
         <div className="min-h-screen bg-background pb-32">
             {/* Header / Hero Section with Highlight */}
-            <header className="relative min-h-[450px] flex flex-col justify-end overflow-hidden pb-12">
+            <header className="relative min-h-[450px] flex flex-col overflow-hidden pb-12">
                 {/* Background Image */}
                 <div className="absolute inset-0 z-0">
                     <Image
@@ -129,34 +131,26 @@ export default function MobileDashboard() {
                     <div className="absolute inset-0 bg-linear-to-b from-background/20 via-background/60 to-background" />
                     <div className="absolute inset-0 bg-linear-to-r from-background/40 to-transparent" />
                 </div>
-
-                <div className="relative z-10 px-6 space-y-6">
-
-                    <motion.div
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.3 }}
-                        className="space-y-4"
-                    >
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/20 backdrop-blur-md border border-white/10">
-                            <Sparkles className="w-3 h-3 text-primary" />
-                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white">Sunday Highlight</span>
-                        </div>
-
-                        <div className="space-y-1">
-                            <h2 className="text-3xl font-black tracking-tight text-white uppercase italic leading-[1.1]">
-                                {display.titlePrefix} <span className="text-primary italic">{display.highlightedWord}</span>,<br />
-                                <span className="text-4xl">{display.titleSuffix}</span>
-                            </h2>
-                            <p className="text-white/60 font-bold text-[10px] uppercase tracking-widest pl-1">
-                                {display.speaker} • {display.series}
-                            </p>
-                        </div>
-                    </motion.div>
-                </div>
             </header>
 
-            <main className="px-6 mt-8 space-y-8">
+            <main className="px-6 space-y-8 relative z-20">
+                <div className="space-y-4 -mt-32">
+                    <div className="px-6">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/20 backdrop-blur-md border border-white/10">
+                            <Sparkles className="w-3 h-3 text-primary" />
+                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white">Upcoming Events</span>
+                        </div>
+                    </div>
+
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.3 }}
+                        className="-mx-6"
+                    >
+                        <EventCarousel events={publicEvents} hideHeader noCard className="pb-0" />
+                    </motion.div>
+                </div>
                 {/* Main Menu Grid */}
                 <div className="grid grid-cols-1 gap-4">
                     {menuItems.map((item, i) => {

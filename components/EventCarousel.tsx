@@ -7,6 +7,7 @@ import Image from "next/image";
 import Link from "next/link";
 import useEmblaCarousel from 'embla-carousel-react';
 import { ChurchEvent } from "@/db/schema";
+import { cn } from "@/lib/utils";
 
 const upcomingEvents = [
     {
@@ -43,7 +44,7 @@ const upcomingEvents = [
     }
 ];
 
-export function EventCarousel({ events }: { events?: ChurchEvent[] }) {
+export function EventCarousel({ events, hideHeader = false, noCard = false, className = "" }: { events?: ChurchEvent[], hideHeader?: boolean, noCard?: boolean, className?: string }) {
     // If we have real events from DB, use them first
     const displayEvents = events && events.length > 0
         ? events.map(e => ({
@@ -69,18 +70,20 @@ export function EventCarousel({ events }: { events?: ChurchEvent[] }) {
     }, [emblaApi]);
 
     return (
-        <div className="relative z-10 w-full pointer-events-auto pb-8">
-            <div className="flex items-center justify-between max-w-7xl mx-auto px-6 mb-6">
-                <div className="flex items-center gap-3">
-                    <div className="w-10 h-1px bg-primary/40" />
-                    <span className="text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground">Upcoming Events</span>
+        <div className={`relative z-10 w-full pointer-events-auto pb-8 ${className}`}>
+            {!hideHeader && (
+                <div className="flex items-center justify-between max-w-7xl mx-auto px-6 mb-6">
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-1px bg-primary/40" />
+                        <span className="text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground">Upcoming Events</span>
+                    </div>
+                    <div className="flex gap-2">
+                        <Link href="/events" className="text-[10px] font-black uppercase tracking-widest text-primary hover:underline underline-offset-4">
+                            View Calendar
+                        </Link>
+                    </div>
                 </div>
-                <div className="flex gap-2">
-                    <Link href="/events" className="text-[10px] font-black uppercase tracking-widest text-primary hover:underline underline-offset-4">
-                        View Calendar
-                    </Link>
-                </div>
-            </div>
+            )}
 
             <div className="embla overflow-hidden cursor-grab active:cursor-grabbing" ref={emblaRef}>
                 <div className="embla__container flex">
@@ -88,22 +91,26 @@ export function EventCarousel({ events }: { events?: ChurchEvent[] }) {
                         <div key={i} className="embla__slide flex-[0_0_85%] md:flex-[0_0_40%] lg:flex-[0_0_30%] min-w-0 pl-6 first:pl-6 last:pr-6">
                             <Link href={`/events/${event.id}`} className="block">
                                 <div className="group space-y-4 cursor-pointer">
-                                    <div className="relative h-[240px] sm:h-[280px] md:h-[320px] lg:h-[360px] rounded-3xl overflow-hidden border border-white/10 shadow-2xl transition-all duration-500 group-hover:border-primary/50 bg-black/20">
-                                        {/* Blurred background to fill empty space while maintaining actual aspect ratio */}
-                                        <Image
-                                            src={event.image}
-                                            alt=""
-                                            fill
-                                            className="object-cover opacity-20 blur-xl scale-110"
-                                            aria-hidden="true"
-                                        />
+                                    <div className={cn(
+                                        "relative h-[240px] sm:h-[280px] md:h-[320px] lg:h-[360px] overflow-hidden transition-all duration-500",
+                                        !noCard && "rounded-3xl border border-white/10 shadow-2xl bg-black/20 group-hover:border-primary/50"
+                                    )}>
+                                        {!noCard && (
+                                            <Image
+                                                src={event.image}
+                                                alt=""
+                                                fill
+                                                className="object-cover opacity-20 blur-xl scale-110"
+                                                aria-hidden="true"
+                                            />
+                                        )}
                                         <Image
                                             src={event.image}
                                             alt={event.title}
                                             fill
                                             className="object-contain transition-transform duration-700 group-hover:scale-105"
                                         />
-                                        <div className="absolute inset-0 bg-linear-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                                        {!noCard && <div className="absolute inset-0 bg-linear-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />}
                                     </div>
 
                                     <div className="space-y-2 px-1">
