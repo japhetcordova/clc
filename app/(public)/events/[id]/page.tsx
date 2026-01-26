@@ -119,9 +119,13 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
                     <div className="lg:col-span-2 space-y-12">
                         <div className="space-y-6">
                             <h2 className="text-3xl font-black uppercase italic tracking-tight">About this <span className="text-primary">Event</span></h2>
-                            <p className="text-lg text-muted-foreground font-medium leading-relaxed whitespace-pre-line">
-                                {event.description}
-                            </p>
+                            <div className="space-y-4 text-lg text-muted-foreground font-medium leading-relaxed">
+                                {event.description.split('\n\n').map((paragraph, idx) => (
+                                    <p key={idx} className="whitespace-pre-line">
+                                        {paragraph}
+                                    </p>
+                                ))}
+                            </div>
                         </div>
 
                         <div className="grid sm:grid-cols-1 gap-8">

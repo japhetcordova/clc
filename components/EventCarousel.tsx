@@ -47,6 +47,7 @@ export function EventCarousel({ events }: { events?: ChurchEvent[] }) {
     // If we have real events from DB, use them first
     const displayEvents = events && events.length > 0
         ? events.map(e => ({
+            id: e.id,
             title: e.title,
             date: new Date(e.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
             time: e.time,
@@ -54,7 +55,7 @@ export function EventCarousel({ events }: { events?: ChurchEvent[] }) {
             image: e.image || "/events/youth-night.webp",
             tag: e.tag
         }))
-        : upcomingEvents;
+        : upcomingEvents.map((e, idx) => ({ ...e, id: `static-${idx}` }));
 
     const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: 'start', skipSnaps: false });
 
@@ -85,45 +86,47 @@ export function EventCarousel({ events }: { events?: ChurchEvent[] }) {
                 <div className="embla__container flex">
                     {displayEvents.map((event, i) => (
                         <div key={i} className="embla__slide flex-[0_0_85%] md:flex-[0_0_40%] lg:flex-[0_0_30%] min-w-0 pl-6 first:pl-6 last:pr-6">
-                            <div className="group space-y-4">
-                                <div className="relative h-[240px] sm:h-[280px] md:h-[320px] lg:h-[360px] rounded-3xl overflow-hidden border border-white/10 shadow-2xl transition-all duration-500 group-hover:border-primary/50 bg-black/20">
-                                    {/* Blurred background to fill empty space while maintaining actual aspect ratio */}
-                                    <Image
-                                        src={event.image}
-                                        alt=""
-                                        fill
-                                        className="object-cover opacity-20 blur-xl scale-110"
-                                        aria-hidden="true"
-                                    />
-                                    <Image
-                                        src={event.image}
-                                        alt={event.title}
-                                        fill
-                                        className="object-contain transition-transform duration-700 group-hover:scale-105"
-                                    />
-                                    <div className="absolute inset-0 bg-linear-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                                </div>
+                            <Link href={`/events/${event.id}`} className="block">
+                                <div className="group space-y-4 cursor-pointer">
+                                    <div className="relative h-[240px] sm:h-[280px] md:h-[320px] lg:h-[360px] rounded-3xl overflow-hidden border border-white/10 shadow-2xl transition-all duration-500 group-hover:border-primary/50 bg-black/20">
+                                        {/* Blurred background to fill empty space while maintaining actual aspect ratio */}
+                                        <Image
+                                            src={event.image}
+                                            alt=""
+                                            fill
+                                            className="object-cover opacity-20 blur-xl scale-110"
+                                            aria-hidden="true"
+                                        />
+                                        <Image
+                                            src={event.image}
+                                            alt={event.title}
+                                            fill
+                                            className="object-contain transition-transform duration-700 group-hover:scale-105"
+                                        />
+                                        <div className="absolute inset-0 bg-linear-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                                    </div>
 
-                                <div className="space-y-2 px-1">
-                                    <h3 className="text-xl md:text-2xl font-black italic uppercase tracking-tighter text-foreground leading-none group-hover:text-primary transition-colors">
-                                        {event.title}
-                                    </h3>
-                                    <div className="flex flex-wrap items-center gap-4 text-muted-foreground">
-                                        <div className="flex items-center gap-1.5">
-                                            <Calendar className="w-3.5 h-3.5 text-primary" />
-                                            <span className="text-[10px] font-bold uppercase tracking-wider">{event.date}</span>
-                                        </div>
-                                        <div className="flex items-center gap-1.5">
-                                            <Clock className="w-3.5 h-3.5 text-primary" />
-                                            <span className="text-[10px] font-bold uppercase tracking-wider">{event.time}</span>
-                                        </div>
-                                        <div className="flex items-center gap-1.5">
-                                            <MapPin className="w-3.5 h-3.5 text-primary" />
-                                            <span className="text-[10px] font-bold uppercase tracking-wider truncate max-w-[120px]">{event.location}</span>
+                                    <div className="space-y-2 px-1">
+                                        <h3 className="text-xl md:text-2xl font-black italic uppercase tracking-tighter text-foreground leading-none group-hover:text-primary transition-colors">
+                                            {event.title}
+                                        </h3>
+                                        <div className="flex flex-wrap items-center gap-4 text-muted-foreground">
+                                            <div className="flex items-center gap-1.5">
+                                                <Calendar className="w-3.5 h-3.5 text-primary" />
+                                                <span className="text-[10px] font-bold uppercase tracking-wider">{event.date}</span>
+                                            </div>
+                                            <div className="flex items-center gap-1.5">
+                                                <Clock className="w-3.5 h-3.5 text-primary" />
+                                                <span className="text-[10px] font-bold uppercase tracking-wider">{event.time}</span>
+                                            </div>
+                                            <div className="flex items-center gap-1.5">
+                                                <MapPin className="w-3.5 h-3.5 text-primary" />
+                                                <span className="text-[10px] font-bold uppercase tracking-wider truncate max-w-[120px]">{event.location}</span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </Link>
                         </div>
                     ))}
                 </div>

@@ -54,9 +54,11 @@ export default function EventsGrid({ initialEvents }: EventsGridProps) {
                             exit={{ opacity: 0, scale: 0.9 }}
                             whileHover={{ y: -8, transition: { duration: 0.2 } }}
                             transition={{ duration: 0.4 }}
-                            className="group p-6 sm:p-8 rounded-[2rem] sm:rounded-[3rem] bg-card border border-border flex flex-col justify-between space-y-6 sm:space-y-8 shadow-lg hover:shadow-2xl hover:shadow-rose-500/10 hover:border-rose-500/20 transition-all relative overflow-hidden"
+                            className="group p-6 sm:p-8 rounded-[2rem] sm:rounded-[3rem] bg-card border border-border flex flex-col justify-between space-y-6 sm:space-y-8 shadow-lg hover:shadow-2xl hover:shadow-rose-500/10 hover:border-rose-500/20 transition-all relative overflow-hidden cursor-pointer"
                         >
-                            <div className="space-y-4 relative z-10">
+                            <Link href={`/events/${event.id}`} className="absolute inset-0 z-0" />
+
+                            <div className="space-y-4 relative z-10 pointer-events-none">
                                 <div className="flex justify-between items-start gap-4">
                                     <div className="px-3 py-1 bg-muted rounded-full text-[9px] font-black uppercase tracking-widest text-muted-foreground group-hover:bg-rose-500/10 group-hover:text-rose-500 transition-colors shrink-0">
                                         {event.tag}
@@ -83,19 +85,7 @@ export default function EventsGrid({ initialEvents }: EventsGridProps) {
                                     </h3>
                                     <div className="flex items-center gap-2 text-muted-foreground overflow-hidden">
                                         <MapPin className="w-3 h-3 group-hover:text-rose-500 transition-colors shrink-0" />
-                                        {event.googleMapsLink ? (
-                                            <a
-                                                href={event.googleMapsLink}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest hover:text-rose-500 hover:underline z-20 relative truncate"
-                                                onClick={(e) => e.stopPropagation()}
-                                            >
-                                                {event.location}
-                                            </a>
-                                        ) : (
-                                            <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest truncate">{event.location}</span>
-                                        )}
+                                        <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest truncate">{event.location}</span>
                                     </div>
                                 </div>
 
@@ -105,16 +95,17 @@ export default function EventsGrid({ initialEvents }: EventsGridProps) {
                             </div>
 
                             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 sm:pt-6 border-t border-border relative z-10 group-hover:border-rose-500/20 transition-colors">
-                                <Link href={`/events/${event.id}`} className="w-full sm:w-auto">
-                                    <Button variant="ghost" className="w-full sm:w-auto p-0 h-auto font-black uppercase text-[10px] tracking-[0.2em] group/btn flex items-center justify-center sm:justify-start gap-2 hover:bg-transparent text-foreground">
+                                <Button variant="ghost" asChild className="w-full sm:w-auto p-0 h-auto font-black uppercase text-[10px] tracking-[0.2em] group/btn flex items-center justify-center sm:justify-start gap-2 hover:bg-transparent text-foreground">
+                                    <Link href={`/events/${event.id}`}>
                                         Event Details
                                         <ChevronRight className="w-3 h-3 group-hover/btn:translate-x-1 transition-transform" />
-                                    </Button>
-                                </Link>
+                                    </Link>
+                                </Button>
                                 <motion.button
                                     whileHover={{ scale: 1.05 }}
                                     whileTap={{ scale: 0.95 }}
-                                    onClick={() => {
+                                    onClick={(e) => {
+                                        e.stopPropagation();
                                         const [year, month, day] = event.date.split("-").map(Number);
                                         // Simple time parsing for "HH:MM AM/PM"
                                         const [timeStr, modifier] = event.time.split(" ");
