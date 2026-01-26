@@ -20,6 +20,7 @@ import { trpcServer } from "@/lib/trpc/server";
 import { notFound } from "next/navigation";
 import EventCTA from "./event-cta";
 import QRLink from "./qr-link";
+import { EventShare } from "./event-share";
 
 export const revalidate = 1800; // Revalidate every 30 mins
 
@@ -95,6 +96,8 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
                                             <span className="text-sm font-bold">{event.location}</span>
                                         </div>
                                     </div>
+
+                                    <EventShare eventTitle={event.title} />
                                 </div>
 
                                 {event.googleMapsLink && (
