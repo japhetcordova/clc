@@ -84,16 +84,16 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
                                     {/* Quick Info Pills */}
                                     <div className="flex flex-wrap gap-3 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-150">
                                         <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-card/80 backdrop-blur-md border border-border shadow-lg">
-                                            <Calendar className="w-4 h-4 text-primary" />
+                                            <Calendar className="w-5 h-5 text-primary shrink-0" />
                                             <span className="text-sm font-bold">{event.date}</span>
                                         </div>
                                         <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-card/80 backdrop-blur-md border border-border shadow-lg">
-                                            <Clock className="w-4 h-4 text-primary" />
+                                            <Clock className="w-5 h-5 text-primary shrink-0" />
                                             <span className="text-sm font-bold">{event.time}</span>
                                         </div>
-                                        <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-card/80 backdrop-blur-md border border-border shadow-lg">
-                                            <MapPin className="w-4 h-4 text-rose-500" />
-                                            <span className="text-sm font-bold">{event.location}</span>
+                                        <div className="flex items-start gap-2 px-4 py-2 rounded-[1.5rem] bg-card/80 backdrop-blur-md border border-border shadow-lg max-w-sm">
+                                            <MapPin className="w-5 h-5 text-rose-500 shrink-0 mt-0.5" />
+                                            <span className="text-sm font-bold leading-tight">{event.location}</span>
                                         </div>
                                     </div>
 
