@@ -26,7 +26,7 @@ export default function Logo({
     return (
         <div className={cn("flex items-center gap-3", className)}>
             <Image
-                src="/logo.webp"
+                src="/logo2.webp"
                 alt="CLC Logo"
                 width={imageSize}
                 height={imageSize}

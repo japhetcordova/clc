@@ -22,7 +22,7 @@ const siteConfig = {
   name: "Christian Life Center Tagum City",
   description: "Official registration and attendance system for Christian Life Center Tagum City. A place to belong, grow, and serve.",
   url: "https://clctagum.com", // 
-  ogImage: "/logo.webp", // Use logo for the rest
+  ogImage: "/logo2.webp", // Use logo for the rest
   keywords: [
     "Christian Life Center",
     "Christian Life Center Tagum City",
@@ -74,7 +74,7 @@ export const metadata: Metadata = {
   icons: {
     icon: "/favicon.ico",
     shortcut: "/favicon.ico",
-    apple: "/logo.webp",
+    apple: "/logo2.webp",
   },
   manifest: "/site.webmanifest",
   appleWebApp: {
@@ -92,7 +92,7 @@ const jsonLd = {
   "@type": "Church",
   "name": "Christian Life Center Tagum City",
   "url": "https://clctagum.com",
-  "logo": "https://clctagum.com/logo.webp",
+  "logo": "https://clctagum.com/logo2.webp",
   "image": "https://clctagum.com/church_architecture_exterior_1767400425687.webp",
   "description": "Official registration and attendance system for Christian Life Center Tagum City.",
   "address": {

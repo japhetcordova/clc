@@ -4,7 +4,7 @@ const OFFLINE_URL = '/offline.html';
 const ASSETS_TO_CACHE = [
     '/',
     OFFLINE_URL,
-    '/logo.webp',
+    '/logo2.webp',
     '/favicon.ico',
 ];
 

@@ -18,7 +18,7 @@ export default function QRLink({ url, size = 80 }: QRLinkProps) {
                 level="M"
                 includeMargin={false}
                 imageSettings={{
-                    src: "/logo.webp",
+                    src: "/logo2.webp",
                     x: undefined,
                     y: undefined,
                     height: size * 0.2,

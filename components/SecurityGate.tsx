@@ -121,7 +121,7 @@ export function SecurityGate({
     if (isLoading) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-background">
-                <Image src="/logo.webp" alt="Loading..." width={64} height={64} className="rounded-full animate-pulse" />
+                <Image src="/logo2.webp" alt="Loading..." width={64} height={64} className="rounded-full animate-pulse" />
             </div>
         );
     }

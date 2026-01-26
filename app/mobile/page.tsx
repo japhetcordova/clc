@@ -98,7 +98,7 @@ export default function MobileDashboard() {
                 });
                 new Notification("Welcome to CLC Digital", {
                     body: "You have successfully enabled notifications.",
-                    icon: "/logo.webp"
+                    icon: "/logo2.webp"
                 });
             } else if (permission === "denied") {
                 toast.error("Permission Denied", {
