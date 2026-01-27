@@ -10,6 +10,7 @@ interface DigitalIDCardProps {
         network: string;
         ministry: string;
         qrCodeId: string;
+        isPremium?: boolean;
     };
     qrValue: string;
     backgroundVariant?: number; // 0: Default, 1: 1.png, 2: 2.png, 3: 3.png
@@ -82,11 +83,17 @@ export default function DigitalIDCard({ user, qrValue, backgroundVariant = 0, is
                         <p className={`text-[9px] font-bold uppercase tracking-[0.3em] ${subTextColor}`}>Volunteer Access</p>
                     </div>
 
-                    <div className="pt-4 flex justify-center">
+                    <div className="pt-4 flex flex-col items-center gap-3">
                         <div className={`inline-flex items-center gap-2.5 px-5 py-2.5 ${badgeBg} rounded-full border ${badgeBorder} shadow-sm`}>
                             <ShieldCheck className={`w-3.5 h-3.5 ${accentColor}`} />
                             <span className="text-[9px] font-black uppercase tracking-widest">Official Digital ID</span>
                         </div>
+                        {user.isPremium && (
+                            <div className="inline-flex items-center gap-1.5 px-4 py-1.5 bg-amber-500/10 border border-amber-500/20 rounded-full shadow-[0_0_15px_rgba(245,158,11,0.1)]">
+                                <Sparkles className="w-3 h-3 text-amber-500" />
+                                <span className="text-[8px] font-black uppercase tracking-[0.2em] text-amber-500">Premium User</span>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

@@ -18,6 +18,7 @@ interface ProfileClientProps {
         network: string;
         ministry: string;
         qrCodeId: string;
+        isPremium?: boolean;
     };
     qrValue: string;
 }

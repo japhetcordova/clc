@@ -335,6 +335,7 @@ export const appRouter = router({
                         network: users.network,
                         cluster: users.cluster,
                         gender: users.gender,
+                        isPremium: users.isPremium,
                     }
                 })
                     .from(attendance)
@@ -585,10 +586,11 @@ export const appRouter = router({
             cluster: z.string(),
             contactNumber: z.string(),
             email: z.string().optional(),
-            ministry: z.string()
+            ministry: z.string(),
+            isPremium: z.boolean().optional().default(false)
         }))
         .mutation(async ({ input }) => {
-            const { firstName, lastName, contactNumber } = input;
+            const { firstName, lastName, contactNumber, isPremium } = input;
 
             // Check for existing user
             const [existingUser] = await db.select().from(users).where(
@@ -599,6 +601,12 @@ export const appRouter = router({
             ).limit(1);
 
             if (existingUser) {
+                // Update existing user to premium if not already
+                if (isPremium && !existingUser.isPremium) {
+                    await db.update(users).set({ isPremium: true }).where(eq(users.id, existingUser.id));
+                    existingUser.isPremium = true;
+                }
+
                 const cookieStore = await cookies();
                 cookieStore.set("qrCodeId", existingUser.qrCodeId, {
                     httpOnly: true,

@@ -5,7 +5,7 @@ import AdminClient from "@/app/admin/admin-client";
 import AdminLogout from "@/app/admin/logout-button";
 import PaginationControls from "@/app/admin/pagination-controls";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
-import { PieChart, BarChart3, Map, Heart } from "lucide-react";
+import { PieChart, BarChart3, Map, Heart, Sparkles } from "lucide-react";
 import { SortHeader } from "./sort-header";
 import { TabSwitcher } from "./tab-switcher";
 import { trpcServer } from "@/lib/trpc/server";
@@ -214,8 +214,13 @@ export default async function AdminDashboard({
                                                         <TableRow key={record.id} className="border-border hover:bg-primary/5 transition-colors group">
                                                             <TableCell className="pl-4 sm:pl-8 py-4">
                                                                 <div className="flex flex-col gap-0.5">
-                                                                    <span className="font-black text-sm sm:text-base text-foreground group-hover:text-primary transition-colors">
+                                                                    <span className="font-black text-sm sm:text-base text-foreground group-hover:text-primary transition-all flex items-center gap-1.5">
                                                                         {record.user.firstName} {record.user.lastName}
+                                                                        {record.user.isPremium && (
+                                                                            <span className="inline-flex items-center gap-1 px-1 py-0.5 bg-amber-500/10 border border-amber-500/20 rounded-full">
+                                                                                <Sparkles className="w-2.5 h-2.5 text-amber-500" />
+                                                                            </span>
+                                                                        )}
                                                                     </span>
                                                                     <span className="font-mono text-[9px] font-bold text-muted-foreground uppercase flex items-center gap-1">
                                                                         <Calendar className="w-2.5 h-2.5" />
@@ -485,8 +490,13 @@ export default async function AdminDashboard({
                                             <TableRow key={member.id} className="border-border hover:bg-blue-600/5 transition-colors group">
                                                 <TableCell className="pl-4 sm:pl-8 py-4">
                                                     <div className="flex flex-col gap-0.5">
-                                                        <span className="font-black text-sm sm:text-base text-foreground group-hover:text-blue-600 transition-colors">
+                                                        <span className="font-black text-sm sm:text-base text-foreground group-hover:text-blue-600 transition-all flex items-center gap-1.5">
                                                             {member.firstName} {member.lastName}
+                                                            {member.isPremium && (
+                                                                <span className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-amber-500/10 border border-amber-500/20 rounded-full">
+                                                                    <Sparkles className="w-2.5 h-2.5 text-amber-500" />
+                                                                </span>
+                                                            )}
                                                         </span>
                                                         <span className="text-[9px] font-bold text-muted-foreground uppercase">
                                                             ID: {member.qrCodeId}

@@ -6,6 +6,9 @@ import { LogOut } from "lucide-react";
 export default function AdminLogout() {
     const handleLogout = () => {
         localStorage.removeItem("clc_admin_auth");
+        localStorage.removeItem("clc_is_premium");
+        document.documentElement.classList.remove("premium");
+        document.documentElement.removeAttribute("data-theme");
         window.location.reload();
     };
 

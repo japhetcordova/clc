@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { QRCodeSVG } from "qrcode.react";
-import { CheckCircle2, UserPlus, Phone, Mail, Building2, Users, ArrowRight, ArrowLeft, Heart, Sparkles, Search, LogIn, QrCode, Scan, Palette, Moon, Sun, Monitor, Eye, FileDown, Check } from "lucide-react";
+import { CheckCircle2, UserPlus, Phone, Mail, Building2, Users, ArrowRight, ArrowLeft, Heart, Sparkles, Search, LogIn, QrCode, Scan, Palette, Moon, Sun, Monitor, Eye, FileDown, Check, Crown } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { toPng } from "html-to-image";
@@ -35,7 +35,7 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-export default function RegistrationContent() {
+export default function RegistrationContent({ isPremium = false }: { isPremium?: boolean }) {
     const router = useRouter();
     const searchParams = useSearchParams();
     const [step, setStep] = useState(1);
@@ -43,7 +43,7 @@ export default function RegistrationContent() {
         (searchParams.get("tab") as "register" | "login") || "register"
     );
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [registeredUser, setRegisteredUser] = useState<{ firstName: string; lastName: string; qrCodeId: string; ministry: string; network: string; alreadyExists?: boolean; cluster: string } | null>(null);
+    const [registeredUser, setRegisteredUser] = useState<{ firstName: string; lastName: string; qrCodeId: string; ministry: string; network: string; alreadyExists?: boolean; cluster: string; isPremium?: boolean } | null>(null);
 
     // Login State
     const [loginFName, setLoginFName] = useState("");
@@ -66,7 +66,7 @@ export default function RegistrationContent() {
     const onSubmit = async (data: FormValues) => {
         setIsSubmitting(true);
         try {
-            const result = await registerMutation.mutateAsync(data);
+            const result = await registerMutation.mutateAsync({ ...data, isPremium });
             if (result.success && result.user) {
                 setRegisteredUser({
                     firstName: result.user.firstName,
@@ -75,8 +75,16 @@ export default function RegistrationContent() {
                     ministry: result.user.ministry || "None",
                     network: result.user.network || "None",
                     cluster: result.user.cluster || "None",
-                    alreadyExists: result.alreadyExists
+                    alreadyExists: result.alreadyExists,
+                    isPremium: result.user.isPremium
                 });
+                if (result.user.isPremium) {
+                    localStorage.setItem("clc_is_premium", "true");
+                    document.documentElement.classList.add("premium");
+                } else {
+                    localStorage.removeItem("clc_is_premium");
+                    document.documentElement.classList.remove("premium");
+                }
                 if (result.alreadyExists) {
                     toast.info("User already registered. Taking you to your profile.");
                 } else {
@@ -119,6 +127,13 @@ export default function RegistrationContent() {
         setIsSearching(false);
 
         if (result.success && result.user) {
+            if (result.user.isPremium) {
+                localStorage.setItem("clc_is_premium", "true");
+                document.documentElement.classList.add("premium");
+            } else {
+                localStorage.removeItem("clc_is_premium");
+                document.documentElement.classList.remove("premium");
+            }
             router.push(`/profile/${result.user.qrCodeId}`);
         } else {
             toast.error(result.error || "Profile not found.");
@@ -280,19 +295,41 @@ export default function RegistrationContent() {
     }
 
     return (
-        <div className="min-h-screen flex items-center justify-center p-4 bg-linear-to-b from-background via-primary/5 to-background overflow-hidden relative">
-            <div className="absolute -top-24 -left-20 w-[500px] h-[500px] bg-primary/15 rounded-full blur-[120px] animate-pulse" />
-            <div className="absolute -bottom-24 -right-20 w-[500px] h-[500px] bg-accent/15 rounded-full blur-[120px]" />
+        <div className={cn(
+            "min-h-screen flex items-center justify-center p-4 overflow-hidden relative transition-colors duration-1000",
+            isPremium ? "bg-slate-950" : "bg-linear-to-b from-background via-primary/5 to-background"
+        )}>
+            {isPremium ? (
+                <>
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(67,56,202,0.15),transparent_70%)]" />
+                    <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-indigo-600/20 rounded-full blur-[120px] animate-pulse" />
+                    <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-amber-600/10 rounded-full blur-[120px]" />
+                    <div className="absolute inset-0 opacity-20" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3%3Cfilter id='noiseFilter'%3%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3%3C/filter%3%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3%3C/svg%3")` }} />
+                </>
+            ) : (
+                <>
+                    <div className="absolute -top-24 -left-20 w-[500px] h-[500px] bg-primary/15 rounded-full blur-[120px] animate-pulse" />
+                    <div className="absolute -bottom-24 -right-20 w-[500px] h-[500px] bg-accent/15 rounded-full blur-[120px]" />
+                </>
+            )}
 
             <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-lg relative z-10">
-                <Card className="border-none shadow-[0_32px_64px_-16px_rgba(0,0,0,0.2)] bg-card/80 backdrop-blur-3xl ring-1 ring-border overflow-hidden">
+                <Card className={cn(
+                    "border-none overflow-hidden transition-all duration-500",
+                    isPremium
+                        ? "shadow-[0_0_50px_rgba(0,0,0,0.5),0_0_1px_rgba(255,255,255,0.1)] bg-slate-900/40 backdrop-blur-3xl ring-1 ring-white/10"
+                        : "shadow-[0_32px_64px_-16px_rgba(0,0,0,0.2)] bg-card/80 backdrop-blur-3xl ring-1 ring-border"
+                )}>
                     {activeTab === "register" && (
                         <div className="h-1.5 w-full bg-muted flex">
-                            <motion.div initial={{ width: "0%" }} animate={{ width: step === 1 ? "50%" : "100%" }} className="h-full bg-linear-to-r from-primary to-accent" />
+                            <motion.div
+                                initial={{ width: "0%" }}
+                                animate={{ width: step === 1 ? "50%" : "100%" }}
+                                className={cn("h-full transition-all duration-500", isPremium ? "bg-linear-to-r from-amber-500 via-indigo-500 to-amber-500" : "bg-linear-to-r from-primary to-accent")}
+                            />
                         </div>
                     )}
-
-                    <CardHeader className="space-y-4 pb-4 pt-6 sm:pb-8 sm:pt-10">
+                    <CardHeader className="space-y-6">
                         <div className="flex bg-muted/50 p-1 rounded-2xl w-full sm:w-fit mx-auto mb-4 ring-1 ring-border">
                             <button
                                 onClick={() => setActiveTab("register")}
@@ -308,12 +345,16 @@ export default function RegistrationContent() {
                             </button>
                         </div>
 
-                        <div className="text-center space-y-1">
-                            <CardTitle className="text-2xl sm:text-4xl font-black tracking-tighter text-foreground uppercase italic leading-none">
-                                {activeTab === "register" ? "Join Christian Life Center" : "Welcome Back"}
+                        <div className="text-center space-y-2">
+                            <CardTitle className={cn(
+                                "text-2xl sm:text-4xl font-black tracking-tighter uppercase italic leading-none flex items-center justify-center gap-3",
+                                isPremium ? "text-premium-gradient" : "text-foreground"
+                            )}>
+                                {isPremium && <Crown className="w-8 h-8 text-amber-500 animate-pulse" />}
+                                {activeTab === "register" ? (isPremium ? "Premium Access" : "Join Christian Life Center") : "Welcome Back"}
                             </CardTitle>
                             <CardDescription className="text-muted-foreground font-medium text-xs sm:text-base">
-                                {activeTab === "register" ? "Create your official Christian Life Center digital profile." : "Enter your name to access your Digital ID."}
+                                {activeTab === "register" ? (isPremium ? "Gain exclusive member privileges and personalized digital assets." : "Create your official Christian Life Center digital profile.") : "Enter your name to access your Digital ID."}
                             </CardDescription>
                         </div>
 
@@ -323,27 +364,27 @@ export default function RegistrationContent() {
                                     <div className="absolute top-5 left-[16%] right-[16%] h-0.5 bg-border/50 -z-10" />
 
                                     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="flex flex-col items-center text-center space-y-2 group cursor-default">
-                                        <div className="relative w-12 h-12 rounded-2xl bg-background flex items-center justify-center ring-1 ring-border group-hover:ring-primary/50 group-hover:bg-primary/5 transition-all shadow-sm">
-                                            <span className="absolute top-1 right-2 text-[9px] font-black text-muted-foreground/30">01</span>
-                                            <UserPlus className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors mt-1" />
+                                        <div className={cn("relative w-12 h-12 rounded-2xl flex items-center justify-center ring-1 transition-all shadow-sm", isPremium ? "bg-amber-500/10 ring-amber-500/30" : "bg-background ring-border group-hover:ring-primary/50 group-hover:bg-primary/5")}>
+                                            <span className={cn("absolute top-1 right-2 text-[9px] font-black", isPremium ? "text-amber-500/40" : "text-muted-foreground/30")}>01</span>
+                                            <UserPlus className={cn("w-5 h-5 mt-1", isPremium ? "text-amber-500" : "text-muted-foreground group-hover:text-primary")} />
                                         </div>
-                                        <p className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-muted-foreground group-hover:text-primary transition-colors">Fill Form</p>
+                                        <p className={cn("text-[10px] sm:text-xs font-bold uppercase tracking-widest", isPremium ? "text-amber-500/80" : "text-muted-foreground group-hover:text-primary")}>Profile</p>
                                     </motion.div>
 
                                     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="flex flex-col items-center text-center space-y-2 group cursor-default">
-                                        <div className="relative w-12 h-12 rounded-2xl bg-background flex items-center justify-center ring-1 ring-border group-hover:ring-primary/50 group-hover:bg-primary/5 transition-all shadow-sm">
-                                            <span className="absolute top-1 right-2 text-[9px] font-black text-muted-foreground/30">02</span>
-                                            <QrCode className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors mt-1" />
+                                        <div className={cn("relative w-12 h-12 rounded-2xl flex items-center justify-center ring-1 transition-all shadow-sm", isPremium ? "bg-amber-500/10 ring-amber-500/30" : "bg-background ring-border group-hover:ring-primary/50 group-hover:bg-primary/5")}>
+                                            <span className={cn("absolute top-1 right-2 text-[9px] font-black", isPremium ? "text-amber-500/40" : "text-muted-foreground/30")}>02</span>
+                                            <QrCode className={cn("w-5 h-5 mt-1", isPremium ? "text-amber-500" : "text-muted-foreground group-hover:text-primary")} />
                                         </div>
-                                        <p className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-muted-foreground group-hover:text-primary transition-colors">Get ID</p>
+                                        <p className={cn("text-[10px] sm:text-xs font-bold uppercase tracking-widest", isPremium ? "text-amber-500/80" : "text-muted-foreground group-hover:text-primary")}>Identity</p>
                                     </motion.div>
 
                                     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="flex flex-col items-center text-center space-y-2 group cursor-default">
-                                        <div className="relative w-12 h-12 rounded-2xl bg-background flex items-center justify-center ring-1 ring-border group-hover:ring-primary/50 group-hover:bg-primary/5 transition-all shadow-sm">
-                                            <span className="absolute top-1 right-2 text-[9px] font-black text-muted-foreground/30">03</span>
-                                            <Scan className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors mt-1" />
+                                        <div className={cn("relative w-12 h-12 rounded-2xl flex items-center justify-center ring-1 transition-all shadow-sm", isPremium ? "bg-amber-500/10 ring-amber-500/30" : "bg-background ring-border group-hover:ring-primary/50 group-hover:bg-primary/5")}>
+                                            <span className={cn("absolute top-1 right-2 text-[9px] font-black", isPremium ? "text-amber-500/40" : "text-muted-foreground/30")}>03</span>
+                                            <Scan className={cn("w-5 h-5 mt-1", isPremium ? "text-amber-500" : "text-muted-foreground group-hover:text-primary")} />
                                         </div>
-                                        <p className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-muted-foreground group-hover:text-primary transition-colors">Scan Entry</p>
+                                        <p className={cn("text-[10px] sm:text-xs font-bold uppercase tracking-widest", isPremium ? "text-amber-500/80" : "text-muted-foreground group-hover:text-primary")}>Verify</p>
                                     </motion.div>
                                 </div>
                             </div>
@@ -359,12 +400,12 @@ export default function RegistrationContent() {
                                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                                                 <div className="space-y-2.5">
                                                     <Label htmlFor="firstName" className="text-foreground font-bold ml-1">First Name</Label>
-                                                    <Input id="firstName" placeholder="Given name" className="h-12 bg-background/50 border-border text-foreground rounded-xl focus:ring-2 focus:ring-primary transition-all" {...register("firstName")} />
+                                                    <Input id="firstName" placeholder="Given name" className={cn("h-12 border-border text-foreground rounded-xl focus:ring-2 transition-all", isPremium ? "bg-white/5 focus:ring-amber-500/50" : "bg-background/50 focus:ring-primary")} {...register("firstName")} />
                                                     {errors.firstName && <p className="text-xs font-bold text-destructive ml-1">{errors.firstName.message}</p>}
                                                 </div>
                                                 <div className="space-y-2.5">
                                                     <Label htmlFor="lastName" className="text-foreground font-bold ml-1">Last Name</Label>
-                                                    <Input id="lastName" placeholder="Family name" className="h-12 bg-background/50 border-border text-foreground rounded-xl focus:ring-2 focus:ring-primary transition-all" {...register("lastName")} />
+                                                    <Input id="lastName" placeholder="Family name" className={cn("h-12 border-border text-foreground rounded-xl focus:ring-2 transition-all", isPremium ? "bg-white/5 focus:ring-amber-500/50" : "bg-background/50 focus:ring-primary")} {...register("lastName")} />
                                                     {errors.lastName && <p className="text-xs font-bold text-destructive ml-1">{errors.lastName.message}</p>}
                                                 </div>
                                             </div>
@@ -372,8 +413,8 @@ export default function RegistrationContent() {
                                             <div className="space-y-2.5">
                                                 <Label className="text-foreground font-bold ml-1">Gender</Label>
                                                 <div className="grid grid-cols-2 gap-3">
-                                                    <button type="button" onClick={() => setValue("gender", "Male")} className={cn("h-12 rounded-xl font-bold transition-all border-2", watch("gender") === "Male" ? "bg-primary/10 border-primary text-foreground" : "bg-muted/50 border-transparent text-muted-foreground hover:bg-muted")}>Male</button>
-                                                    <button type="button" onClick={() => setValue("gender", "Female")} className={cn("h-12 rounded-xl font-bold transition-all border-2", watch("gender") === "Female" ? "bg-primary/10 border-primary text-foreground" : "bg-muted/50 border-transparent text-muted-foreground hover:bg-muted")}>Female</button>
+                                                    <button type="button" onClick={() => setValue("gender", "Male")} className={cn("h-12 rounded-xl font-bold transition-all border-2", watch("gender") === "Male" ? (isPremium ? "bg-amber-500/10 border-amber-500 text-amber-100" : "bg-primary/10 border-primary text-foreground") : "bg-muted/50 border-transparent text-muted-foreground hover:bg-muted")}>Male</button>
+                                                    <button type="button" onClick={() => setValue("gender", "Female")} className={cn("h-12 rounded-xl font-bold transition-all border-2", watch("gender") === "Female" ? (isPremium ? "bg-amber-500/10 border-amber-500 text-amber-100" : "bg-primary/10 border-primary text-foreground") : "bg-muted/50 border-transparent text-muted-foreground hover:bg-muted")}>Female</button>
                                                 </div>
                                                 {errors.gender && <p className="text-xs font-bold text-destructive ml-1">{errors.gender.message}</p>}
                                             </div>
@@ -381,47 +422,64 @@ export default function RegistrationContent() {
                                             <div className="space-y-2.5">
                                                 <Label htmlFor="contactNumber" className="text-foreground font-bold ml-1">WhatsApp / Phone</Label>
                                                 <div className="relative">
-                                                    <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                                                    <Input id="contactNumber" className="h-12 pl-12 bg-background/50 border-border text-foreground rounded-xl focus:ring-2 focus:ring-primary transition-all" placeholder="09XX XXX XXXX" {...register("contactNumber")} />
+                                                    <Phone className={cn("absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5", isPremium ? "text-amber-500" : "text-muted-foreground")} />
+                                                    <Input id="contactNumber" className={cn("h-12 pl-12 border-border text-foreground rounded-xl focus:ring-2 transition-all", isPremium ? "bg-white/5 focus:ring-amber-500/50" : "bg-background/50 focus:ring-primary")} placeholder="09XX XXX XXXX" {...register("contactNumber")} />
                                                 </div>
                                                 {errors.contactNumber && <p className="text-xs font-bold text-destructive ml-1">{errors.contactNumber.message}</p>}
                                             </div>
 
-                                            <Button type="button" onClick={nextStep} className="w-full h-14 rounded-2xl bg-primary text-primary-foreground hover:opacity-90 text-lg font-black transition-all group shadow-lg shadow-primary/10">
+                                            <Button type="button" onClick={nextStep} className={cn("w-full h-14 rounded-2xl text-lg font-black transition-all group shadow-lg", isPremium ? "bg-amber-500 text-slate-950 hover:bg-amber-400 shadow-amber-500/20" : "bg-primary text-primary-foreground hover:opacity-90 shadow-primary/10")}>
                                                 Continue
                                                 <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
                                             </Button>
+
+                                            {isPremium && (
+                                                <div className="mt-6 p-6 rounded-2xl bg-gradient-to-br from-amber-500/10 via-indigo-500/10 to-amber-500/10 border border-amber-500/20 backdrop-blur-sm">
+                                                    <div className="flex items-start gap-4">
+                                                        <div className="p-3 bg-amber-500/20 rounded-xl shrink-0">
+                                                            <Crown className="w-6 h-6 text-amber-500" />
+                                                        </div>
+                                                        <div className="space-y-2">
+                                                            <h4 className="font-black text-sm uppercase tracking-wider text-amber-100">Kingdom Builders Ministry Partners</h4>
+                                                            <p className="text-xs font-medium text-white/80 leading-relaxed">
+                                                                Be part of Kingdom Builders Ministry Partners and get exclusive member privileges! Sign up today.
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            )}
                                         </motion.div>
                                     ) : (
                                         <motion.div key="step2" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-5">
                                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 pt-2">
                                                 <div className="space-y-2.5">
                                                     <Label className="text-foreground font-bold ml-1">Cluster</Label>
-                                                    <ClusterSelect value={watch("cluster")} onValueChange={(v) => { setValue("cluster", v); setValue("network", ""); }} />
+                                                    <ClusterSelect className={isPremium ? "bg-white/5" : ""} value={watch("cluster")} onValueChange={(v) => { setValue("cluster", v); setValue("network", ""); }} />
                                                 </div>
                                                 <div className="space-y-2.5">
                                                     <Label className="text-foreground font-bold ml-1">Network</Label>
-                                                    <NetworkSelect cluster={watch("cluster")} gender={watch("gender")} value={watch("network")} onValueChange={(v) => setValue("network", v)} />
+                                                    <NetworkSelect className={isPremium ? "bg-white/5" : ""} cluster={watch("cluster")} gender={watch("gender")} value={watch("network")} onValueChange={(v) => setValue("network", v)} />
                                                 </div>
                                             </div>
 
                                             <div className="space-y-2.5">
                                                 <Label className="text-foreground font-bold ml-1">Ministry Involvement</Label>
-                                                <MinistrySelect value={watch("ministry")} onValueChange={(v) => setValue("ministry", v)} />
+                                                <MinistrySelect className={isPremium ? "bg-white/5" : ""} value={watch("ministry")} onValueChange={(v) => setValue("ministry", v)} />
                                             </div>
 
                                             <div className="space-y-2.5">
                                                 <Label htmlFor="email" className="text-foreground font-bold ml-1">Email (Optional)</Label>
-                                                <Input id="email" type="email" placeholder="your@email.com" className="h-12 bg-background/50 border-border text-foreground rounded-xl focus:ring-2 focus:ring-primary transition-all" {...register("email")} />
+                                                <Input id="email" type="email" placeholder="your@email.com" className={cn("h-12 border-border text-foreground rounded-xl focus:ring-2 transition-all", isPremium ? "bg-white/5 focus:ring-amber-500/50" : "bg-background/50 focus:ring-primary")} {...register("email")} />
                                             </div>
 
                                             <div className="grid grid-cols-4 gap-3 pt-2">
                                                 <Button type="button" variant="ghost" onClick={prevStep} className="h-14 rounded-2xl bg-muted hover:bg-muted/80 text-foreground font-bold transition-all"><ArrowLeft className="w-6 h-6" /></Button>
-                                                <Button type="submit" disabled={isSubmitting} className="col-span-3 h-14 rounded-2xl bg-primary hover:opacity-90 text-primary-foreground text-lg font-black transition-all shadow-lg shadow-primary/20">
-                                                    {isSubmitting ? <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1, ease: "linear" }} className="w-6 h-6 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full" /> : "Complete Registration"}
+                                                <Button type="submit" disabled={isSubmitting} className={cn("col-span-3 h-14 rounded-2xl text-lg font-black transition-all shadow-lg", isPremium ? "bg-amber-500 text-slate-950 hover:bg-amber-400 shadow-amber-500/20" : "bg-primary text-primary-foreground hover:opacity-90 shadow-primary/10")}>
+                                                    {isSubmitting ? <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1, ease: "linear" }} className={cn("w-6 h-6 border-2 rounded-full", isPremium ? "border-slate-900/30 border-t-slate-900" : "border-primary-foreground/30 border-t-primary-foreground")} /> : "Complete Registration"}
                                                 </Button>
                                             </div>
-                                            <ConcernNote />
+                                            <ConcernNote variant={isPremium ? "primary" : "default"} />
+
                                         </motion.div>
                                     )}
                                 </AnimatePresence>
@@ -433,21 +491,21 @@ export default function RegistrationContent() {
                                         <div className="space-y-2.5">
                                             <Label className="text-foreground font-bold ml-1">First Name</Label>
                                             <div className="relative">
-                                                <UserPlus className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                                                <Input value={loginFName} onChange={(e) => setLoginFName(e.target.value)} placeholder="Enter given name" className="h-14 pl-12 bg-background/50 border-border text-foreground rounded-2xl focus:ring-2 focus:ring-primary transition-all text-lg font-medium" />
+                                                <UserPlus className={cn("absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5", isPremium ? "text-amber-500" : "text-muted-foreground")} />
+                                                <Input value={loginFName} onChange={(e) => setLoginFName(e.target.value)} placeholder="Enter given name" className={cn("h-14 pl-12 border-border text-foreground rounded-2xl focus:ring-2 transition-all text-lg font-medium", isPremium ? "bg-white/5 focus:ring-amber-500/50" : "bg-background/50 focus:ring-primary")} />
                                             </div>
                                         </div>
                                         <div className="space-y-2.5">
                                             <Label className="text-foreground font-bold ml-1">Last Name</Label>
                                             <div className="relative">
-                                                <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                                                <Input value={loginLName} onChange={(e) => setLoginLName(e.target.value)} placeholder="Enter family name" className="h-14 pl-12 bg-background/50 border-border text-foreground rounded-2xl focus:ring-2 focus:ring-primary transition-all text-lg font-medium" />
+                                                <Building2 className={cn("absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5", isPremium ? "text-amber-500" : "text-muted-foreground")} />
+                                                <Input value={loginLName} onChange={(e) => setLoginLName(e.target.value)} placeholder="Enter family name" className={cn("h-14 pl-12 border-border text-foreground rounded-2xl focus:ring-2 transition-all text-lg font-medium", isPremium ? "bg-white/5 focus:ring-amber-500/50" : "bg-background/50 focus:ring-primary")} />
                                             </div>
                                         </div>
                                     </div>
 
-                                    <Button type="submit" disabled={isSearching} className="w-full h-16 rounded-[2rem] bg-slate-900 text-white hover:bg-slate-800 text-xl font-black transition-all shadow-2xl flex items-center justify-center gap-3">
-                                        {isSearching ? <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1, ease: "linear" }} className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full" /> : (
+                                    <Button type="submit" disabled={isSearching} className={cn("w-full h-16 rounded-[2rem] text-xl font-black transition-all shadow-2xl flex items-center justify-center gap-3", isPremium ? "bg-amber-500 text-slate-950 hover:bg-amber-400 shadow-amber-500/30" : "bg-slate-900 text-white hover:bg-slate-800")}>
+                                        {isSearching ? <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1, ease: "linear" }} className={cn("w-6 h-6 border-2 rounded-full", isPremium ? "border-slate-900/30 border-t-slate-900" : "border-white/30 border-t-white")} /> : (
                                             <>
                                                 <Search className="w-6 h-6" />
                                                 Find My ID
@@ -455,12 +513,12 @@ export default function RegistrationContent() {
                                         )}
                                     </Button>
 
-                                    <div className="p-4 bg-primary/5 rounded-2xl border border-primary/10 flex flex-col gap-2">
+                                    <div className={cn("p-4 rounded-2xl border flex flex-col gap-2 shadow-inner", isPremium ? "bg-amber-500/5 border-amber-500/10 shadow-amber-500/5" : "bg-primary/5 border-primary/10 shadow-primary/5")}>
                                         <div className="flex items-start gap-3">
-                                            <Sparkles className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                                            <Sparkles className={cn("w-5 h-5 shrink-0 mt-0.5", isPremium ? "text-amber-500" : "text-primary")} />
                                             <p className="text-xs font-medium text-muted-foreground leading-relaxed">Forgot your ID? No problem. Simply enter your registered name to retrieve your official Christian Life Center digital profile.</p>
                                         </div>
-                                        <ConcernNote variant="primary" />
+                                        <ConcernNote variant={isPremium ? "primary" : "default"} />
                                     </div>
                                 </motion.div>
                             </form>

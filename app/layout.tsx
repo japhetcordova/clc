@@ -125,6 +125,26 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var isPremium = localStorage.getItem('clc_is_premium');
+                  if (isPremium === 'true') {
+                    document.documentElement.classList.add('premium');
+                    document.documentElement.setAttribute('data-theme', 'premium');
+                  } else {
+                    document.documentElement.classList.remove('premium');
+                    document.documentElement.removeAttribute('data-theme');
+                  }
+                } catch (e) {}
+              })();
+            `,
+          }}
+        />
+      </head>
       <body
         className={`${outfit.variable} ${jetbrainsMono.variable} antialiased min-h-screen flex flex-col`}
       >

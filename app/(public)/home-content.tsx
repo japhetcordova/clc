@@ -98,7 +98,7 @@ export default function LandingContent({ serverEvents }: { serverEvents?: Church
                             <div className="space-y-6">
                                 <h1 className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter text-foreground uppercase leading-[0.9] drop-shadow-2xl">
                                     Love God. Love People. <br />
-                                    Make <span className="text-transparent bg-clip-text bg-linear-to-r from-primary via-indigo-500 to-primary bg-[length:200%_auto] animate-gradient-x px-4">Disciples</span>
+                                    Make <span className="text-transparent bg-clip-text bg-linear-to-r from-primary via-accent to-primary bg-[length:200%_auto] animate-gradient-x px-4">Disciples</span>
                                 </h1>
                             </div>
 

@@ -85,6 +85,9 @@ export function SecurityGate({
             localStorage.removeItem(storageKey);
             localStorage.removeItem(`${storageKey}_date`);
         }
+        localStorage.removeItem("clc_is_premium");
+        document.documentElement.classList.remove("premium");
+        document.documentElement.removeAttribute("data-theme");
         setAuthorized(false);
         setPin("");
     };

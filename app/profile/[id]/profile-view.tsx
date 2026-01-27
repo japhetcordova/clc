@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { User as UserIcon, Phone, Mail, Users as UsersIcon, Calendar, Share2, Download, Edit3, Settings, ShieldCheck, Lightbulb, Home, Eye } from "lucide-react";
+import { User as UserIcon, Phone, Mail, Users as UsersIcon, Calendar, Share2, Download, Edit3, Settings, ShieldCheck, Lightbulb, Home, Eye, Sparkles } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -38,6 +38,9 @@ export default function ProfileView({ user, qrValue, attendance = [], initialAut
         await logoutMutation.mutateAsync();
         localStorage.removeItem(`profile_auth_${qrValue}`);
         localStorage.removeItem(`profile_auth_${qrValue}_date`);
+        localStorage.removeItem("clc_is_premium");
+        document.documentElement.classList.remove("premium");
+        document.documentElement.removeAttribute("data-theme");
         toast.success("Profile access locked.");
         window.location.reload();
     };
@@ -138,7 +141,14 @@ export default function ProfileView({ user, qrValue, attendance = [], initialAut
                                     </div>
 
                                     <div className="space-y-1">
-                                        <h1 className="text-2xl font-black text-foreground tracking-tight">{user.firstName} {user.lastName}</h1>
+                                        <div className="flex items-center justify-center gap-2">
+                                            <h1 className="text-2xl font-black text-foreground tracking-tight">{user.firstName} {user.lastName}</h1>
+                                            {user.isPremium && (
+                                                <div className="bg-amber-500/10 p-1 rounded-full border border-amber-500/20">
+                                                    <Sparkles className="w-3 h-3 text-amber-500" />
+                                                </div>
+                                            )}
+                                        </div>
                                         <p className="text-sm font-medium text-muted-foreground uppercase tracking-widest">{user.ministry}</p>
                                     </div>
 
