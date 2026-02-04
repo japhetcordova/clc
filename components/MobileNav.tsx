@@ -1,7 +1,7 @@
-"use client";
+﻿"use client";
 
 import { motion } from "framer-motion";
-import { QrCode, User, Home, MapPin, BookOpen, Shield } from "lucide-react";
+import { QrCode, User, Home, MapPin, BookOpen, Shield, GraduationCap } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
@@ -13,6 +13,7 @@ export default function MobileNav() {
 
     const links = [
         { name: "App", href: "/mobile", icon: Home },
+        { name: "Classes", href: "/classes", icon: GraduationCap },
         { name: "Verse", href: "/word", icon: BookOpen },
         ...(isAdmin ? [{ name: "Admin", href: "/admin", icon: Shield }] : []),
         { name: "My QR", href: "/my-qr", icon: QrCode },
@@ -39,7 +40,7 @@ export default function MobileNav() {
                                 <Icon className="size-5" />
                             </div>
                             <span className={cn(
-                                "text-[8px] font-black uppercase tracking-wider transition-colors duration-300 truncate w-full text-center",
+                                "text-[8px] font-semibold uppercase tracking-wider transition-colors duration-300 truncate w-full text-center",
                                 isActive ? "text-primary" : "text-muted-foreground"
                             )}>
                                 {link.name}

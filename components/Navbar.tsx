@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -20,6 +20,7 @@ export default function Navbar() {
         { name: "Ministries", href: "/ministries" },
         { name: "Giving", href: "/giving" },
         { name: "Events", href: "/events" },
+        { name: "Classes", href: "/classes" },
         { name: "Verse of the Day", href: "/word" },
     ];
 
@@ -79,7 +80,7 @@ export default function Navbar() {
                         <Logo />
                     </Link>
 
-                    <div className="hidden md:flex items-center gap-8 lg:gap-10 text-[11px] lg:text-xs font-black uppercase tracking-[0.2em] text-muted-foreground">
+                    <div className="hidden md:flex items-center gap-8 lg:gap-10 text-[11px] lg:text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
                         {navLinks.map((link) => (
                             <Link
                                 key={link.href}
@@ -105,7 +106,7 @@ export default function Navbar() {
                             <motion.button
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
-                                className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl font-black uppercase text-[11px] tracking-widest px-6 h-10 md:h-12 shadow-xl shadow-primary/20 transition-all hover:shadow-primary/40 hover:-translate-y-0.5"
+                                className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl font-semibold uppercase text-[11px] tracking-widest px-6 h-10 md:h-12 shadow-xl shadow-primary/20 transition-all hover:shadow-primary/40 hover:-translate-y-0.5"
                             >
                                 Join Us
                             </motion.button>
@@ -174,13 +175,13 @@ export default function Navbar() {
                                     >
                                         <div className="flex flex-col gap-1">
                                             <span className={cn(
-                                                "text-[10px] font-black uppercase tracking-[0.2em]",
+                                                "text-[10px] font-semibold uppercase tracking-[0.2em]",
                                                 pathname === link.href ? "text-primary" : "text-muted-foreground"
                                             )}>
                                                 {link.name === "Giving" ? "Partner with us" : "Explore"}
                                             </span>
                                             <span className={cn(
-                                                "text-2xl font-black uppercase italic tracking-tighter",
+                                                "text-2xl font-semibold uppercase  tracking-tighter",
                                                 pathname === link.href ? "text-primary" : "text-foreground"
                                             )}>
                                                 {link.name}
@@ -201,7 +202,7 @@ export default function Navbar() {
                                 className="mt-4"
                             >
                                 <Link href="/registration">
-                                    <Button className="w-full h-16 rounded-2xl bg-primary text-white font-black uppercase italic tracking-tighter text-xl shadow-lg shadow-primary/25">
+                                    <Button className="w-full h-16 rounded-2xl bg-primary text-white font-semibold uppercase  tracking-tighter text-xl shadow-lg shadow-primary/25">
                                         Join Our Journey
                                     </Button>
                                 </Link>

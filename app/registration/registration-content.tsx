@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -183,8 +183,8 @@ export default function RegistrationContent({ isPremium = false }: { isPremium?:
                             <div className="mx-auto w-16 h-16 bg-emerald-500/10 rounded-full flex items-center justify-center mb-2">
                                 <CheckCircle2 className="w-10 h-10 text-emerald-500" />
                             </div>
-                            <CardTitle className="text-3xl font-black text-foreground">Registration Complete!</CardTitle>
-                            <CardDescription className="text-muted-foreground font-medium">Welcome to Christian Life Center, {registeredUser.firstName}!</CardDescription>
+                            <CardTitle className="text-3xl font-semibold text-foreground">Registration Complete!</CardTitle>
+                            <CardDescription className="text-muted-foreground font-thin">Welcome to Christian Life Center, {registeredUser.firstName}!</CardDescription>
                         </CardHeader>
 
                         <CardContent className="flex flex-col items-center space-y-8 pt-6">
@@ -195,13 +195,13 @@ export default function RegistrationContent({ isPremium = false }: { isPremium?:
                             <div className="text-center space-y-4 w-full">
                                 <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest">Your Private Access Key</p>
                                 <div className="flex flex-col gap-3">
-                                    <Button className="w-full bg-slate-900 hover:bg-slate-800 text-white h-12 rounded-xl text-md font-bold transition-all hover:scale-[1.02]" onClick={() => router.push(`/profile/${registeredUser.qrCodeId}`)}>
+                                    <Button className="w-full bg-slate-900 hover:bg-slate-800 text-white h-12 rounded-xl text-md font-semibold transition-all hover:scale-[1.02]" onClick={() => router.push(`/profile/${registeredUser.qrCodeId}`)}>
                                         Go to My Profile
                                     </Button>
 
                                     <Dialog open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
                                         <DialogTrigger asChild>
-                                            <Button variant="outline" className="w-full border-2 border-slate-200 h-12 rounded-xl text-md font-bold text-slate-700 hover:bg-slate-50 transition-all flex items-center justify-center gap-2">
+                                            <Button variant="outline" className="w-full border-2 border-slate-200 h-12 rounded-xl text-md font-semibold text-slate-700 hover:bg-slate-50 transition-all flex items-center justify-center gap-2">
                                                 <Eye className="w-4 h-4" />
                                                 Preview & Customize ID
                                             </Button>
@@ -213,7 +213,7 @@ export default function RegistrationContent({ isPremium = false }: { isPremium?:
                                                 <div className="p-4 sm:p-8 flex items-center justify-center bg-muted/20 border-b lg:border-b-0 lg:border-r border-border/50 relative min-h-[400px] lg:min-h-0 text-center">
                                                     <div className="hidden sm:flex absolute top-6 left-8 items-center gap-2">
                                                         <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                                                        <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">Live Preview</span>
+                                                        <span className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60">Live Preview</span>
                                                     </div>
 
                                                     <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
@@ -234,8 +234,8 @@ export default function RegistrationContent({ isPremium = false }: { isPremium?:
                                                 <div className="p-6 sm:p-8 space-y-8 flex flex-col bg-background h-fit lg:h-full lg:overflow-y-auto">
                                                     <div className="space-y-4">
                                                         <DialogHeader>
-                                                            <DialogTitle className="text-2xl sm:text-3xl font-black italic uppercase tracking-tighter">Customize ID</DialogTitle>
-                                                            <p className="text-muted-foreground text-[10px] sm:text-xs font-medium">Personalize your digital access pass.</p>
+                                                            <DialogTitle className="text-2xl sm:text-3xl font-semibold  uppercase tracking-tighter">Customize ID</DialogTitle>
+                                                            <p className="text-muted-foreground text-[10px] sm:text-xs font-thin">Personalize your digital access pass.</p>
                                                         </DialogHeader>
                                                         <div className="h-[2px] w-12 bg-primary rounded-full" />
                                                     </div>
@@ -243,7 +243,7 @@ export default function RegistrationContent({ isPremium = false }: { isPremium?:
                                                     <div className="space-y-6 flex-1">
 
                                                         <div className="space-y-3">
-                                                            <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1 flex items-center gap-2">
+                                                            <label className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground ml-1 flex items-center gap-2">
                                                                 <Palette className="w-3 h-3" />
                                                                 Background Art
                                                             </label>
@@ -258,7 +258,7 @@ export default function RegistrationContent({ isPremium = false }: { isPremium?:
                                                                         )}
                                                                     >
                                                                         {opt.id === 0 ? <div className="w-full h-full bg-[#020617] rounded-[inherit]" /> : <img src={opt.image} className="w-full h-full object-cover rounded-[inherit]" />}
-                                                                        <div className="absolute inset-x-0 bottom-0 bg-black/80 backdrop-blur-sm p-1.5 rounded-b-[inherit]"><p className="text-[8px] font-bold text-white uppercase text-center">{opt.name}</p></div>
+                                                                        <div className="absolute inset-x-0 bottom-0 bg-black/80 backdrop-blur-sm p-1.5 rounded-b-[inherit]"><p className="text-[8px] font-semibold text-white uppercase text-center">{opt.name}</p></div>
                                                                         {bgVariant === opt.id && <div className="absolute top-1 right-1 bg-primary text-white p-0.5 rounded-full z-20"><Check className="w-2 h-2" /></div>}
                                                                     </button>
                                                                 ))}
@@ -266,7 +266,7 @@ export default function RegistrationContent({ isPremium = false }: { isPremium?:
                                                         </div>
                                                     </div>
 
-                                                    <Button onClick={downloadPNG} className="w-full h-14 rounded-2xl bg-primary text-primary-foreground font-black uppercase text-[10px] tracking-widest shadow-xl flex items-center justify-center gap-2 active:scale-95 transition-all mt-auto">
+                                                    <Button onClick={downloadPNG} className="w-full h-14 rounded-2xl bg-primary text-primary-foreground font-semibold uppercase text-[10px] tracking-widest shadow-xl flex items-center justify-center gap-2 active:scale-95 transition-all mt-auto">
                                                         <FileDown className="w-4 h-4" />
                                                         Download PNG
                                                     </Button>
@@ -277,12 +277,12 @@ export default function RegistrationContent({ isPremium = false }: { isPremium?:
 
                                     <div className="w-full grid grid-cols-2 gap-4 mt-2">
                                         <div className="bg-slate-50 p-3 rounded-2xl border border-slate-100">
-                                            <span className="block text-[10px] font-bold text-slate-400 uppercase">Network</span>
-                                            <span className="font-bold text-slate-700">{registeredUser.network}</span>
+                                            <span className="block text-[10px] font-semibold text-slate-400 uppercase">Network</span>
+                                            <span className="font-semibold text-slate-700">{registeredUser.network}</span>
                                         </div>
                                         <div className="bg-slate-50 p-3 rounded-2xl border border-slate-100">
-                                            <span className="block text-[10px] font-bold text-slate-400 uppercase">Ministry</span>
-                                            <span className="font-bold text-slate-700">{registeredUser.ministry}</span>
+                                            <span className="block text-[10px] font-semibold text-slate-400 uppercase">Ministry</span>
+                                            <span className="font-semibold text-slate-700">{registeredUser.ministry}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -333,13 +333,13 @@ export default function RegistrationContent({ isPremium = false }: { isPremium?:
                         <div className="flex bg-muted/50 p-1 rounded-2xl w-full sm:w-fit mx-auto mb-4 ring-1 ring-border">
                             <button
                                 onClick={() => setActiveTab("register")}
-                                className={cn("flex-1 sm:flex-none px-6 py-2 rounded-xl text-sm font-black uppercase tracking-widest transition-all", activeTab === "register" ? "bg-background text-foreground shadow-lg shadow-black/5" : "text-muted-foreground hover:text-foreground")}
+                                className={cn("flex-1 sm:flex-none px-6 py-2 rounded-xl text-sm font-semibold uppercase tracking-widest transition-all", activeTab === "register" ? "bg-background text-foreground shadow-lg shadow-black/5" : "text-muted-foreground hover:text-foreground")}
                             >
                                 Register
                             </button>
                             <button
                                 onClick={() => setActiveTab("login")}
-                                className={cn("flex-1 sm:flex-none px-6 py-2 rounded-xl text-sm font-black uppercase tracking-widest transition-all", activeTab === "login" ? "bg-background text-foreground shadow-lg shadow-black/5" : "text-muted-foreground hover:text-foreground")}
+                                className={cn("flex-1 sm:flex-none px-6 py-2 rounded-xl text-sm font-semibold uppercase tracking-widest transition-all", activeTab === "login" ? "bg-background text-foreground shadow-lg shadow-black/5" : "text-muted-foreground hover:text-foreground")}
                             >
                                 Login
                             </button>
@@ -347,13 +347,13 @@ export default function RegistrationContent({ isPremium = false }: { isPremium?:
 
                         <div className="text-center space-y-2">
                             <CardTitle className={cn(
-                                "text-2xl sm:text-4xl font-black tracking-tighter uppercase italic leading-none flex items-center justify-center gap-3",
+                                "text-2xl sm:text-4xl font-semibold tracking-tighter uppercase  leading-none flex items-center justify-center gap-3",
                                 isPremium ? "text-premium-gradient" : "text-foreground"
                             )}>
                                 {isPremium && <Crown className="w-8 h-8 text-amber-500 animate-pulse" />}
                                 {activeTab === "register" ? (isPremium ? "Premium Access" : "Join Christian Life Center") : "Welcome Back"}
                             </CardTitle>
-                            <CardDescription className="text-muted-foreground font-medium text-xs sm:text-base">
+                            <CardDescription className="text-muted-foreground font-thin text-xs sm:text-base">
                                 {activeTab === "register" ? (isPremium ? "Gain exclusive member privileges and personalized digital assets." : "Create your official Christian Life Center digital profile.") : "Enter your name to access your Digital ID."}
                             </CardDescription>
                         </div>
@@ -365,26 +365,26 @@ export default function RegistrationContent({ isPremium = false }: { isPremium?:
 
                                     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="flex flex-col items-center text-center space-y-2 group cursor-default">
                                         <div className={cn("relative w-12 h-12 rounded-2xl flex items-center justify-center ring-1 transition-all shadow-sm", isPremium ? "bg-amber-500/10 ring-amber-500/30" : "bg-background ring-border group-hover:ring-primary/50 group-hover:bg-primary/5")}>
-                                            <span className={cn("absolute top-1 right-2 text-[9px] font-black", isPremium ? "text-amber-500/40" : "text-muted-foreground/30")}>01</span>
+                                            <span className={cn("absolute top-1 right-2 text-[9px] font-semibold", isPremium ? "text-amber-500/40" : "text-muted-foreground/30")}>01</span>
                                             <UserPlus className={cn("w-5 h-5 mt-1", isPremium ? "text-amber-500" : "text-muted-foreground group-hover:text-primary")} />
                                         </div>
-                                        <p className={cn("text-[10px] sm:text-xs font-bold uppercase tracking-widest", isPremium ? "text-amber-500/80" : "text-muted-foreground group-hover:text-primary")}>Profile</p>
+                                        <p className={cn("text-[10px] sm:text-xs font-semibold uppercase tracking-widest", isPremium ? "text-amber-500/80" : "text-muted-foreground group-hover:text-primary")}>Profile</p>
                                     </motion.div>
 
                                     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="flex flex-col items-center text-center space-y-2 group cursor-default">
                                         <div className={cn("relative w-12 h-12 rounded-2xl flex items-center justify-center ring-1 transition-all shadow-sm", isPremium ? "bg-amber-500/10 ring-amber-500/30" : "bg-background ring-border group-hover:ring-primary/50 group-hover:bg-primary/5")}>
-                                            <span className={cn("absolute top-1 right-2 text-[9px] font-black", isPremium ? "text-amber-500/40" : "text-muted-foreground/30")}>02</span>
+                                            <span className={cn("absolute top-1 right-2 text-[9px] font-semibold", isPremium ? "text-amber-500/40" : "text-muted-foreground/30")}>02</span>
                                             <QrCode className={cn("w-5 h-5 mt-1", isPremium ? "text-amber-500" : "text-muted-foreground group-hover:text-primary")} />
                                         </div>
-                                        <p className={cn("text-[10px] sm:text-xs font-bold uppercase tracking-widest", isPremium ? "text-amber-500/80" : "text-muted-foreground group-hover:text-primary")}>Identity</p>
+                                        <p className={cn("text-[10px] sm:text-xs font-semibold uppercase tracking-widest", isPremium ? "text-amber-500/80" : "text-muted-foreground group-hover:text-primary")}>Identity</p>
                                     </motion.div>
 
                                     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="flex flex-col items-center text-center space-y-2 group cursor-default">
                                         <div className={cn("relative w-12 h-12 rounded-2xl flex items-center justify-center ring-1 transition-all shadow-sm", isPremium ? "bg-amber-500/10 ring-amber-500/30" : "bg-background ring-border group-hover:ring-primary/50 group-hover:bg-primary/5")}>
-                                            <span className={cn("absolute top-1 right-2 text-[9px] font-black", isPremium ? "text-amber-500/40" : "text-muted-foreground/30")}>03</span>
+                                            <span className={cn("absolute top-1 right-2 text-[9px] font-semibold", isPremium ? "text-amber-500/40" : "text-muted-foreground/30")}>03</span>
                                             <Scan className={cn("w-5 h-5 mt-1", isPremium ? "text-amber-500" : "text-muted-foreground group-hover:text-primary")} />
                                         </div>
-                                        <p className={cn("text-[10px] sm:text-xs font-bold uppercase tracking-widest", isPremium ? "text-amber-500/80" : "text-muted-foreground group-hover:text-primary")}>Verify</p>
+                                        <p className={cn("text-[10px] sm:text-xs font-semibold uppercase tracking-widest", isPremium ? "text-amber-500/80" : "text-muted-foreground group-hover:text-primary")}>Verify</p>
                                     </motion.div>
                                 </div>
                             </div>
@@ -399,36 +399,36 @@ export default function RegistrationContent({ isPremium = false }: { isPremium?:
                                         <motion.div key="step1" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="space-y-5">
                                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                                                 <div className="space-y-2.5">
-                                                    <Label htmlFor="firstName" className="text-foreground font-bold ml-1">First Name</Label>
+                                                    <Label htmlFor="firstName" className="text-foreground font-semibold ml-1">First Name</Label>
                                                     <Input id="firstName" placeholder="Given name" className={cn("h-12 border-border text-foreground rounded-xl focus:ring-2 transition-all", isPremium ? "bg-white/5 focus:ring-amber-500/50" : "bg-background/50 focus:ring-primary")} {...register("firstName")} />
-                                                    {errors.firstName && <p className="text-xs font-bold text-destructive ml-1">{errors.firstName.message}</p>}
+                                                    {errors.firstName && <p className="text-xs font-semibold text-destructive ml-1">{errors.firstName.message}</p>}
                                                 </div>
                                                 <div className="space-y-2.5">
-                                                    <Label htmlFor="lastName" className="text-foreground font-bold ml-1">Last Name</Label>
+                                                    <Label htmlFor="lastName" className="text-foreground font-semibold ml-1">Last Name</Label>
                                                     <Input id="lastName" placeholder="Family name" className={cn("h-12 border-border text-foreground rounded-xl focus:ring-2 transition-all", isPremium ? "bg-white/5 focus:ring-amber-500/50" : "bg-background/50 focus:ring-primary")} {...register("lastName")} />
-                                                    {errors.lastName && <p className="text-xs font-bold text-destructive ml-1">{errors.lastName.message}</p>}
+                                                    {errors.lastName && <p className="text-xs font-semibold text-destructive ml-1">{errors.lastName.message}</p>}
                                                 </div>
                                             </div>
 
                                             <div className="space-y-2.5">
-                                                <Label className="text-foreground font-bold ml-1">Gender</Label>
+                                                <Label className="text-foreground font-semibold ml-1">Gender</Label>
                                                 <div className="grid grid-cols-2 gap-3">
-                                                    <button type="button" onClick={() => setValue("gender", "Male")} className={cn("h-12 rounded-xl font-bold transition-all border-2", watch("gender") === "Male" ? (isPremium ? "bg-amber-500/10 border-amber-500 text-amber-100" : "bg-primary/10 border-primary text-foreground") : "bg-muted/50 border-transparent text-muted-foreground hover:bg-muted")}>Male</button>
-                                                    <button type="button" onClick={() => setValue("gender", "Female")} className={cn("h-12 rounded-xl font-bold transition-all border-2", watch("gender") === "Female" ? (isPremium ? "bg-amber-500/10 border-amber-500 text-amber-100" : "bg-primary/10 border-primary text-foreground") : "bg-muted/50 border-transparent text-muted-foreground hover:bg-muted")}>Female</button>
+                                                    <button type="button" onClick={() => setValue("gender", "Male")} className={cn("h-12 rounded-xl font-semibold transition-all border-2", watch("gender") === "Male" ? (isPremium ? "bg-amber-500/10 border-amber-500 text-amber-100" : "bg-primary/10 border-primary text-foreground") : "bg-muted/50 border-transparent text-muted-foreground hover:bg-muted")}>Male</button>
+                                                    <button type="button" onClick={() => setValue("gender", "Female")} className={cn("h-12 rounded-xl font-semibold transition-all border-2", watch("gender") === "Female" ? (isPremium ? "bg-amber-500/10 border-amber-500 text-amber-100" : "bg-primary/10 border-primary text-foreground") : "bg-muted/50 border-transparent text-muted-foreground hover:bg-muted")}>Female</button>
                                                 </div>
-                                                {errors.gender && <p className="text-xs font-bold text-destructive ml-1">{errors.gender.message}</p>}
+                                                {errors.gender && <p className="text-xs font-semibold text-destructive ml-1">{errors.gender.message}</p>}
                                             </div>
 
                                             <div className="space-y-2.5">
-                                                <Label htmlFor="contactNumber" className="text-foreground font-bold ml-1">WhatsApp / Phone</Label>
+                                                <Label htmlFor="contactNumber" className="text-foreground font-semibold ml-1">WhatsApp / Phone</Label>
                                                 <div className="relative">
                                                     <Phone className={cn("absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5", isPremium ? "text-amber-500" : "text-muted-foreground")} />
                                                     <Input id="contactNumber" className={cn("h-12 pl-12 border-border text-foreground rounded-xl focus:ring-2 transition-all", isPremium ? "bg-white/5 focus:ring-amber-500/50" : "bg-background/50 focus:ring-primary")} placeholder="09XX XXX XXXX" {...register("contactNumber")} />
                                                 </div>
-                                                {errors.contactNumber && <p className="text-xs font-bold text-destructive ml-1">{errors.contactNumber.message}</p>}
+                                                {errors.contactNumber && <p className="text-xs font-semibold text-destructive ml-1">{errors.contactNumber.message}</p>}
                                             </div>
 
-                                            <Button type="button" onClick={nextStep} className={cn("w-full h-14 rounded-2xl text-lg font-black transition-all group shadow-lg", isPremium ? "bg-amber-500 text-slate-950 hover:bg-amber-400 shadow-amber-500/20" : "bg-primary text-primary-foreground hover:opacity-90 shadow-primary/10")}>
+                                            <Button type="button" onClick={nextStep} className={cn("w-full h-14 rounded-2xl text-lg font-semibold transition-all group shadow-lg", isPremium ? "bg-amber-500 text-slate-950 hover:bg-amber-400 shadow-amber-500/20" : "bg-primary text-primary-foreground hover:opacity-90 shadow-primary/10")}>
                                                 Continue
                                                 <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
                                             </Button>
@@ -440,8 +440,8 @@ export default function RegistrationContent({ isPremium = false }: { isPremium?:
                                                             <Crown className="w-6 h-6 text-amber-500" />
                                                         </div>
                                                         <div className="space-y-2">
-                                                            <h4 className="font-black text-sm uppercase tracking-wider text-amber-100">Kingdom Builders Ministry Partners</h4>
-                                                            <p className="text-xs font-medium text-white/80 leading-relaxed">
+                                                            <h4 className="font-semibold text-sm uppercase tracking-wider text-amber-100">Kingdom Builders Ministry Partners</h4>
+                                                            <p className="text-xs font-thin text-white/80 leading-relaxed">
                                                                 Be part of Kingdom Builders Ministry Partners and get exclusive member privileges! Sign up today.
                                                             </p>
                                                         </div>
@@ -453,28 +453,28 @@ export default function RegistrationContent({ isPremium = false }: { isPremium?:
                                         <motion.div key="step2" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-5">
                                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 pt-2">
                                                 <div className="space-y-2.5">
-                                                    <Label className="text-foreground font-bold ml-1">Cluster</Label>
+                                                    <Label className="text-foreground font-semibold ml-1">Cluster</Label>
                                                     <ClusterSelect className={isPremium ? "bg-white/5" : ""} value={watch("cluster")} onValueChange={(v) => { setValue("cluster", v); setValue("network", ""); }} />
                                                 </div>
                                                 <div className="space-y-2.5">
-                                                    <Label className="text-foreground font-bold ml-1">Network</Label>
+                                                    <Label className="text-foreground font-semibold ml-1">Network</Label>
                                                     <NetworkSelect className={isPremium ? "bg-white/5" : ""} cluster={watch("cluster")} gender={watch("gender")} value={watch("network")} onValueChange={(v) => setValue("network", v)} />
                                                 </div>
                                             </div>
 
                                             <div className="space-y-2.5">
-                                                <Label className="text-foreground font-bold ml-1">Ministry Involvement</Label>
+                                                <Label className="text-foreground font-semibold ml-1">Ministry Involvement</Label>
                                                 <MinistrySelect className={isPremium ? "bg-white/5" : ""} value={watch("ministry")} onValueChange={(v) => setValue("ministry", v)} />
                                             </div>
 
                                             <div className="space-y-2.5">
-                                                <Label htmlFor="email" className="text-foreground font-bold ml-1">Email (Optional)</Label>
+                                                <Label htmlFor="email" className="text-foreground font-semibold ml-1">Email (Optional)</Label>
                                                 <Input id="email" type="email" placeholder="your@email.com" className={cn("h-12 border-border text-foreground rounded-xl focus:ring-2 transition-all", isPremium ? "bg-white/5 focus:ring-amber-500/50" : "bg-background/50 focus:ring-primary")} {...register("email")} />
                                             </div>
 
                                             <div className="grid grid-cols-4 gap-3 pt-2">
-                                                <Button type="button" variant="ghost" onClick={prevStep} className="h-14 rounded-2xl bg-muted hover:bg-muted/80 text-foreground font-bold transition-all"><ArrowLeft className="w-6 h-6" /></Button>
-                                                <Button type="submit" disabled={isSubmitting} className={cn("col-span-3 h-14 rounded-2xl text-lg font-black transition-all shadow-lg", isPremium ? "bg-amber-500 text-slate-950 hover:bg-amber-400 shadow-amber-500/20" : "bg-primary text-primary-foreground hover:opacity-90 shadow-primary/10")}>
+                                                <Button type="button" variant="ghost" onClick={prevStep} className="h-14 rounded-2xl bg-muted hover:bg-muted/80 text-foreground font-semibold transition-all"><ArrowLeft className="w-6 h-6" /></Button>
+                                                <Button type="submit" disabled={isSubmitting} className={cn("col-span-3 h-14 rounded-2xl text-lg font-semibold transition-all shadow-lg", isPremium ? "bg-amber-500 text-slate-950 hover:bg-amber-400 shadow-amber-500/20" : "bg-primary text-primary-foreground hover:opacity-90 shadow-primary/10")}>
                                                     {isSubmitting ? <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1, ease: "linear" }} className={cn("w-6 h-6 border-2 rounded-full", isPremium ? "border-slate-900/30 border-t-slate-900" : "border-primary-foreground/30 border-t-primary-foreground")} /> : "Complete Registration"}
                                                 </Button>
                                             </div>
@@ -489,22 +489,22 @@ export default function RegistrationContent({ isPremium = false }: { isPremium?:
                                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-5">
                                     <div className="space-y-4">
                                         <div className="space-y-2.5">
-                                            <Label className="text-foreground font-bold ml-1">First Name</Label>
+                                            <Label className="text-foreground font-semibold ml-1">First Name</Label>
                                             <div className="relative">
                                                 <UserPlus className={cn("absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5", isPremium ? "text-amber-500" : "text-muted-foreground")} />
-                                                <Input value={loginFName} onChange={(e) => setLoginFName(e.target.value)} placeholder="Enter given name" className={cn("h-14 pl-12 border-border text-foreground rounded-2xl focus:ring-2 transition-all text-lg font-medium", isPremium ? "bg-white/5 focus:ring-amber-500/50" : "bg-background/50 focus:ring-primary")} />
+                                                <Input value={loginFName} onChange={(e) => setLoginFName(e.target.value)} placeholder="Enter given name" className={cn("h-14 pl-12 border-border text-foreground rounded-2xl focus:ring-2 transition-all text-lg font-thin", isPremium ? "bg-white/5 focus:ring-amber-500/50" : "bg-background/50 focus:ring-primary")} />
                                             </div>
                                         </div>
                                         <div className="space-y-2.5">
-                                            <Label className="text-foreground font-bold ml-1">Last Name</Label>
+                                            <Label className="text-foreground font-semibold ml-1">Last Name</Label>
                                             <div className="relative">
                                                 <Building2 className={cn("absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5", isPremium ? "text-amber-500" : "text-muted-foreground")} />
-                                                <Input value={loginLName} onChange={(e) => setLoginLName(e.target.value)} placeholder="Enter family name" className={cn("h-14 pl-12 border-border text-foreground rounded-2xl focus:ring-2 transition-all text-lg font-medium", isPremium ? "bg-white/5 focus:ring-amber-500/50" : "bg-background/50 focus:ring-primary")} />
+                                                <Input value={loginLName} onChange={(e) => setLoginLName(e.target.value)} placeholder="Enter family name" className={cn("h-14 pl-12 border-border text-foreground rounded-2xl focus:ring-2 transition-all text-lg font-thin", isPremium ? "bg-white/5 focus:ring-amber-500/50" : "bg-background/50 focus:ring-primary")} />
                                             </div>
                                         </div>
                                     </div>
 
-                                    <Button type="submit" disabled={isSearching} className={cn("w-full h-16 rounded-[2rem] text-xl font-black transition-all shadow-2xl flex items-center justify-center gap-3", isPremium ? "bg-amber-500 text-slate-950 hover:bg-amber-400 shadow-amber-500/30" : "bg-slate-900 text-white hover:bg-slate-800")}>
+                                    <Button type="submit" disabled={isSearching} className={cn("w-full h-16 rounded-[2rem] text-xl font-semibold transition-all shadow-2xl flex items-center justify-center gap-3", isPremium ? "bg-amber-500 text-slate-950 hover:bg-amber-400 shadow-amber-500/30" : "bg-slate-900 text-white hover:bg-slate-800")}>
                                         {isSearching ? <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1, ease: "linear" }} className={cn("w-6 h-6 border-2 rounded-full", isPremium ? "border-slate-900/30 border-t-slate-900" : "border-white/30 border-t-white")} /> : (
                                             <>
                                                 <Search className="w-6 h-6" />
@@ -516,7 +516,7 @@ export default function RegistrationContent({ isPremium = false }: { isPremium?:
                                     <div className={cn("p-4 rounded-2xl border flex flex-col gap-2 shadow-inner", isPremium ? "bg-amber-500/5 border-amber-500/10 shadow-amber-500/5" : "bg-primary/5 border-primary/10 shadow-primary/5")}>
                                         <div className="flex items-start gap-3">
                                             <Sparkles className={cn("w-5 h-5 shrink-0 mt-0.5", isPremium ? "text-amber-500" : "text-primary")} />
-                                            <p className="text-xs font-medium text-muted-foreground leading-relaxed">Forgot your ID? No problem. Simply enter your registered name to retrieve your official Christian Life Center digital profile.</p>
+                                            <p className="text-xs font-thin text-muted-foreground leading-relaxed">Forgot your ID? No problem. Simply enter your registered name to retrieve your official Christian Life Center digital profile.</p>
                                         </div>
                                         <ConcernNote variant={isPremium ? "primary" : "default"} />
                                     </div>

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React from "react";
 import Link from "next/link";
@@ -50,7 +50,7 @@ export default function Footer() {
                         <Link href="/" className="hover:opacity-80 transition-opacity">
                             <Logo />
                         </Link>
-                        <p className="text-sm text-muted-foreground font-medium leading-relaxed">
+                        <p className="text-sm text-muted-foreground font-thin leading-relaxed">
                             Dedicated to fostering spiritual growth, community impact, and authentic worship in Tagum City since inception. Join our global family today.
                         </p>
                         <div className="flex items-center gap-3">
@@ -69,7 +69,7 @@ export default function Footer() {
                     </div>
 
                     <div className="space-y-6">
-                        <h4 className="font-black uppercase text-xs tracking-[0.2em] text-foreground">Navigation</h4>
+                        <h4 className="font-semibold uppercase text-xs tracking-[0.2em] text-foreground">Navigation</h4>
                         <ul className="space-y-4">
                             {[
                                 { name: "About Christian Life Center Tagum ", href: "/about" },
@@ -80,7 +80,7 @@ export default function Footer() {
                                 { name: "News & Events", href: "/events" }
                             ].map((link) => (
                                 <li key={link.name}>
-                                    <Link href={link.href} className="text-sm font-bold text-muted-foreground hover:text-primary transition-colors flex items-center gap-2 group">
+                                    <Link href={link.href} className="text-sm font-semibold text-muted-foreground hover:text-primary transition-colors flex items-center gap-2 group">
                                         <div className="w-1.5 h-1.5 rounded-full bg-primary/30 group-hover:bg-primary transition-colors" />
                                         {link.name}
                                     </Link>
@@ -91,30 +91,30 @@ export default function Footer() {
 
                     {/* Connect Section */}
                     <div className="space-y-6">
-                        <h4 className="font-black uppercase text-xs tracking-[0.2em] text-foreground">Get Connected</h4>
+                        <h4 className="font-semibold uppercase text-xs tracking-[0.2em] text-foreground">Get Connected</h4>
                         <ul className="space-y-4">
                             <li className="flex gap-3">
                                 <MapPin className="w-5 h-5 text-primary shrink-0" />
-                                <span className="text-sm font-medium text-muted-foreground">Cor. Sobrecary and Pioneer Streets,<br />Tagum City, Philippines, 8100</span>
+                                <span className="text-sm font-thin text-muted-foreground">Cor. Sobrecary and Pioneer Streets,<br />Tagum City, Philippines, 8100</span>
                             </li>
                             <li className="flex gap-3">
                                 <Phone className="w-5 h-5 text-primary shrink-0" />
-                                <span className="text-sm font-medium text-muted-foreground">0916 461 3649</span>
+                                <span className="text-sm font-thin text-muted-foreground">0916 461 3649</span>
                             </li>
                             <li className="flex gap-3">
                                 <Mail className="w-5 h-5 text-primary shrink-0" />
-                                <span className="text-sm font-medium text-muted-foreground">hello@clctagum.org</span>
+                                <span className="text-sm font-thin text-muted-foreground">hello@clctagum.org</span>
                             </li>
                         </ul>
                     </div>
 
                     {/* Newsletter/App */}
                     <div className="space-y-6">
-                        <h4 className="font-black uppercase text-xs tracking-[0.2em] text-foreground">Stay Informed</h4>
-                        <p className="text-xs font-medium text-muted-foreground italic">Join our community newsletter for weekly updates and inspiration.</p>
+                        <h4 className="font-semibold uppercase text-xs tracking-[0.2em] text-foreground">Stay Informed</h4>
+                        <p className="text-xs font-thin text-muted-foreground ">Join our community newsletter for weekly updates and inspiration.</p>
                         <div className="space-y-3">
                             <Link href="/registration">
-                                <Button className="w-full h-12 rounded-xl font-bold bg-primary uppercase text-[10px] tracking-widest shadow-xl shadow-primary/20">
+                                <Button className="w-full h-12 rounded-xl font-semibold bg-primary uppercase text-[10px] tracking-widest shadow-xl shadow-primary/20">
                                     Register Now
                                 </Button>
                             </Link>
@@ -123,15 +123,15 @@ export default function Footer() {
                 </div>
 
                 <div className="pt-10 border-t border-border flex flex-col md:flex-row justify-between items-center gap-6">
-                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground text-center md:text-left">
+                    <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground text-center md:text-left">
                         © {currentYear} Christian Life Center Tagum. All rights reserved.
                     </p>
-                    <div className="flex flex-wrap items-center justify-center gap-6 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                    <div className="flex flex-wrap items-center justify-center gap-6 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
                         <Link href="#" className="hover:text-primary transition-colors">Privacy Policy</Link>
                         <Link href="#" className="hover:text-primary transition-colors">Terms of Service</Link>
                         <Link href="#" className="hover:text-primary transition-colors">Cookie Settings</Link>
                     </div>
-                    <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground/50">
+                    <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/50">
                         Crafted by
                         <a href="https://japhetcordova.com" target="_blank" className="text-foreground hover:text-primary transition-colors flex items-center gap-1">
                             CoreDova <ExternalLink className="w-2.5 h-2.5" />

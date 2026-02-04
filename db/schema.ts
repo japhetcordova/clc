@@ -112,6 +112,42 @@ export const cellGroupInterests = pgTable("cell_group_interests", {
     createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+export const classEnrollments = pgTable("class_enrollments", {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id").references(() => users.id, { onDelete: "cascade" }).notNull(),
+    classLevel: text("class_level").notNull(), // LIFE_CLASS, SOL_1, SOL_2, SOL_3
+    status: text("status").notNull().default("active"), // active, completed, dropped
+    enrolledAt: timestamp("enrolled_at").defaultNow().notNull(),
+}, (t) => [
+    unique().on(t.userId, t.classLevel),
+    index("class_enrollments_user_id_idx").on(t.userId),
+    index("class_enrollments_class_level_idx").on(t.classLevel),
+]);
+
+export const classStaff = pgTable("class_staff", {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id").references(() => users.id, { onDelete: "cascade" }).notNull(),
+    classLevel: text("class_level").notNull(),
+    role: text("role").notNull(), // teacher, assistant
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (t) => [
+    index("class_staff_user_id_idx").on(t.userId),
+    index("class_staff_class_level_idx").on(t.classLevel),
+]);
+
+export const classAttendance = pgTable("class_attendance", {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id").references(() => users.id, { onDelete: "cascade" }).notNull(),
+    classLevel: text("class_level").notNull(),
+    weekNumber: integer("week_number").notNull(),
+    scanDate: date("scan_date").notNull(),
+    scannedAt: timestamp("scanned_at").defaultNow().notNull(),
+}, (t) => [
+    unique().on(t.userId, t.classLevel, t.weekNumber),
+    index("class_attendance_user_id_idx").on(t.userId),
+    index("class_attendance_class_level_idx").on(t.classLevel),
+]);
+
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
 export type Attendance = typeof attendance.$inferSelect;
@@ -129,3 +165,9 @@ export type Announcement = typeof announcements.$inferSelect;
 export type NewAnnouncement = typeof announcements.$inferInsert;
 export type CellGroupInterest = typeof cellGroupInterests.$inferSelect;
 export type NewCellGroupInterest = typeof cellGroupInterests.$inferInsert;
+export type ClassEnrollment = typeof classEnrollments.$inferSelect;
+export type NewClassEnrollment = typeof classEnrollments.$inferInsert;
+export type ClassStaff = typeof classStaff.$inferSelect;
+export type NewClassStaff = typeof classStaff.$inferInsert;
+export type ClassAttendance = typeof classAttendance.$inferSelect;
+export type NewClassAttendance = typeof classAttendance.$inferInsert;

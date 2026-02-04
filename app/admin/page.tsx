@@ -15,6 +15,7 @@ import MemberSearch from "./member-search";
 import MobileHighlightsClient from "./mobile-highlights-client";
 import AnnouncementsAdminClient from "./announcements-admin-client";
 import CellGroupAdminClient from "./cell-group-admin-client";
+import G12JourneyAdminClient from "./g12-journey-admin-client";
 
 import { cache } from "react";
 
@@ -560,6 +561,10 @@ export default async function AdminDashboard({
 
                 <TabsContent value="cell-groups" className="space-y-6 sm:space-y-8 animate-in fade-in slide-in-from-top-4 duration-500">
                     <CellGroupAdminClient />
+                </TabsContent>
+
+                <TabsContent value="g12-journey" className="space-y-6 sm:space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                    <G12JourneyAdminClient />
                 </TabsContent>
             </Tabs>
         </div>

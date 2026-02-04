@@ -1,7 +1,7 @@
 import { router, publicProcedure } from "./trpc";
 import { z } from "zod";
 import { db } from "@/db";
-import { users, attendance, events, dailyPins, mobileHighlights, announcements, cellGroupInterests } from "@/db/schema";
+import { users, attendance, events, dailyPins, mobileHighlights, announcements, cellGroupInterests, classEnrollments } from "@/db/schema";
 import { eq, and, desc, sql, count, asc, ilike, inArray, or } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
@@ -399,7 +399,12 @@ export const appRouter = router({
                 totalMembersCount,
                 filterDate,
                 trendMinistryStats: trendMinistryStats.map(stat => ({ ...stat, count: Number(stat.count) })),
-                trendNetworkStats: trendNetworkStats.map(stat => ({ ...stat, count: Number(stat.count) }))
+                trendNetworkStats: trendNetworkStats.map(stat => ({ ...stat, count: Number(stat.count) })),
+                classEnrollmentStats: await db.select({
+                    level: classEnrollments.classLevel,
+                    count: count(),
+                    status: classEnrollments.status
+                }).from(classEnrollments).groupBy(classEnrollments.classLevel, classEnrollments.status)
             };
         }),
 
@@ -894,6 +899,72 @@ export const appRouter = router({
     getCellGroupInterests: publicProcedure
         .query(async () => {
             return await db.select().from(cellGroupInterests).orderBy(desc(cellGroupInterests.createdAt));
+        }),
+
+    enrollStudentByQr: publicProcedure
+        .input(z.object({
+            qrCodeId: z.string(),
+            classLevel: z.string()
+        }))
+        .mutation(async ({ input }) => {
+            const { qrCodeId, classLevel } = input;
+
+            const [user] = await db.select().from(users).where(eq(users.qrCodeId, qrCodeId)).limit(1);
+            if (!user) throw new Error("User not found");
+
+            const [existing] = await db.select().from(classEnrollments)
+                .where(and(eq(classEnrollments.userId, user.id), eq(classEnrollments.classLevel, classLevel)))
+                .limit(1);
+
+            if (existing) {
+                return { success: true, alreadyEnrolled: true };
+            }
+
+            await db.insert(classEnrollments).values({
+                userId: user.id,
+                classLevel,
+                status: 'active'
+            });
+
+            revalidatePath("/classes");
+            revalidatePath(`/profile/${qrCodeId}`);
+
+            return { success: true };
+        }),
+
+    getClassEnrollments: publicProcedure
+        .query(async () => {
+            return await db.select({
+                id: classEnrollments.id,
+                classLevel: classEnrollments.classLevel,
+                status: classEnrollments.status,
+                enrolledAt: classEnrollments.enrolledAt,
+                user: {
+                    id: users.id,
+                    firstName: users.firstName,
+                    lastName: users.lastName,
+                    qrCodeId: users.qrCodeId,
+                    network: users.network,
+                }
+            })
+                .from(classEnrollments)
+                .innerJoin(users, eq(classEnrollments.userId, users.id))
+                .orderBy(desc(classEnrollments.enrolledAt));
+        }),
+
+    updateClassEnrollmentStatus: publicProcedure
+        .input(z.object({
+            id: z.string(),
+            status: z.enum(["active", "completed", "dropped"])
+        }))
+        .mutation(async ({ input }) => {
+            await db.update(classEnrollments)
+                .set({ status: input.status })
+                .where(eq(classEnrollments.id, input.id));
+
+            revalidatePath("/admin");
+            revalidatePath("/classes");
+            return { success: true };
         }),
 });
 
