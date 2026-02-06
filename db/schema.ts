@@ -25,9 +25,10 @@ export const attendance = pgTable("attendance", {
     id: uuid("id").primaryKey().defaultRandom(),
     userId: uuid("user_id").references(() => users.id, { onDelete: "cascade" }).notNull(),
     scanDate: date("scan_date").notNull(), // YYYY-MM-DD
+    slot: text("slot").notNull().default("general"), // morning_service, makeup_class, regular_class, afternoon_service, general
     scannedAt: timestamp("scanned_at").defaultNow().notNull(),
 }, (t) => [
-    unique().on(t.userId, t.scanDate),
+    unique().on(t.userId, t.scanDate, t.slot),
     // Indexes for performance optimization
     index("attendance_scan_date_idx").on(t.scanDate), // For date filtering and trending
     index("attendance_user_id_idx").on(t.userId), // For joins with users table

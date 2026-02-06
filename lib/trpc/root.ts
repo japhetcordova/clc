@@ -155,22 +155,55 @@ export const appRouter = router({
 
             if (!user) throw new Error("User not found");
 
-            const today = new Date().toISOString().split('T')[0];
+            // Handle Slots based on time (Sunday specialized)
+            const now = new Date();
+            // Get local date in YYYY-MM-DD format
+            const today = now.toLocaleDateString("en-CA");
+            const dayOfWeek = now.getDay(); // 0 = Sunday
+            const hour = now.getHours();
+            const minute = now.getMinutes();
+            const timeVal = hour * 100 + minute;
+
+            let slot = "general";
+            let displaySlot = "Daily Attendance";
+
+            if (dayOfWeek === 0) { // Sunday
+                if (timeVal < 1230) {
+                    slot = "morning_service";
+                    displaySlot = "Morning Service";
+                } else if (timeVal < 1400) {
+                    slot = "makeup_class";
+                    displaySlot = "Makeup Class";
+                } else if (timeVal < 1600) {
+                    slot = "regular_class";
+                    displaySlot = "Regular Class";
+                } else {
+                    slot = "afternoon_service";
+                    displaySlot = "Afternoon Service";
+                }
+            }
 
             const [inserted] = await db.insert(attendance)
                 .values({
                     userId: user.id,
                     scanDate: today,
+                    slot,
                 })
-                .onConflictDoNothing()
+                .onConflictDoNothing({
+                    target: [attendance.userId, attendance.scanDate, attendance.slot]
+                })
                 .returning();
 
             if (!inserted) {
-                return { success: false, message: "Already marked today", user };
+                return {
+                    success: false,
+                    message: `Already marked for ${displaySlot} today`,
+                    user
+                };
             }
 
             revalidatePath("/admin");
-            return { success: true, user };
+            return { success: true, user, slot: displaySlot };
         }),
 
     getEvents: publicProcedure
@@ -328,6 +361,7 @@ export const appRouter = router({
                 db.select({
                     id: attendance.id,
                     scannedAt: attendance.scannedAt,
+                    slot: attendance.slot,
                     user: {
                         firstName: users.firstName,
                         lastName: users.lastName,

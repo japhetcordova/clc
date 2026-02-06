@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
 import Image from "next/image";
 
 export default function ScannerClient() {
-    const [lastScan, setLastScan] = useState<{ success: boolean; user?: any; error?: string } | null>(null);
+    const [lastScan, setLastScan] = useState<{ success: boolean; user?: any; error?: string; slot?: string } | null>(null);
     const [isScannerReady, setIsScannerReady] = useState(false);
     const [hasPermission, setHasPermission] = useState<boolean | null>(null);
     const [cameras, setCameras] = useState<Array<{ id: string; label: string }>>([]);
@@ -219,6 +219,13 @@ export default function ScannerClient() {
                                     <p className="font-black text-lg sm:text-xl leading-tight">
                                         {lastScan.success ? `Welcome, ${lastScan.user?.firstName}!` : lastScan.error}
                                     </p>
+                                    {lastScan.success && lastScan.slot && (
+                                        <div className="flex items-center justify-center gap-2">
+                                            <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-600 rounded-md text-[9px] sm:text-[10px] font-black uppercase tracking-widest ring-1 ring-emerald-500/30">
+                                                {lastScan.slot}
+                                            </span>
+                                        </div>
+                                    )}
                                     {lastScan.user && (
                                         <div className="flex items-center justify-center gap-2">
                                             <span className="px-2 py-0.5 bg-background/50 rounded-md text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-muted-foreground ring-1 ring-border">{lastScan.user.ministry}</span>
