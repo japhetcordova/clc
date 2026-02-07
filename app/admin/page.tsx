@@ -1,9 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Users, UserCheck, Calendar, Filter, TrendingUp, Award, Tv } from "lucide-react";
+import { Users, UserCheck, Calendar, TrendingUp, Award, Tv } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import AdminClient from "@/app/admin/admin-client";
 import AdminLogout from "@/app/admin/logout-button";
 import PaginationControls from "@/app/admin/pagination-controls";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
@@ -18,6 +17,9 @@ import MobileHighlightsClient from "./mobile-highlights-client";
 import AnnouncementsAdminClient from "./announcements-admin-client";
 import CellGroupAdminClient from "./cell-group-admin-client";
 import G12JourneyAdminClient from "./g12-journey-admin-client";
+import RealtimeAttendance from "./realtime-attendance";
+import RealtimeStats from "./realtime-stats";
+import RealtimeSidebar from "./realtime-sidebar";
 
 import { cache } from "react";
 
@@ -114,220 +116,11 @@ export default async function AdminDashboard({
 
                 <TabsContent value="attendance" className="space-y-6 sm:space-y-8 animate-in fade-in zoom-in-95 duration-500">
 
-                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4 md:gap-6">
-                        <Card className="shadow-xl shadow-primary/5 border-primary/10 bg-linear-to-br from-primary/10 to-transparent backdrop-blur-sm rounded-3xl">
-                            <CardHeader className="flex flex-row items-center justify-between pb-1 sm:pb-2 p-3 sm:p-6">
-                                <CardTitle className="text-[9px] sm:text-xs font-black uppercase tracking-widest text-muted-foreground">Registered</CardTitle>
-                                <Users className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
-                            </CardHeader>
-                            <CardContent className="p-3 sm:p-6 pt-0">
-                                <div className="text-2xl sm:text-4xl font-black text-foreground">{data.totalUsers}</div>
-                                <p className="text-[8px] sm:text-[10px] font-bold text-muted-foreground uppercase mt-0.5 sm:mt-1 tracking-tighter">Members</p>
-                            </CardContent>
-                        </Card>
-
-                        <Card className="shadow-xl shadow-accent/5 border-accent/10 bg-linear-to-br from-accent/10 to-transparent backdrop-blur-sm rounded-3xl">
-                            <CardHeader className="flex flex-row items-center justify-between pb-1 sm:pb-2 p-3 sm:p-6">
-                                <CardTitle className="text-[9px] sm:text-xs font-black uppercase tracking-widest text-muted-foreground">Scanned</CardTitle>
-                                <UserCheck className="h-4 w-4 sm:h-5 sm:w-5 text-accent" />
-                            </CardHeader>
-                            <CardContent className="p-3 sm:p-6 pt-0">
-                                <div className="text-2xl sm:text-4xl font-black text-foreground">{data.attendanceToday}</div>
-                                <p className="text-[8px] sm:text-[10px] font-bold text-muted-foreground uppercase mt-0.5 sm:mt-1 tracking-tighter">Unique</p>
-                            </CardContent>
-                        </Card>
-
-                        <Card className="shadow-lg border-border bg-card rounded-3xl">
-                            <CardHeader className="flex flex-row items-center justify-between pb-1 sm:pb-2 p-3 sm:p-6">
-                                <CardTitle className="text-[9px] sm:text-xs font-black uppercase tracking-widest text-muted-foreground">Top Min</CardTitle>
-                                <Award className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
-                            </CardHeader>
-                            <CardContent className="p-3 sm:p-6 pt-0">
-                                <div className="text-base sm:text-xl font-black truncate text-foreground leading-tight">
-                                    {data.ministryStats.length > 0 ? (
-                                        `${data.ministryStats.sort((a, b) => b.count - a.count)[0].name}`
-                                    ) : "---"}
-                                </div>
-                                <p className="text-[8px] sm:text-[10px] font-bold text-muted-foreground uppercase mt-0.5 sm:mt-1 tracking-tighter">Leading Participation</p>
-                            </CardContent>
-                        </Card>
-
-                        <Card className="shadow-lg border-border bg-card rounded-3xl">
-                            <CardHeader className="flex flex-row items-center justify-between pb-1 sm:pb-2 p-3 sm:p-6">
-                                <CardTitle className="text-[9px] sm:text-xs font-black uppercase tracking-widest text-muted-foreground">Top Net</CardTitle>
-                                <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5 text-accent" />
-                            </CardHeader>
-                            <CardContent className="p-3 sm:p-6 pt-0">
-                                <div className="text-base sm:text-xl font-black truncate text-foreground leading-tight">
-                                    {data.networkStats.length > 0 ? (
-                                        `${data.networkStats.sort((a, b) => b.count - a.count)[0].name}`
-                                    ) : "---"}
-                                </div>
-                                <p className="text-[8px] sm:text-[10px] font-bold text-muted-foreground uppercase mt-0.5 sm:mt-1 tracking-tighter">Collective Reach</p>
-                            </CardContent>
-                        </Card>
-                    </div>
+                    <RealtimeStats initialData={data} />
 
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8 pb-10 items-start">
-                        <div className="lg:col-span-2 space-y-6">
-                            <Card className="shadow-2xl border-border bg-card/50 backdrop-blur-xl rounded-[2rem] overflow-hidden">
-                                <CardHeader className="flex flex-row items-center justify-between border-b border-border/50 py-4 sm:py-6 px-4 sm:px-8">
-                                    <div className="flex items-center gap-3">
-                                        <div className="p-2 bg-primary/10 rounded-xl">
-                                            <UserCheck className="w-5 h-5 text-primary" />
-                                        </div>
-                                        <CardTitle className="font-black text-lg sm:text-xl uppercase tracking-tighter">Live Attendance</CardTitle>
-                                    </div>
-                                    <Filter className="w-5 h-5 text-muted-foreground opacity-50" />
-                                </CardHeader>
-                                <CardContent className="p-0">
-                                    <div className="px-4 sm:px-8 pt-6">
-                                        <AdminClient
-                                            initialMinistry={params.ministry || "all"}
-                                            initialNetwork={params.network || "all"}
-                                            initialCluster={params.cluster || "all"}
-                                            initialGender={params.gender || "all"}
-                                            initialDate={data.filterDate}
-                                            attendanceData={data.attendanceList}
-                                        />
-                                    </div>
-
-                                    <div className="mt-6 border-t border-border/50">
-                                        <Table className="relative">
-                                            <TableHeader className="bg-muted/30">
-                                                <TableRow className="border-border hover:bg-transparent">
-                                                    <TableHead className="text-[10px] font-black uppercase tracking-widest h-12 pl-4 sm:pl-8">
-                                                        <SortHeader label="Time/Member" sortKey="time" currentSort={params.atSort} currentOrder={params.atOrder} paramKey="atSort" orderParamKey="atOrder" />
-                                                    </TableHead>
-                                                    <TableHead className="text-[10px] font-black uppercase tracking-widest h-12 hidden sm:table-cell">
-                                                        <SortHeader label="Cluster" sortKey="cluster" currentSort={params.atSort} currentOrder={params.atOrder} paramKey="atSort" orderParamKey="atOrder" />
-                                                    </TableHead>
-                                                    <TableHead className="text-[10px] font-black uppercase tracking-widest h-12">
-                                                        <SortHeader label="Group" sortKey="ministry" currentSort={params.atSort} currentOrder={params.atOrder} paramKey="atSort" orderParamKey="atOrder" />
-                                                    </TableHead>
-                                                    <TableHead className="text-[10px] font-black uppercase tracking-widest h-12 text-right pr-4 sm:pr-8">
-                                                        <SortHeader label="Info" sortKey="network" className="justify-end" currentSort={params.atSort} currentOrder={params.atOrder} paramKey="atSort" orderParamKey="atOrder" />
-                                                    </TableHead>
-                                                </TableRow>
-                                            </TableHeader>
-                                            <TableBody>
-                                                {data.paginatedList.length === 0 ? (
-                                                    <TableRow>
-                                                        <TableCell colSpan={4} className="h-40 text-center text-muted-foreground font-bold italic">
-                                                            Waiting for scans...
-                                                        </TableCell>
-                                                    </TableRow>
-                                                ) : (
-                                                    data.paginatedList.map((record) => (
-                                                        <TableRow key={record.id} className="border-border hover:bg-primary/5 transition-colors group">
-                                                            <TableCell className="pl-4 sm:pl-8 py-4">
-                                                                <div className="flex flex-col gap-0.5">
-                                                                    <span className="font-black text-sm sm:text-base text-foreground group-hover:text-primary transition-all flex items-center gap-1.5">
-                                                                        {record.user.firstName} {record.user.lastName}
-                                                                        {record.user.isPremium && (
-                                                                            <span className="inline-flex items-center gap-1 px-1 py-0.5 bg-amber-500/10 border border-amber-500/20 rounded-full">
-                                                                                <Sparkles className="w-2.5 h-2.5 text-amber-500" />
-                                                                            </span>
-                                                                        )}
-                                                                    </span>
-                                                                    <span className="font-mono text-[9px] font-bold text-muted-foreground uppercase flex items-center gap-1">
-                                                                        <Calendar className="w-2.5 h-2.5" />
-                                                                        {new Date(record.scannedAt).toLocaleTimeString("en-US", { hour: '2-digit', minute: '2-digit', timeZone: "Asia/Manila" })}
-                                                                    </span>
-                                                                </div>
-                                                            </TableCell>
-                                                            <TableCell className="hidden sm:table-cell">
-                                                                <span className="text-xs font-bold text-muted-foreground bg-muted/50 px-2 py-1 rounded-lg">
-                                                                    {record.user.cluster}
-                                                                </span>
-                                                            </TableCell>
-                                                            <TableCell>
-                                                                <div className="flex flex-wrap gap-1.5">
-                                                                    <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[9px] font-black uppercase tracking-tight ring-1 ring-primary/20">
-                                                                        {record.user.ministry}
-                                                                    </span>
-                                                                </div>
-                                                            </TableCell>
-                                                            <TableCell className="text-right pr-4 sm:pr-8 py-4">
-                                                                <div className="flex flex-col items-end gap-0.5">
-                                                                    <span className="text-xs font-bold text-foreground/80">{record.user.network}</span>
-                                                                    <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/60">{record.user.gender}</span>
-                                                                </div>
-                                                            </TableCell>
-                                                        </TableRow>
-                                                    ))
-                                                )}
-                                            </TableBody>
-                                        </Table>
-                                    </div>
-                                    <PaginationControls currentPage={page} totalPages={data.totalPages} />
-                                </CardContent>
-                            </Card>
-                        </div>
-
-                        <div className="flex flex-col gap-6 sm:gap-8">
-                            <Card className="bg-card shadow-xl border-border shrink-0">
-                                <CardHeader className="border-b border-border mb-4">
-                                    <CardTitle className="text-xs font-black uppercase tracking-widest text-muted-foreground">Ministry Breakdown</CardTitle>
-                                </CardHeader>
-                                <CardContent className="space-y-6">
-                                    {data.ministryStats.length === 0 ? (
-                                        <p className="text-xs text-muted-foreground font-bold text-center py-4">No activity recorded</p>
-                                    ) : (
-                                        data.ministryStats.map((stat) => (
-                                            <div key={stat.name} className="space-y-2">
-                                                <div className="flex justify-between text-[10px] font-black uppercase tracking-wider text-foreground/70">
-                                                    <span>{stat.name}</span>
-                                                    <span className="text-primary">{stat.count}</span>
-                                                </div>
-                                                <div className="h-2 w-full bg-muted rounded-full overflow-hidden shadow-inner">
-                                                    <div
-                                                        style={{ width: `${(stat.count / data.attendanceToday) * 100}%` }}
-                                                        className="h-full bg-primary rounded-full transition-all duration-1000 ease-out"
-                                                    />
-                                                </div>
-                                            </div>
-                                        ))
-                                    )}
-                                </CardContent>
-                            </Card>
-
-                            <Card className="bg-card shadow-xl border-border flex flex-col max-h-[500px]">
-                                <CardHeader className="border-b border-border mb-4">
-                                    <CardTitle className="text-xs font-black uppercase tracking-widest text-muted-foreground">Network Participation</CardTitle>
-                                </CardHeader>
-                                <CardContent className="space-y-6 flex-1 overflow-auto">
-                                    {data.networkStats.length === 0 ? (
-                                        <p className="text-xs text-muted-foreground font-bold text-center py-4">No activity recorded</p>
-                                    ) : (
-                                        data.networkStats.map((stat) => (
-                                            <div key={stat.name} className="space-y-2">
-                                                <div className="flex justify-between text-[10px] font-black uppercase tracking-wider text-foreground/70">
-                                                    <span>{stat.name}</span>
-                                                    <span className="text-accent">{stat.count}</span>
-                                                </div>
-                                                <div className="h-2 w-full bg-muted rounded-full overflow-hidden shadow-inner">
-                                                    <div
-                                                        style={{ width: `${(stat.count / data.attendanceToday) * 100}%` }}
-                                                        className="h-full bg-accent rounded-full transition-all duration-1000 ease-out"
-                                                    />
-                                                </div>
-                                            </div>
-                                        ))
-                                    )}
-                                </CardContent>
-                            </Card>
-
-                            <div className="p-6 bg-primary/5 rounded-3xl border border-primary/10 space-y-3 shrink-0">
-                                <div className="flex items-center gap-2">
-                                    <TrendingUp className="w-4 h-4 text-primary" />
-                                    <h4 className="text-xs font-black uppercase tracking-widest text-primary">Insights</h4>
-                                </div>
-                                <p className="text-xs font-medium text-muted-foreground leading-relaxed">
-                                    Participation is currently at <span className="text-foreground font-black">{data.attendanceToday > 0 ? ((data.attendanceToday / data.totalUsers) * 100).toFixed(1) : 0}%</span> of the total registered church family.
-                                </p>
-                            </div>
-                        </div>
+                        <RealtimeAttendance initialData={data} />
+                        <RealtimeSidebar initialData={data} />
                     </div>
                 </TabsContent>
 
