@@ -149,6 +149,18 @@ export const classAttendance = pgTable("class_attendance", {
     index("class_attendance_class_level_idx").on(t.classLevel),
 ]);
 
+export const videos = pgTable("videos", {
+    id: uuid("id").primaryKey().defaultRandom(),
+    fbId: text("fb_id").notNull().unique(),
+    title: text("title"),
+    description: text("description"),
+    thumbnail: text("thumbnail"),
+    videoUrl: text("video_url").notNull(),
+    isLive: boolean("is_live").default(false).notNull(),
+    publishedAt: timestamp("published_at").notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
 export type Attendance = typeof attendance.$inferSelect;
@@ -172,3 +184,6 @@ export type ClassStaff = typeof classStaff.$inferSelect;
 export type NewClassStaff = typeof classStaff.$inferInsert;
 export type ClassAttendance = typeof classAttendance.$inferSelect;
 export type NewClassAttendance = typeof classAttendance.$inferInsert;
+export type Video = typeof videos.$inferSelect;
+export type NewVideo = typeof videos.$inferInsert;
+

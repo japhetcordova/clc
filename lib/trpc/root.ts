@@ -1,10 +1,11 @@
 import { router, publicProcedure } from "./trpc";
 import { z } from "zod";
 import { db } from "@/db";
-import { users, attendance, events, dailyPins, mobileHighlights, announcements, cellGroupInterests, classEnrollments } from "@/db/schema";
+import { users, attendance, events, dailyPins, mobileHighlights, announcements, cellGroupInterests, classEnrollments, videos } from "@/db/schema";
 import { eq, and, desc, sql, count, asc, ilike, inArray, or } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
+import { getLiveVideo, getRecentVideos, syncFacebookVideos } from "@/lib/video-service";
 
 export const appRouter = router({
     getAnnouncements: publicProcedure
@@ -999,6 +1000,21 @@ export const appRouter = router({
             revalidatePath("/admin");
             revalidatePath("/classes");
             return { success: true };
+        }),
+
+    getVideos: publicProcedure
+        .query(async () => {
+            const live = await getLiveVideo();
+            const archive = await getRecentVideos();
+            return { live, archive };
+        }),
+
+    syncVideos: publicProcedure
+        .input(z.object({ accessToken: z.string().optional() }))
+        .mutation(async ({ input }) => {
+            const result = await syncFacebookVideos(input.accessToken);
+            revalidatePath("/watch");
+            return result;
         }),
 });
 

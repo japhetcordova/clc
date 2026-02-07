@@ -1,6 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Users, UserCheck, Calendar, Filter, TrendingUp, Award } from "lucide-react";
+import { Users, UserCheck, Calendar, Filter, TrendingUp, Award, Tv } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 import AdminClient from "@/app/admin/admin-client";
 import AdminLogout from "@/app/admin/logout-button";
 import PaginationControls from "@/app/admin/pagination-controls";
@@ -98,6 +100,11 @@ export default async function AdminDashboard({
                         <Calendar className="w-4 h-4 text-primary" />
                         <span className="font-bold text-xs sm:text-sm text-foreground whitespace-nowrap">{data.filterDate}</span>
                     </div>
+                    <Link href="/admin/watch">
+                        <Button variant="outline" size="icon" className="rounded-2xl border-primary/20 bg-primary/5 text-primary hover:bg-primary hover:text-white transition-all shadow-lg shadow-primary/5">
+                            <Tv className="w-4 h-4" />
+                        </Button>
+                    </Link>
                     <AdminLogout />
                 </div>
             </div>

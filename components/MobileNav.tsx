@@ -1,7 +1,7 @@
 ﻿"use client";
 
 import { motion } from "framer-motion";
-import { QrCode, User, Home, MapPin, BookOpen, Shield, GraduationCap } from "lucide-react";
+import { QrCode, User, Home, MapPin, BookOpen, Shield, GraduationCap, Tv } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
@@ -13,6 +13,7 @@ export default function MobileNav() {
 
     const links = [
         { name: "App", href: "/mobile", icon: Home },
+        { name: "Watch", href: "/watch", icon: Tv },
         { name: "Classes", href: "/classes", icon: GraduationCap },
         { name: "Verse", href: "/word", icon: BookOpen },
         ...(isAdmin ? [{ name: "Admin", href: "/admin", icon: Shield }] : []),
