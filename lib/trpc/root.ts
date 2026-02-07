@@ -1,7 +1,7 @@
 import { router, publicProcedure } from "./trpc";
 import { z } from "zod";
 import { db } from "@/db";
-import { users, attendance, events, dailyPins, mobileHighlights, announcements, cellGroupInterests, classEnrollments, videos } from "@/db/schema";
+import { users, attendance, events, mobileHighlights, announcements, cellGroupInterests, classEnrollments, videos } from "@/db/schema";
 import { eq, and, desc, sql, count, asc, ilike, inArray, or } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
@@ -518,57 +518,7 @@ export const appRouter = router({
             return { success: false, error: "Invalid administrator password." };
         }),
 
-    getActiveDailyPin: publicProcedure
-        .query(async () => {
-            const today = new Date().toISOString().split('T')[0];
-            const [existingPin] = await db.select()
-                .from(dailyPins)
-                .where(eq(dailyPins.date, today))
-                .limit(1);
-            return { success: true, pin: existingPin || null };
-        }),
 
-    verifyPinGeneratorPassword: publicProcedure
-        .input(z.object({ password: z.string() }))
-        .mutation(async ({ input }) => {
-            const generatorPass = process.env.PIN_GENERATOR_PASSWORD || process.env.ADMIN_PASSWORD;
-            if (!generatorPass) {
-                return { success: false, error: "Security password not configured." };
-            }
-            if (input.password === generatorPass) {
-                return { success: true };
-            }
-            return { success: false, error: "Invalid security password." };
-        }),
-
-    generateDailyPin: publicProcedure
-        .input(z.object({ password: z.string() }))
-        .mutation(async ({ input }) => {
-            // Re-use logic
-            const generatorPass = process.env.PIN_GENERATOR_PASSWORD || process.env.ADMIN_PASSWORD;
-            if (input.password !== generatorPass) {
-                return { success: false, error: "Invalid security password." };
-            }
-
-            const today = new Date().toISOString().split('T')[0];
-            const [existing] = await db.select()
-                .from(dailyPins)
-                .where(eq(dailyPins.date, today))
-                .limit(1);
-
-            if (existing) {
-                return { success: true, pin: existing, message: "Today's PIN is already active." };
-            }
-
-            const pin = Math.floor(100000 + Math.random() * 900000).toString();
-            const [newPin] = await db.insert(dailyPins).values({
-                pin,
-                date: today,
-            }).returning();
-
-            revalidatePath("/pin-generator");
-            return { success: true, pin: newPin };
-        }),
 
     getUserByQrId: publicProcedure
         .input(z.object({ qrCodeId: z.string() }))
@@ -781,27 +731,25 @@ export const appRouter = router({
     validateScannerPin: publicProcedure
         .input(z.object({ password: z.string() }))
         .mutation(async ({ input }) => {
-            const { dailyPins } = await import("@/db/schema");
-            const today = new Date().toISOString().split('T')[0];
+            const scannerPin = process.env.SCANNER_PIN;
 
-            const [pinRecord] = await db.select()
-                .from(dailyPins)
-                .where(eq(dailyPins.date, today))
-                .limit(1);
+            if (!scannerPin) {
+                return { success: false, error: "Scanner PIN not configured." };
+            }
 
-            if (pinRecord && pinRecord.pin === input.password) {
+            if (input.password === scannerPin) {
                 const cookieStore = await cookies();
                 cookieStore.set("clc_scanner_session", "authorized", {
                     httpOnly: true,
                     secure: process.env.NODE_ENV === "production",
                     sameSite: "strict",
                     path: "/",
-                    maxAge: 60 * 60 * 24, // 1 day
+                    maxAge: 60 * 60 * 24 * 365, // 1 year (permanent session)
                 });
                 return { success: true };
             }
 
-            return { success: false, error: "Invalid security PIN for today." };
+            return { success: false, error: "Invalid security PIN." };
         }),
 
     clearScannerSession: publicProcedure

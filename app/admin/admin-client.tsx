@@ -362,13 +362,7 @@ export default function AdminClient({
                 </div>
 
                 <div className="flex flex-col sm:flex-row gap-3 pt-2 border-t border-border/50">
-                    <div className="grid grid-cols-2 sm:flex sm:flex-row gap-3 flex-1">
-                        <Link href="/pin-generator" className="w-full sm:w-auto">
-                            <Button className="w-full gap-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl h-11 font-black text-[10px] uppercase tracking-widest shadow-lg shadow-amber-600/20 active:scale-95 transition-all">
-                                <Key className="w-4 h-4" />
-                                Daily PIN
-                            </Button>
-                        </Link>
+                    <div className="flex flex-col sm:flex-row gap-3 flex-1">
                         <Link href="/admin/events" className="w-full sm:w-auto">
                             <Button className="w-full gap-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl h-11 font-black text-[10px] uppercase tracking-widest shadow-lg shadow-primary/20 active:scale-95 transition-all">
                                 <CalendarIcon className="w-4 h-4" />

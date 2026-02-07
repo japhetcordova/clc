@@ -35,12 +35,7 @@ export const attendance = pgTable("attendance", {
     index("attendance_scan_date_user_id_idx").on(t.scanDate, t.userId), // Composite for common queries
 ]);
 
-export const dailyPins = pgTable("daily_pins", {
-    id: uuid("id").primaryKey().defaultRandom(),
-    pin: text("pin").notNull(),
-    date: date("date").notNull().unique(), // One pin per day
-    createdAt: timestamp("created_at").defaultNow().notNull(),
-});
+
 
 export const events = pgTable("events", {
     id: uuid("id").primaryKey().defaultRandom(),
@@ -165,7 +160,7 @@ export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
 export type Attendance = typeof attendance.$inferSelect;
 export type NewAttendance = typeof attendance.$inferInsert;
-export type DailyPin = typeof dailyPins.$inferSelect;
+
 export type ChurchEvent = typeof events.$inferSelect;
 export type NewChurchEvent = typeof events.$inferInsert;
 export type Suggestion = typeof suggestions.$inferSelect;

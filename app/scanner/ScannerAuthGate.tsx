@@ -12,12 +12,11 @@ export default function ScannerAuthGate({
     isAuthorized: boolean
 }) {
     const validateMutation = trpc.validateScannerPin.useMutation();
-    const clearMutation = trpc.clearScannerSession.useMutation();
 
     return (
         <SecurityGate
             title="Scanner Lock"
-            description="Daily Security PIN Required"
+            description="Security PIN Required"
             icon={<ShieldAlert className="w-8 h-8 text-primary" />}
             accentColor="primary"
             isOTP={true}
@@ -26,11 +25,11 @@ export default function ScannerAuthGate({
                 return res as any;
             }}
             onAuthorized={() => { }}
-            onMidnight={() => clearMutation.mutate()}
             initialAuthorized={isAuthorized}
-            footerNote="PINs are valid for 24 hours only."
+            footerNote="Enter the scanner PIN to access."
         >
             {children}
         </SecurityGate>
     );
 }
+
