@@ -1,4 +1,5 @@
 import { decodeHTMLEntities } from "./utils";
+import { MANUAL_VOTD } from "./votd-data";
 
 export async function getVOTDByDate(dateInput: string) {
     try {
@@ -29,6 +30,17 @@ export async function getVOTDByDate(dateInput: string) {
             day: 'numeric',
             year: 'numeric'
         }).format(date);
+
+        // Check for manual entry first
+        if (MANUAL_VOTD[dateKey]) {
+            const manual = MANUAL_VOTD[dateKey];
+            return {
+                ...manual,
+                date: dateKey,
+                fullDate,
+                version: manual.version || "New International Version"
+            };
+        }
 
         // Fetch from VerseOfTheDay.com
         const votdUrl = `https://www.verseoftheday.com/en/${dateKey}/`;
@@ -94,6 +106,7 @@ export async function getVOTDByDate(dateInput: string) {
         return null;
     }
 }
+
 
 export async function getPreviousDevotionals(count: number = 7) {
     const devotionals = [];

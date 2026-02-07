@@ -1,4 +1,5 @@
 import { decodeHTMLEntities } from "./utils";
+import { MANUAL_VOTD } from "./votd-data";
 
 export async function getVOTD() {
     try {
@@ -23,6 +24,17 @@ export async function getVOTD() {
             day: 'numeric',
             year: 'numeric'
         }).format(now);
+
+        // Check for manual entry first
+        if (MANUAL_VOTD[dateKey]) {
+            const manual = MANUAL_VOTD[dateKey];
+            return {
+                ...manual,
+                date: dateKey,
+                fullDate,
+                version: manual.version || "New International Version"
+            };
+        }
 
         // Fetch both APIs in parallel with timeout
         // Note: BibleGateway doesn't take a date, so it might be out of sync with Manila time
@@ -139,3 +151,4 @@ export async function getVOTD() {
         };
     }
 }
+
