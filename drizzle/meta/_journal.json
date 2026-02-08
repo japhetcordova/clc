@@ -29,6 +29,13 @@
       "when": 1768997459550,
       "tag": "0003_glamorous_silver_sable",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1770543795127,
+      "tag": "0004_high_skin",
+      "breakpoints": true
     }
   ]
 }

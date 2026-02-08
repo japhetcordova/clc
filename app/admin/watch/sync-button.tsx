@@ -13,7 +13,7 @@ export default function VideoSync() {
     const syncMutation = trpc.syncVideos.useMutation({
         onSuccess: (data) => {
             if (data.success) {
-                toast.success(`Synced ${data.count} videos!`);
+                toast.success(`Synced ${data.liveCount || 0} live, ${data.archivedCount || 0} archived videos!`);
                 utils.getVideos.invalidate();
             } else {
                 toast.error(`Sync failed: ${data.error}`);

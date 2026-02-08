@@ -152,6 +152,7 @@ export const videos = pgTable("videos", {
     description: text("description"),
     thumbnail: text("thumbnail"),
     videoUrl: text("video_url").notNull(),
+    embedHtml: text("embed_html"), // Official Facebook embed player HTML
     isLive: boolean("is_live").default(false).notNull(),
     publishedAt: timestamp("published_at").notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),

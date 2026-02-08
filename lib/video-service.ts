@@ -22,9 +22,11 @@ export async function getLiveVideo() {
 }
 
 /**
- * This is a simplified "sync" function. 
- * In a real-world app, you'd use a Facebook Graph API token.
- * For now, we'll implement the logic to handle the sync if a token is provided.
+ * Sync Facebook videos using the Graph API.
+ * This follows Facebook's official guidelines:
+ * 1. Fetch live_videos with broadcast_status=LIVE to detect active streams
+ * 2. Store the embed_html for compliant embedding
+ * 3. Fetch regular videos for the archive
  */
 export async function syncFacebookVideos(accessToken?: string) {
     if (!accessToken) {
@@ -33,20 +35,73 @@ export async function syncFacebookVideos(accessToken?: string) {
     }
 
     try {
-        const response = await fetch(
-            `https://graph.facebook.com/v19.0/${FB_PAGE_ID}/videos?fields=id,title,description,thumbnails,source,is_live,created_time&access_token=${accessToken}`
+        console.log("Starting Facebook Video Sync...");
+
+        // 1. Fetch ACTIVE live videos with embed_html and picture (the correct approach)
+        const liveResponse = await fetch(
+            `https://graph.facebook.com/v19.0/${FB_PAGE_ID}/live_videos?fields=id,title,description,embed_html,status,creation_time,video{id,thumbnails},picture&broadcast_status=["LIVE"]&access_token=${accessToken}`
         );
 
-        if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            console.error("FB API Error Details:", errorData);
-            throw new Error(`FB API error: ${response.statusText} - ${JSON.stringify(errorData)}`);
+        // 2. Fetch recent videos for archive
+        const videosResponse = await fetch(
+            `https://graph.facebook.com/v19.0/${FB_PAGE_ID}/videos?fields=id,title,description,thumbnails,embed_html,created_time&access_token=${accessToken}`
+        );
+
+        // Reset all isLive to false before updating
+        await db.update(videos).set({ isLive: false, embedHtml: null });
+
+        // Handle live videos first (priority)
+        let liveCount = 0;
+        if (liveResponse.ok) {
+            const liveData = await liveResponse.json();
+            const liveVideos = liveData.data || [];
+            console.log(`Found ${liveVideos.length} LIVE broadcasts`);
+
+            for (const liveV of liveVideos) {
+                if (liveV.status === "LIVE" && liveV.embed_html) {
+                    const fbId = liveV.video?.id || liveV.id;
+                    liveCount++;
+
+                    // Get thumbnail: prioritize video.thumbnails, then picture, then fallback
+                    const thumbnail = liveV.video?.thumbnails?.data?.[0]?.uri
+                        || liveV.picture
+                        || `/bg/word.webp`;
+
+                    await db.insert(videos)
+                        .values({
+                            fbId: fbId,
+                            title: liveV.title || "Live Worship Service",
+                            description: liveV.description || "",
+                            thumbnail: thumbnail,
+                            videoUrl: `https://www.facebook.com/${FB_PAGE_ID}/videos/${fbId}/`,
+                            embedHtml: liveV.embed_html, // Official Facebook embed
+                            isLive: true,
+                            publishedAt: new Date(liveV.creation_time || Date.now()),
+                        })
+                        .onConflictDoUpdate({
+                            target: videos.fbId,
+                            set: {
+                                isLive: true,
+                                embedHtml: liveV.embed_html,
+                                title: liveV.title || "Live Worship Service",
+                                thumbnail: thumbnail, // Update thumbnail on conflict too
+                            }
+                        });
+                }
+            }
+        } else {
+            console.warn("Failed to fetch live_videos:", await liveResponse.text());
         }
 
+        // Handle archived videos
+        if (!videosResponse.ok) {
+            const errorData = await videosResponse.json().catch(() => ({}));
+            console.error("FB API Error (/videos):", errorData);
+            throw new Error(`FB API error: ${videosResponse.statusText}`);
+        }
 
-
-        const data = await response.json();
-        const fbVideos = data.data || [];
+        const videosData = await videosResponse.json();
+        const fbVideos = videosData.data || [];
 
         for (const video of fbVideos) {
             const thumbnail = video.thumbnails?.data?.[0]?.uri || "";
@@ -57,22 +112,24 @@ export async function syncFacebookVideos(accessToken?: string) {
                     title: video.title || "Untitled Service",
                     description: video.description || "",
                     thumbnail: thumbnail,
-                    videoUrl: `https://www.facebook.com/watch/?v=${video.id}`,
-                    isLive: video.is_live || false,
+                    videoUrl: `https://www.facebook.com/${FB_PAGE_ID}/videos/${video.id}/`,
+                    embedHtml: video.embed_html || null,
+                    isLive: false,
                     publishedAt: new Date(video.created_time),
                 })
                 .onConflictDoUpdate({
                     target: videos.fbId,
                     set: {
-                        isLive: video.is_live || false,
                         title: video.title || "Untitled Service",
                         description: video.description || "",
                         thumbnail: thumbnail,
+                        embedHtml: video.embed_html || null,
                     }
                 });
         }
 
-        return { success: true, count: fbVideos.length };
+        console.log(`Facebook Sync Completed. Live: ${liveCount}, Archived: ${fbVideos.length}`);
+        return { success: true, liveCount, archivedCount: fbVideos.length };
     } catch (error) {
         console.error("Failed to sync Facebook videos:", error);
         return { success: false, error: String(error) };
