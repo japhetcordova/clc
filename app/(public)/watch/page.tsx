@@ -24,15 +24,26 @@ import { Metadata } from "next";
 import { getLiveVideo, getRecentVideos, syncFacebookVideos } from "@/lib/video-service";
 import { format } from "date-fns";
 
-export const metadata: Metadata = {
-    title: "Watch Live | Christian Life Center Tagum",
-    description: "Join our worship services live from Tagum City. Experience authentic worship and life-changing messages wherever you are.",
-    openGraph: {
+export async function generateMetadata(): Promise<Metadata> {
+    const [live, recent] = await Promise.all([
+        getLiveVideo(),
+        getRecentVideos()
+    ]);
+
+    const latest = live || recent[0];
+    const image = latest?.thumbnail || "/logo.webp";
+
+    return {
         title: "Watch Live | Christian Life Center Tagum",
-        description: "Join our worship services live from Tagum City.",
-        images: ["/bg/events.webp"],
-    }
-};
+        description: "Join our worship services live from Tagum City. Experience authentic worship and life-changing messages wherever you are.",
+        openGraph: {
+            title: "Watch Live | Christian Life Center Tagum",
+            description: "Join our worship services live from Tagum City.",
+            images: [image],
+        }
+    };
+}
+
 
 export default async function WatchPage() {
     // Optional: Auto-sync if token is provided in env
