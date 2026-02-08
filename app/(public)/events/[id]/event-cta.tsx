@@ -5,6 +5,12 @@ import { Button } from "@/components/ui/button";
 import { Share2, LinkIcon, Calendar } from "lucide-react";
 import { trpc } from "@/lib/trpc/client";
 import { toast } from "sonner";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface EventCTAProps {
     eventId: string;
@@ -70,29 +76,78 @@ export default function EventCTA({
         }
     };
 
-    const handleCalendarAdd = () => {
-        const [year, month, day] = eventDate.split("-").map(Number);
-        const [timeStr, modifier] = eventTime.split(" ");
-        let [hours, minutes] = timeStr.split(":").map(Number);
-        if (modifier === "PM" && hours < 12) hours += 12;
-        if (modifier === "AM" && hours === 12) hours = 0;
+    const getEventDates = () => {
+        try {
+            const [year, month, day] = eventDate.split("-").map(Number);
+            const timeMatch = eventTime.match(/(\d+)(?::(\d+))?\s*(AM|PM)?/i);
 
-        const startDate = new Date(year, month - 1, day, hours, minutes);
-        const endDate = new Date(startDate.getTime() + 60 * 60 * 1000);
+            if (!timeMatch) throw new Error("Invalid time format");
+
+            let hours = parseInt(timeMatch[1], 10);
+            const minutes = parseInt(timeMatch[2] || "0", 10);
+            const modifier = timeMatch[3]?.toUpperCase();
+
+            if (modifier === "PM" && hours < 12) hours += 12;
+            if (modifier === "AM" && hours === 12) hours = 0;
+
+            const startDate = new Date(year, month - 1, day, hours, minutes);
+            const endDate = new Date(startDate.getTime() + 60 * 60 * 1000);
+
+            if (isNaN(startDate.getTime())) throw new Error("Invalid date");
+
+            return { startDate, endDate };
+        } catch (err) {
+            console.error(err);
+            return null;
+        }
+    };
+
+    const handleGoogleCalendar = () => {
+        const dates = getEventDates();
+        if (!dates) {
+            toast.error("Could not parse event date/time");
+            return;
+        }
+
+        const formatDate = (date: Date) => date.toISOString().replace(/-|:|\.\d+/g, "");
+
+        const url = new URL("https://www.google.com/calendar/render");
+        url.searchParams.append("action", "TEMPLATE");
+        url.searchParams.append("text", eventTitle);
+        url.searchParams.append("details", description);
+        url.searchParams.append("location", location);
+        url.searchParams.append("dates", `${formatDate(dates.startDate)}/${formatDate(dates.endDate)}`);
+
+        window.open(url.toString(), "_blank");
+    };
+
+    const handleICSDownload = () => {
+        const dates = getEventDates();
+        if (!dates) {
+            toast.error("Could not parse event date/time");
+            return;
+        }
 
         const formatDate = (date: Date) => {
             return date.toISOString().replace(/-|:|\.\d+/g, "");
         };
 
+        const escapeICS = (str: string) => {
+            return str
+                .replace(/[\\,;]/g, (match) => `\\${match}`)
+                .replace(/\n/g, "\\n");
+        };
+
         const icsContent = [
             "BEGIN:VCALENDAR",
             "VERSION:2.0",
+            "PRODID:-//Christian Life Center//Event Calendar//EN",
             "BEGIN:VEVENT",
-            `DTSTART:${formatDate(startDate)}`,
-            `DTEND:${formatDate(endDate)}`,
-            `SUMMARY:${eventTitle}`,
-            `DESCRIPTION:${description.replace(/\n/g, "\\n")}`,
-            `LOCATION:${location}`,
+            `DTSTART:${formatDate(dates.startDate)}`,
+            `DTEND:${formatDate(dates.endDate)}`,
+            `SUMMARY:${escapeICS(eventTitle)}`,
+            `DESCRIPTION:${escapeICS(description)}`,
+            `LOCATION:${escapeICS(location)}`,
             "END:VEVENT",
             "END:VCALENDAR"
         ].join("\n");
@@ -104,7 +159,7 @@ export default function EventCTA({
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-        toast.success("Event added to your download queue!");
+        toast.success("Calendar file downloaded!");
     };
 
     const copyToClipboard = () => {
@@ -150,13 +205,37 @@ export default function EventCTA({
                 )}
 
                 <div className="flex flex-col gap-3">
-                    <Button
-                        onClick={handleCalendarAdd}
-                        variant="ghost"
-                        className="w-full h-14 rounded-2xl border-white/20 bg-white/5 font-black uppercase text-[10px] tracking-widest text-white hover:bg-white/10 gap-2"
-                    >
-                        <Calendar className="w-4 h-4" /> Add to Calendar
-                    </Button>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button
+                                variant="ghost"
+                                className="w-full h-14 rounded-2xl border-white/20 bg-white/5 font-black uppercase text-[10px] tracking-widest text-white hover:bg-white/10 gap-2"
+                            >
+                                <Calendar className="w-4 h-4" /> Add to Calendar
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-[200px] rounded-2xl p-2 bg-background border-border shadow-2xl">
+                            <DropdownMenuItem
+                                onClick={handleGoogleCalendar}
+                                className="h-12 rounded-xl scale-95 hover:scale-100 transition-all font-bold uppercase text-[10px] tracking-widest gap-3 cursor-pointer"
+                            >
+                                <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
+                                    <div className="w-2 h-2 rounded-full bg-blue-500" />
+                                </div>
+                                Google Calendar
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                                onClick={handleICSDownload}
+                                className="h-12 rounded-xl scale-95 hover:scale-100 transition-all font-bold uppercase text-[10px] tracking-widest gap-3 cursor-pointer"
+                            >
+                                <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                                    <div className="w-2 h-2 rounded-full bg-primary" />
+                                </div>
+                                Apple / Outlook
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+
                     <Button
                         onClick={handleShare}
                         variant="ghost"
