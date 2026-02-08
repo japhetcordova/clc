@@ -6,10 +6,23 @@ import { trpcServer } from "@/lib/trpc/server";
 
 export const dynamic = "force-dynamic";
 
-export const metadata = {
-    title: "The Journey | Christian Life Center",
-    description: "Discover the G12 Discipleship Journey and enroll in our School of Leaders classes.",
-};
+import { Metadata } from "next";
+
+export async function generateMetadata(): Promise<Metadata> {
+    return {
+        title: "The Journey | Christian Life Center",
+        description: "Discover the G12 Discipleship Journey and enroll in our School of Leaders classes.",
+        openGraph: {
+            url: "/classes",
+            images: ["/logo.webp"],
+        },
+        twitter: {
+            card: "summary_large_image",
+            images: ["/logo.webp"],
+        }
+    };
+}
+
 
 export default async function ClassesPage() {
     const caller = await trpcServer();

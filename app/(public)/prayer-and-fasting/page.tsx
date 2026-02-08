@@ -1,4 +1,21 @@
+import { Metadata } from "next";
 import { Button } from "@/components/ui/button";
+
+export async function generateMetadata(): Promise<Metadata> {
+    return {
+        title: "Prayer & Fasting | Christian Life Center Tagum",
+        description: "Join us for 21 days of prayer and fasting. Seek God's presence and declare His lordship over the year ahead.",
+        openGraph: {
+            url: "/prayer-and-fasting",
+            images: ["/logo.webp"],
+        },
+        twitter: {
+            card: "summary_large_image",
+            images: ["/logo.webp"],
+        }
+    };
+}
+
 import { ArrowLeft, Clock, MapPin, Calendar, Heart, BookOpen, Share2 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";

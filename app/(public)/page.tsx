@@ -4,14 +4,23 @@ import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { trpcServer } from "@/lib/trpc/server";
 
-export const metadata: Metadata = {
-  title: "Christian Life Center Tagum City | CLC Tagum",
-  description: "Welcome to Christian Life Center Tagum City (CLC Tagum). Join us for worship, community, and spiritual growth. Love God. Love People. Make Disciples.",
-  keywords: ["christian life center", "christian life centr", "christian life center tagum city", "clc tagum", "tagum city church"],
-  openGraph: {
-    url: "/",
-  }
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    title: "Christian Life Center Tagum City | CLC Tagum",
+    description: "Welcome to Christian Life Center Tagum City (CLC Tagum). Join us for worship, community, and spiritual growth. Love God. Love People. Make Disciples.",
+    keywords: ["christian life center", "christian life centr", "christian life center tagum city", "clc tagum", "tagum city church"],
+    openGraph: {
+      url: "/",
+      images: ["/logo.webp"],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: "Christian Life Center Tagum City | CLC Tagum",
+      description: "Welcome to Christian Life Center Tagum City (CLC Tagum). Join us for worship, community, and spiritual growth.",
+      images: ["/logo.webp"],
+    }
+  };
+}
 
 export default async function Home() {
   const headersList = await headers();

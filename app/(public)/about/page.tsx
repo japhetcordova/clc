@@ -7,13 +7,20 @@ import { AboutQuote } from "@/components/about/AboutQuote";
 import { AboutCTA } from "@/components/about/AboutCTA";
 import { Metadata } from "next";
 
-export const metadata: Metadata = {
-    title: "About Us",
-    description: "Learn more about Christian Life Center Tagum City, our story, our pastors, and our mission to love God and people.",
-    openGraph: {
-        url: "/about",
-    },
-};
+export async function generateMetadata(): Promise<Metadata> {
+    return {
+        title: "About Us | Christian Life Center Tagum",
+        description: "Learn more about Christian Life Center Tagum City, our story, our pastors, and our mission to love God and people.",
+        openGraph: {
+            url: "/about",
+            images: ["/logo.webp"],
+        },
+        twitter: {
+            card: "summary_large_image",
+            images: ["/logo.webp"],
+        }
+    };
+}
 
 export default function AboutPage() {
     const fadeIn = {

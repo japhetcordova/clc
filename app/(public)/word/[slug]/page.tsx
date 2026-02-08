@@ -31,8 +31,16 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     return {
         title: `${data.reference} - Verse of the Day`,
         description: `Read today's verse: "${data.text.substring(0, 150)}..." and find inspiration through thoughts and prayer.`,
+        openGraph: {
+            images: ["/logo.webp"],
+        },
+        twitter: {
+            card: "summary_large_image",
+            images: ["/logo.webp"],
+        }
     };
 }
+
 
 export default async function DevotionalPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;

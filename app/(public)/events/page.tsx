@@ -12,10 +12,20 @@ import { Metadata } from "next";
 import { getPrayerAndFastingDay } from "@/lib/date-utils";
 import NewsletterForm from "./newsletter-form";
 
-export const metadata: Metadata = {
-    title: "News & Events",
-    description: "Stay updated with the latest news and upcoming events at Christian Life Center Tagum City. Join our gatherings and be part of what God is doing.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+    return {
+        title: "News & Events | Christian Life Center Tagum",
+        description: "Stay updated with the latest news and upcoming events at Christian Life Center Tagum City. Join our gatherings and be part of what God is doing.",
+        openGraph: {
+            url: "/events",
+            images: ["/logo.webp"],
+        },
+        twitter: {
+            card: "summary_large_image",
+            images: ["/logo.webp"],
+        }
+    };
+}
 
 export const revalidate = 1800; // Revalidate every 30 minutes
 

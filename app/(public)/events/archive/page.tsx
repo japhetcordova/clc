@@ -4,10 +4,23 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
-export const metadata = {
-    title: "News Archive",
-    description: "Browse past church announcements and updates from Christian Life Center Tagum City.",
-};
+import { Metadata } from "next";
+
+export async function generateMetadata(): Promise<Metadata> {
+    return {
+        title: "News Archive | Christian Life Center",
+        description: "Browse past church announcements and updates from Christian Life Center Tagum City.",
+        openGraph: {
+            url: "/events/archive",
+            images: ["/logo.webp"],
+        },
+        twitter: {
+            card: "summary_large_image",
+            images: ["/logo.webp"],
+        }
+    };
+}
+
 
 export const revalidate = 1800; // 30 minutes
 

@@ -1,4 +1,21 @@
 import { getPreviousDevotionals } from "@/lib/votd-archive";
+import { Metadata } from "next";
+
+export async function generateMetadata(): Promise<Metadata> {
+    return {
+        title: "Word Archive | Christian Life Center",
+        description: "Browse previous Verse of the Day devotionals from Christian Life Center Tagum City.",
+        openGraph: {
+            url: "/word/archive",
+            images: ["/logo.webp"],
+        },
+        twitter: {
+            card: "summary_large_image",
+            images: ["/logo.webp"],
+        }
+    };
+}
+
 import {
     BookOpen,
     Calendar,

@@ -22,7 +22,7 @@ const siteConfig = {
   name: "Christian Life Center Tagum City",
   description: "Official registration and attendance system for Christian Life Center Tagum City. A place to belong, grow, and serve.",
   url: "https://clctagum.com", // 
-  ogImage: "/logo2.webp", // Use logo for the rest
+  ogImage: "/logo.webp", // Use logo for the rest
   keywords: [
     "Christian Life Center",
     "Christian Life Center Tagum City",

@@ -18,11 +18,35 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { trpcServer } from "@/lib/trpc/server";
 import { notFound } from "next/navigation";
+import { Metadata } from "next";
 import EventCTA from "./event-cta";
 import QRLink from "./qr-link";
 import { EventShare } from "./event-share";
 
 export const revalidate = 1800; // Revalidate every 30 mins
+
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+    const { id } = await params;
+    const caller = await trpcServer();
+    const event = await caller.getEventById({ id });
+
+    if (!event) return { title: "Event Not Found" };
+
+    return {
+        title: `${event.title} | Christian Life Center Tagum`,
+        description: event.description.substring(0, 160),
+        openGraph: {
+            title: event.title,
+            description: event.description.substring(0, 160),
+            images: [event.image || "/logo.webp"],
+        },
+        twitter: {
+            card: "summary_large_image",
+            images: [event.image || "/logo.webp"],
+        }
+    };
+}
+
 
 export default async function EventDetailPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;

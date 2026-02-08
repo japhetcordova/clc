@@ -1,4 +1,27 @@
 import { trpcServer } from "@/lib/trpc/server";
+import { Metadata } from "next";
+
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+    const { id } = await params;
+    const caller = await trpcServer();
+    const announcements = await caller.getAnnouncements();
+    const announcement = announcements.find(a => a.id === id);
+
+    if (!announcement) return { title: "Announcement Not Found" };
+
+    return {
+        title: `${announcement.title} | CLC News`,
+        description: announcement.content.substring(0, 160),
+        openGraph: {
+            images: ["/logo.webp"],
+        },
+        twitter: {
+            card: "summary_large_image",
+            images: ["/logo.webp"],
+        }
+    };
+}
+
 import { ArrowLeft, Calendar, Megaphone, Share2 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";

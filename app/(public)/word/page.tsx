@@ -1,3 +1,4 @@
+import { Metadata } from "next";
 import {
     BookOpen,
     Calendar,
@@ -29,7 +30,6 @@ import Link from "next/link";
 import { getVOTD } from "@/lib/votd";
 import { getPreviousDevotionals } from "@/lib/votd-archive";
 import VOTDClient from "./votd-client";
-import { Metadata } from "next";
 
 export async function generateMetadata(): Promise<Metadata> {
     const data = await getVOTD();
@@ -50,20 +50,13 @@ export async function generateMetadata(): Promise<Metadata> {
             description: thoughts,
             url: "/word",
             type: "article",
-            images: [
-                {
-                    url: "/bg/word.webp",
-                    width: 1200,
-                    height: 630,
-                    alt: "Bible - Verse of the Day",
-                }
-            ],
+            images: ["/logo.webp"],
         },
         twitter: {
             card: "summary_large_image",
             title: pageTitle,
             description: thoughts,
-            images: ["/bg/word.webp"],
+            images: ["/logo.webp"],
         },
     };
 }
