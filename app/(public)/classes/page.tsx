@@ -53,7 +53,7 @@ export default async function ClassesPage() {
                             Discipleship <span className="text-primary underline decoration-primary/20 underline-offset-8">Levels</span>
                         </h1>
                         <p className="max-w-3xl mx-auto text-muted-foreground font-thin text-base sm:text-lg leading-relaxed">
-                            Life Class and SOL 1Ã¢â‚¬â€œ3 are discipleship and leadership levels in the G12 (Government of 12) church system, designed to move members from new believer to mature leader.
+                            Life Class is the core of our Consolidation stage, uniting Pre-Encounter, Encounter, and Post-Encounter into a 9-week journey. Move from new believer to mature leader through our School of Leaders (SOL) track.
                         </p>
                     </div>
 

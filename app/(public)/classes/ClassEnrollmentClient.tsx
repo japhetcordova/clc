@@ -72,10 +72,15 @@ export default function ClassEnrollmentClient({ currentUser }: { currentUser: Us
         {
             id: "LIFE_CLASS",
             title: "Life Class",
-            subtitle: "The Entry Level",
-            description: "The starting point in the G12 journey for new believers or attendees. Learn how to live the Christian life.",
-            focus: ["Basic Christian life", "Relationship with God", "Values, discipline, and identity"],
-            purpose: "Prepare for deeper discipleship and establish a spiritual foundation.",
+            subtitle: "The Foundation (9 Weeks)",
+            description: "A 9-week journey designed to consolidate your faith and prepare you for a personal encounter with God.",
+            focus: [
+                "Weeks 1-4: Pre-Encounter (Lessons 1-4)",
+                "Week 5: Encounter (3-Day Weekend)",
+                "Weeks 6-9: Post-Encounter (Lessons 6-9)"
+            ],
+            qualifiers: "Attending Cell group, Cell Celebration, and weekly services.",
+            purpose: "Shift from passive attendee to a certified volunteer (ILD).",
             icon: <Heart className="w-6 h-6 text-emerald-500" />,
             color: "border-emerald-500/20 bg-emerald-500/5",
             accent: "bg-emerald-500"
@@ -83,10 +88,15 @@ export default function ClassEnrollmentClient({ currentUser }: { currentUser: Us
         {
             id: "SOL_1",
             title: "SOL 1",
-            subtitle: "Foundations of Leadership",
-            description: "First step in the School of Leaders. Start learning how to lead yourself and others.",
-            focus: ["Salvation & Lordship", "Vision of the church", "Discipleship principles"],
-            purpose: "Build a solid leadership foundation. Ready to serve and disciple.",
+            subtitle: "Faith and Vision (10 Weeks)",
+            description: "First step in the School of Leaders. Build a firm foundation in Faith and the Vision.",
+            focus: [
+                "Pastored in His Love",
+                "Power of a Vision",
+                "1-Verse Evangelism"
+            ],
+            qualifiers: "Completed Life Class (Weeks 1-9) & Devotional Book.",
+            purpose: "Invite 3 people to church and start leading yourself.",
             icon: <Compass className="w-6 h-6 text-primary" />,
             color: "border-primary/20 bg-primary/5",
             accent: "bg-primary"
@@ -94,10 +104,15 @@ export default function ClassEnrollmentClient({ currentUser }: { currentUser: Us
         {
             id: "SOL_2",
             title: "SOL 2",
-            subtitle: "Character & Ministry",
-            description: "Focus on character formation and ministry involvement. Trust and accountability.",
-            focus: ["Character formation", "Ministry involvement", "Faithfulness"],
-            purpose: "Serve in church and start assisting in cell groups. Trusted to lead others.",
+            subtitle: "Character & Ministry (10 Weeks)",
+            description: "Focus on character formation and learning how to win your family for Christ.",
+            focus: [
+                "A Winning Strategy",
+                "Families with a Purpose",
+                "Character Formation"
+            ],
+            qualifiers: "Completed SOL 1 (Weeks 1-10).",
+            purpose: "Win your family and prepare to open a cell group.",
             icon: <ShieldCheck className="w-6 h-6 text-accent" />,
             color: "border-accent/20 bg-accent/5",
             accent: "bg-accent"
@@ -105,10 +120,15 @@ export default function ClassEnrollmentClient({ currentUser }: { currentUser: Us
         {
             id: "SOL_3",
             title: "SOL 3",
-            subtitle: "Leadership & Multiplication",
-            description: "Advanced leadership training. Focus on mentoring and church vision expansion.",
-            focus: ["Leadership multiplication", "Mentoring", "Church vision and expansion"],
-            purpose: "Lead cell groups and disciple leaders. Ready to raise leaders, not followers.",
+            subtitle: "Leadership Multiplication (10 Weeks)",
+            description: "Advanced training to become a leader of 12 disciples and expand the church vision.",
+            focus: [
+                "Effective Leadership",
+                "The Holy Spirit within Me",
+                "Multiplication Strategy"
+            ],
+            qualifiers: "Completed SOL 2 (Weeks 1-10).",
+            purpose: "Be a leader of 12 disciples and raise new leaders.",
             icon: <Rocket className="w-6 h-6 text-amber-500" />,
             color: "border-amber-500/20 bg-amber-500/5",
             accent: "bg-amber-500"
@@ -134,22 +154,50 @@ export default function ClassEnrollmentClient({ currentUser }: { currentUser: Us
                     </h2>
                     <div className="space-y-4 text-muted-foreground font-thin text-lg leading-relaxed">
                         <p>
-                            G12 (Government of 12) is a Christian discipleship system popular in churches worldwide, built around Jesus' model of 12 disciples.
+                            G12 (Government of 12) is a discipleship model that follows Jesus' example of training 12 disciples to reach the world. It is the core engine of our church's vision for multiplication.
                         </p>
-                        <ul className="space-y-3">
-                            <li className="flex gap-3">
-                                <Zap className="w-5 h-5 text-primary shrink-0 mt-1" />
-                                <span>Originated by Pastor CÃƒÂ©sar Castellanos (Colombia)</span>
-                            </li>
-                            <li className="flex gap-3">
-                                <Users className="w-5 h-5 text-primary shrink-0 mt-1" />
-                                <span>Focuses on discipleship, leadership multiplication, and church growth</span>
-                            </li>
-                            <li className="flex gap-3">
-                                <LayoutGrid className="w-5 h-5 text-primary shrink-0 mt-1" />
-                                <span>Spiritual + Organizational structure (The Ladder of Success)</span>
-                            </li>
-                        </ul>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-8">
+                            <div className="bg-primary/5 border border-primary/10 rounded-2xl p-6 space-y-3">
+                                <Heart className="w-6 h-6 text-primary" />
+                                <h4 className="font-semibold uppercase text-sm tracking-widest text-foreground">Why Life Class?</h4>
+                                <ul className="space-y-2 text-xs">
+                                    <li className="flex gap-2">
+                                        <div className="w-1 h-1 rounded-full bg-primary mt-1.5 shrink-0" />
+                                        <span>Complete Care For New Believers</span>
+                                    </li>
+                                    <li className="flex gap-2">
+                                        <div className="w-1 h-1 rounded-full bg-primary mt-1.5 shrink-0" />
+                                        <span>The Power Of An Encounter</span>
+                                    </li>
+                                    <li className="flex gap-2">
+                                        <div className="w-1 h-1 rounded-full bg-primary mt-1.5 shrink-0" />
+                                        <span>Develops Great Habits (40-Week Bible Plan)</span>
+                                    </li>
+                                    <li className="flex gap-2">
+                                        <div className="w-1 h-1 rounded-full bg-primary mt-1.5 shrink-0" />
+                                        <span>Establishes Core Foundations</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div className="bg-emerald-500/5 border border-emerald-500/10 rounded-2xl p-6 space-y-3">
+                                <Zap className="w-6 h-6 text-emerald-500" />
+                                <h4 className="font-semibold uppercase text-sm tracking-widest text-foreground">3 Core Elements</h4>
+                                <ul className="space-y-2 text-xs">
+                                    <li className="flex gap-2">
+                                        <span className="font-semibold text-emerald-500 whitespace-nowrap">Pre-Encounter:</span>
+                                        <span>Preparation (Weeks 1-4)</span>
+                                    </li>
+                                    <li className="flex gap-2">
+                                        <span className="font-semibold text-emerald-500 whitespace-nowrap">Encounter:</span>
+                                        <span>Face-to-Face with God (Week 5)</span>
+                                    </li>
+                                    <li className="flex gap-2">
+                                        <span className="font-semibold text-emerald-500 whitespace-nowrap">Post-Encounter:</span>
+                                        <span>New Beginning (Weeks 6-9)</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                 </motion.div>
 
@@ -215,9 +263,15 @@ export default function ClassEnrollmentClient({ currentUser }: { currentUser: Us
                                                 ))}
                                             </ul>
                                         </div>
+                                        <div className="space-y-2">
+                                            <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60">Qualifiers</p>
+                                            <p className="text-xs font-thin text-foreground/80 leading-tight">
+                                                {level.qualifiers}
+                                            </p>
+                                        </div>
                                         <div className="pt-2">
-                                            <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60">Outcome</p>
-                                            <p className="text-xs font-thin  mt-1 leading-relaxed text-foreground/80">{level.purpose}</p>
+                                            <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60">Outcome Goal</p>
+                                            <p className="text-xs font-thin mt-1 leading-relaxed text-foreground/80">{level.purpose}</p>
                                         </div>
                                     </div>
                                 </CardContent>
@@ -231,26 +285,54 @@ export default function ClassEnrollmentClient({ currentUser }: { currentUser: Us
             <div className="bg-card/40 backdrop-blur-xl border border-border/50 rounded-[3rem] p-8 md:p-12">
                 <div className="max-w-4xl mx-auto space-y-12">
                     <div className="text-center space-y-2">
-                        <h3 className="text-2xl font-semibold uppercase  tracking-tight">The Simple Progression</h3>
+                        <h3 className="text-2xl font-semibold uppercase tracking-tight">Life Class Weekly Calendar</h3>
+                        <p className="text-muted-foreground font-thin uppercase text-[10px] tracking-[0.3em]">9-Week Journey to Transformation</p>
                     </div>
 
-                    <div className="flex flex-col md:flex-row items-center justify-between gap-8 md:gap-4 relative">
-                        {/* Connecting Line (Desktop) */}
-                        <div className="hidden md:block absolute top-[28px] left-[10%] right-[10%] h-1 bg-linear-to-r from-emerald-500 via-primary to-amber-500 opacity-20" />
-
-                        {journeyData.map((level, i) => (
-                            <div key={level.id} className="relative z-10 flex flex-col items-center gap-4 text-center group">
-                                <div className={cn("w-14 h-14 rounded-full flex items-center justify-center text-white shadow-xl transition-transform group-hover:scale-110", level.accent)}>
-                                    {i + 1}
-                                </div>
-                                <div className="space-y-1">
-                                    <p className="text-sm font-semibold uppercase  tracking-widest">{level.title}</p>
-                                    <p className="text-[9px] font-thin text-muted-foreground uppercase tracking-widest leading-none">
-                                        {i === 0 ? "The Foundation" : i === 1 ? "The Step Up" : i === 2 ? "The Growth" : "The Multiplication"}
-                                    </p>
-                                </div>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+                        {[
+                            { w: "W1", t: "Mistakes", d: "Learning from our mistakes" },
+                            { w: "W2", t: "Best Deal", d: "The best deal of your life" },
+                            { w: "W3", t: "Experience", d: "The best experience of your life" },
+                            { w: "W4", t: "Battle", d: "Life is a battle" },
+                            { w: "W5", t: "ENCOUNTER", d: "3-Day Weekend Retreat", special: true },
+                            { w: "W6", t: "Secret", d: "Secret that will transform you" },
+                            { w: "W7", t: "Decisions", d: "Your decisions define you" },
+                            { w: "W8", t: "God's Best", d: "Nothing less than God's best" },
+                            { w: "W9", t: "Beginning", d: "A new beginning" }
+                        ].map((week, i) => (
+                            <div key={week.w} className={cn(
+                                "p-4 rounded-2xl border flex flex-col items-center text-center gap-2 transition-all hover:scale-105",
+                                week.special ? "bg-emerald-500 border-emerald-400 text-white shadow-lg shadow-emerald-500/20" : "bg-background/50 border-border/50"
+                            )}>
+                                <span className={cn("text-[10px] font-bold uppercase tracking-tighter", week.special ? "text-white/80" : "text-primary")}>{week.w}</span>
+                                <span className="text-xs font-semibold leading-tight uppercase tracking-tighter">{week.t}</span>
+                                <p className={cn("text-[9px] font-thin leading-tight", week.special ? "text-white/70" : "text-muted-foreground")}>{week.d}</p>
                             </div>
                         ))}
+                    </div>
+
+                    <div className="pt-8 border-t border-border/50">
+                        <div className="text-center space-y-2 mb-8">
+                            <h3 className="text-2xl font-semibold uppercase tracking-tight">Books & Manuals</h3>
+                        </div>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                            {[
+                                { t: "Life Class", s: "Student's Devotional Book", color: "text-emerald-500", bg: "bg-emerald-500/10" },
+                                { t: "SOL 1", s: "Pastored in His Love", color: "text-primary", bg: "bg-primary/10" },
+                                { t: "SOL 2", s: "A Winning Strategy", color: "text-accent", bg: "bg-accent/10" },
+                                { t: "SOL 3", s: "Effective Leadership", color: "text-amber-500", bg: "bg-amber-500/10" }
+                            ].map((book, i) => (
+                                <div key={i} className="group relative">
+                                    <div className={cn("aspect-[3/4] rounded-xl mb-4 overflow-hidden border border-border/50 flex flex-col items-center justify-center p-6 text-center gap-2", book.bg)}>
+                                        <GraduationCap className={cn("w-10 h-10 mb-2", book.color)} />
+                                        <span className={cn("text-lg font-bold uppercase tracking-tighter", book.color)}>{book.t}</span>
+                                    </div>
+                                    <p className="text-xs font-semibold uppercase tracking-tighter text-center">{book.t}</p>
+                                    <p className="text-[10px] font-thin text-muted-foreground text-center line-clamp-2">{book.s}</p>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </div>
             </div>
