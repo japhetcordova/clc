@@ -34,7 +34,7 @@ export function AboutPastors({ fadeIn }: AboutPastorsProps) {
                         </h2>
                         <div className="max-w-xl">
                             <p className="text-muted-foreground font-medium text-xl leading-relaxed">
-                                Led by a shared vision and a deep love for God's people, <span className="text-foreground font-bold italic underline decoration-primary/30 decoration-4 underline-offset-4">Ptr Jeser Molina</span> and <span className="text-foreground font-bold italic underline decoration-primary/30 decoration-4 underline-offset-4">Ptra Alene Molina</span> have dedicated their lives to building a community where everyone can experience the unconditional love of Jesus.
+                                Led by a shared vision and a deep love for God's people, <span className="text-foreground font-bold italic underline decoration-primary/30 decoration-4 underline-offset-4">Ptr Jeser </span> and <span className="text-foreground font-bold italic underline decoration-primary/30 decoration-4 underline-offset-4"> Arlene Molina</span> have dedicated their lives to building a community where everyone can experience the unconditional love of Jesus.
                             </p>
                         </div>
                     </div>
@@ -91,7 +91,7 @@ export function AboutPastors({ fadeIn }: AboutPastorsProps) {
                             <div className="absolute inset-0 bg-linear-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                             <div className="absolute bottom-12 left-12 right-12 translate-y-4 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-500">
                                 <p className="text-primary text-[10px] font-black uppercase tracking-[0.4em] mb-2">Lead Pastors</p>
-                                <h3 className="text-white text-3xl font-black uppercase italic tracking-tighter">Ptr Jeser & Ptra Alene</h3>
+                                <h3 className="text-white text-3xl font-black uppercase italic tracking-tighter">Ptr Jeser & Arlene</h3>
                             </div>
                         </div>
 

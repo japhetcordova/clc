@@ -51,10 +51,10 @@ export default async function WatchPage() {
 
 
     const liveSchedule = [
-        { day: "Sunday Morning", time: "8:00 AM & 10:00 AM", label: "Sunday Worship Service" },
-        { day: "Sunday Afternoon", time: "3:00 PM", label: "Youth & J12 Service" },
-        { day: "Wednesday Night", time: "6:00 PM", label: "Midweek Service" },
-        { day: "Friday Night", time: "7:00 PM", label: "Prayer Night" },
+        { day: "Sunday Services", time: "8:00 AM & 5:00 PM", label: "Worship Service" },
+        { day: "Tuesday Night", time: "6:00 PM", label: "Online Cell Group" },
+        { day: "Wednesday Night", time: "5:00 PM", label: "Regeneration Campus (Coming Soon)" },
+        { day: "Friday Night", time: "6:00 PM", label: "Regeneration Upnext" },
     ];
 
     // Fallback if no recent videos in DB
@@ -84,9 +84,12 @@ export default async function WatchPage() {
         }
     ];
 
-    const liveEmbedUrl = liveVideo
-        ? `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(liveVideo.videoUrl)}&show_text=0&width=1280`
+    const activeVideo = liveVideo || (recentVideos.length > 0 ? recentVideos[0] : null);
+
+    const liveEmbedUrl = activeVideo
+        ? `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(activeVideo.videoUrl)}&show_text=0&width=1280`
         : "https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Fclctagum%2Flive&show_text=0&width=1280";
+
 
 
     return (
@@ -147,7 +150,7 @@ export default async function WatchPage() {
                                 </div>
                                 <div className="flex items-center gap-4 text-xs font-bold uppercase tracking-widest text-muted-foreground bg-muted/30 px-4 py-2 rounded-full">
                                     <Users className="w-4 h-4 text-primary" />
-                                    <span>{liveVideo ? "Live Now" : "Currently Offline"}</span>
+                                    <span>{liveVideo ? "Live Now" : "Latest Message"}</span>
                                 </div>
                             </div>
 
@@ -164,7 +167,7 @@ export default async function WatchPage() {
                                 {/* Overlay if not live or if we want custom UI on top */}
                                 <div className="absolute inset-0 pointer-events-none bg-linear-to-t from-black/40 to-transparent flex items-end p-8 opacity-0 group-hover:opacity-100 transition-opacity">
                                     <div className="space-y-2">
-                                        <p className="text-white font-black italic uppercase tracking-tighter text-2xl">{liveVideo?.title || "Worship Service"}</p>
+                                        <p className="text-white font-black italic uppercase tracking-tighter text-2xl">{activeVideo?.title || "Worship Service"}</p>
                                         <p className="text-white/80 font-bold uppercase tracking-widest text-xs">Christian Life Center Tagum City</p>
                                     </div>
                                 </div>
@@ -173,15 +176,15 @@ export default async function WatchPage() {
                             <div className="flex flex-wrap items-center justify-between gap-4 p-6 bg-card/50 border border-border/50 rounded-[2rem]">
                                 <div className="flex items-center gap-6">
                                     <div className="flex flex-col">
-                                        <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Currently {liveVideo ? "Playing" : "Scheduled"}</span>
-                                        <span className="font-black uppercase italic tracking-tighter text-xl">{liveVideo?.title || "Stay Tuned"}</span>
+                                        <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Currently {liveVideo ? "Playing" : "Offline / Latest"}</span>
+                                        <span className="font-black uppercase italic tracking-tighter text-xl">{activeVideo?.title || "Worship Service"}</span>
                                     </div>
                                     <div className="h-10 w-px bg-border hidden sm:block" />
                                     <div className="hidden sm:flex flex-col">
                                         <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Platform</span>
                                         <span className="font-bold text-xs uppercase tracking-widest flex items-center gap-2 text-primary">
                                             <Facebook className="w-3 h-3 fill-primary" />
-                                            Facebook Live
+                                            {liveVideo ? "Facebook Live" : "Facebook Playback"}
                                         </span>
                                     </div>
                                 </div>

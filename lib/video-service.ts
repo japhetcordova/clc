@@ -3,7 +3,7 @@ import { videos } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
 
 // CLC Tagum Facebook Page ID
-const FB_PAGE_ID = "100064505599583"; // From earlier lookup
+const FB_PAGE_ID = "1549536122038390"; // Corrected ID for Christian Life Center - Tagum City
 
 export async function getRecentVideos() {
     return await db.select()
@@ -40,6 +40,8 @@ export async function syncFacebookVideos(accessToken?: string) {
         if (!response.ok) {
             throw new Error(`FB API error: ${response.statusText}`);
         }
+
+
 
         const data = await response.json();
         const fbVideos = data.data || [];
