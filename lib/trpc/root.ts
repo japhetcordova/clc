@@ -518,6 +518,19 @@ export const appRouter = router({
             return { success: false, error: "Invalid administrator password." };
         }),
 
+    updateVideoTitle: publicProcedure
+        .input(z.object({
+            id: z.string(),
+            manualTitle: z.string(),
+        }))
+        .mutation(async ({ input }) => {
+            await db.update(videos)
+                .set({ manualTitle: input.manualTitle })
+                .where(eq(videos.id, input.id));
+            revalidatePath("/watch");
+            return { success: true };
+        }),
+
 
 
     getUserByQrId: publicProcedure

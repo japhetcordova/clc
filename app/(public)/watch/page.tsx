@@ -23,6 +23,7 @@ import { Metadata } from "next";
 
 import { getLiveVideo, getRecentVideos, syncFacebookVideos } from "@/lib/video-service";
 import { format } from "date-fns";
+import { EditableVideoTitle } from "@/components/EditableVideoTitle";
 
 export async function generateMetadata(): Promise<Metadata> {
     const [live, recent] = await Promise.all([
@@ -32,10 +33,11 @@ export async function generateMetadata(): Promise<Metadata> {
 
     const latest = live || recent[0];
     const image = latest?.thumbnail || "/logo.webp";
+    const displayTitle = latest?.manualTitle || latest?.title || "Worship Service";
 
     return {
         title: "Watch Live | Christian Life Center Tagum",
-        description: "Join our worship services live from Tagum City. Experience authentic worship and life-changing messages wherever you are.",
+        description: `Join our worship services live from Tagum City. Currently: ${displayTitle}`,
         openGraph: {
             title: "Watch Live | Christian Life Center Tagum",
             description: "Join our worship services live from Tagum City.",
@@ -49,10 +51,11 @@ export default async function WatchPage() {
     // Optional: Auto-sync if token is provided in env
     const fbToken = process.env.FB_ACCESS_TOKEN;
     if (fbToken) {
-        // We can do a fire-and-forget sync or wait for it
-        // For performance, we'll only sync if data is stale (e.g. once an hour)
-        // For simplicity now, let's just fetch
-        await syncFacebookVideos(fbToken);
+        try {
+            await syncFacebookVideos(fbToken);
+        } catch (error) {
+            console.error("Delayed sync error:", error);
+        }
     }
 
     const [liveVideo, recentVideos] = await Promise.all([
@@ -70,7 +73,7 @@ export default async function WatchPage() {
 
     // Fallback if no recent videos in DB
     const archives = recentVideos.length > 0 ? recentVideos.map(v => ({
-        title: v.title || "Worship Service",
+        title: v.manualTitle || v.title || "Worship Service",
         date: format(v.publishedAt, "MMM d, yyyy"),
         speaker: "Ptr. Japhet Cordova",
         image: v.thumbnail || "/bg/word.webp",
@@ -178,7 +181,15 @@ export default async function WatchPage() {
                                 {/* Overlay if not live or if we want custom UI on top */}
                                 <div className="absolute inset-0 pointer-events-none bg-linear-to-t from-black/40 to-transparent flex items-end p-8 opacity-0 group-hover:opacity-100 transition-opacity">
                                     <div className="space-y-2">
-                                        <p className="text-white font-black italic uppercase tracking-tighter text-2xl">{activeVideo?.title || "Worship Service"}</p>
+                                        <div className="text-white font-black italic uppercase tracking-tighter text-2xl">
+                                            {activeVideo ? (
+                                                <EditableVideoTitle
+                                                    videoId={activeVideo.id}
+                                                    initialTitle={activeVideo.manualTitle || activeVideo.title || "Worship Service"}
+                                                    className="text-white"
+                                                />
+                                            ) : "Worship Service"}
+                                        </div>
                                         <p className="text-white/80 font-bold uppercase tracking-widest text-xs">Christian Life Center Tagum City</p>
                                     </div>
                                 </div>
@@ -188,7 +199,15 @@ export default async function WatchPage() {
                                 <div className="flex items-center gap-6">
                                     <div className="flex flex-col">
                                         <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Currently {liveVideo ? "Playing" : "Offline / Latest"}</span>
-                                        <span className="font-black uppercase italic tracking-tighter text-xl">{activeVideo?.title || "Worship Service"}</span>
+                                        <div className="font-black uppercase italic tracking-tighter text-xl">
+                                            {activeVideo ? (
+                                                <EditableVideoTitle
+                                                    videoId={activeVideo.id}
+                                                    initialTitle={activeVideo.manualTitle || activeVideo.title || "Worship Service"}
+                                                    className="text-foreground"
+                                                />
+                                            ) : "Worship Service"}
+                                        </div>
                                     </div>
                                     <div className="h-10 w-px bg-border hidden sm:block" />
                                     <div className="hidden sm:flex flex-col">
@@ -242,6 +261,7 @@ export default async function WatchPage() {
                                                         alt={video.title}
                                                         fill
                                                         className="object-cover group-hover:scale-110 transition-transform duration-700"
+                                                        unoptimized={video.image.startsWith("http")}
                                                     />
                                                     <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors" />
                                                     <div className="absolute bottom-4 right-4 bg-black/70 backdrop-blur-md px-2 py-1 rounded text-[10px] font-bold text-white tracking-widest">

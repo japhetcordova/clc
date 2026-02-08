@@ -38,7 +38,9 @@ export async function syncFacebookVideos(accessToken?: string) {
         );
 
         if (!response.ok) {
-            throw new Error(`FB API error: ${response.statusText}`);
+            const errorData = await response.json().catch(() => ({}));
+            console.error("FB API Error Details:", errorData);
+            throw new Error(`FB API error: ${response.statusText} - ${JSON.stringify(errorData)}`);
         }
 
 

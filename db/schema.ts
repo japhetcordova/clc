@@ -148,6 +148,7 @@ export const videos = pgTable("videos", {
     id: uuid("id").primaryKey().defaultRandom(),
     fbId: text("fb_id").notNull().unique(),
     title: text("title"),
+    manualTitle: text("manual_title"),
     description: text("description"),
     thumbnail: text("thumbnail"),
     videoUrl: text("video_url").notNull(),
