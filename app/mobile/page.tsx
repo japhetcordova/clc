@@ -126,6 +126,7 @@ export default function MobileDashboard() {
                         fill
                         className="object-cover"
                         priority
+                        unoptimized={display.imageUrl.startsWith("http")}
                     />
                     {/* Premium Overlays */}
                     <div className="absolute inset-0 bg-linear-to-b from-background/20 via-background/60 to-background" />

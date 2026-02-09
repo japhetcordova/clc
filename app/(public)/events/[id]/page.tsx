@@ -69,6 +69,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
                         fill
                         className="object-cover"
                         priority
+                        unoptimized={event.image?.startsWith("http")}
                     />
                     {/* Blur and transparency overlay */}
                     <div className="absolute inset-0 backdrop-blur-2xl bg-background/60" />
@@ -95,6 +96,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
                                     height={600}
                                     className="w-full h-auto object-contain"
                                     priority
+                                    unoptimized={event.image?.startsWith("http")}
                                 />
                             </div>
 

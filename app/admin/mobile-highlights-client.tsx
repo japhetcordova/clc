@@ -146,6 +146,7 @@ export default function MobileHighlightsClient() {
                                         alt={highlight.speaker}
                                         fill
                                         className="object-cover group-hover:scale-105 transition-transform duration-700"
+                                        unoptimized={highlight.imageUrl.startsWith("http")}
                                     />
                                     <div className="absolute inset-0 bg-linear-to-t from-black/80 to-transparent" />
 

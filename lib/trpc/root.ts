@@ -6,8 +6,55 @@ import { eq, and, desc, sql, count, asc, ilike, inArray, or } from "drizzle-orm"
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import { getLiveVideo, getRecentVideos, syncFacebookVideos } from "@/lib/video-service";
+import fs from "fs";
+import path from "path";
 
 export const appRouter = router({
+    getClassVideos: publicProcedure
+        .query(async () => {
+            const classesDir = path.join(process.cwd(), "public", "classes");
+
+            if (!fs.existsSync(classesDir)) return {};
+
+            const folders = fs.readdirSync(classesDir);
+            const data: Record<string, { module: string | null, file: string }[]> = {};
+
+            for (const folder of folders) {
+                const folderPath = path.join(classesDir, folder);
+                if (fs.statSync(folderPath).isDirectory()) {
+                    const videos: { module: string | null, file: string }[] = [];
+                    const entries = fs.readdirSync(folderPath, { withFileTypes: true });
+
+                    for (const entry of entries) {
+                        if (entry.isDirectory()) {
+                            const moduleName = entry.name;
+                            const modulePath = path.join(folderPath, moduleName);
+                            const moduleFiles = fs.readdirSync(modulePath)
+                                .filter(f => f.endsWith(".mp4"))
+                                .map(f => ({ module: moduleName, file: f }));
+                            videos.push(...moduleFiles);
+                        } else if (entry.name.endsWith(".mp4")) {
+                            videos.push({ module: null, file: entry.name });
+                        }
+                    }
+
+                    // Sort: module ASC (null first), then filename numeric
+                    videos.sort((a, b) => {
+                        if (a.module !== b.module) {
+                            if (!a.module) return -1;
+                            if (!b.module) return 1;
+                            return a.module.localeCompare(b.module, undefined, { numeric: true });
+                        }
+                        return a.file.localeCompare(b.file, undefined, { numeric: true });
+                    });
+
+                    data[folder] = videos;
+                }
+            }
+
+            return data;
+        }),
+
     getAnnouncements: publicProcedure
         .query(async () => {
             return db.select().from(announcements).orderBy(desc(announcements.date));
