@@ -593,13 +593,22 @@ export const appRouter = router({
             const [user] = await db.select().from(users).where(eq(users.qrCodeId, input.qrCodeId)).limit(1);
             if (!user) return null;
 
-            const userAttendance = await db.select()
-                .from(attendance)
-                .where(eq(attendance.userId, user.id))
-                .orderBy(desc(attendance.scannedAt))
-                .limit(10);
+            const [userAttendance, userEnrollments] = await Promise.all([
+                db.select()
+                    .from(attendance)
+                    .where(eq(attendance.userId, user.id))
+                    .orderBy(desc(attendance.scannedAt))
+                    .limit(10),
+                db.select()
+                    .from(classEnrollments)
+                    .where(eq(classEnrollments.userId, user.id))
+            ]);
 
-            return { user, attendance: userAttendance };
+            return {
+                user,
+                attendance: userAttendance,
+                enrollments: userEnrollments
+            };
         }),
 
     findUser: publicProcedure

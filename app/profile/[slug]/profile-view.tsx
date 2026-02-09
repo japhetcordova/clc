@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { User as UserIcon, Phone, Mail, Users as UsersIcon, Calendar, Share2, Download, Edit3, Settings, ShieldCheck, Lightbulb, Home, Eye, Sparkles, LogOut, Lock, ExternalLink, Play, Book, CheckCircle, ChevronRight } from "lucide-react";
+import { User as UserIcon, Phone, Mail, Users as UsersIcon, Calendar, Share2, Download, Edit3, Settings, ShieldCheck, Lightbulb, Home, Eye, Sparkles, LogOut, Lock, ExternalLink, Play, Book, CheckCircle, ChevronRight, Wrench } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -23,112 +23,172 @@ import { SecurityGate } from "@/components/SecurityGate";
 import { trpc } from "@/lib/trpc/client";
 import { useRouter } from "next/navigation";
 
+// Helper function to convert video URLs to embeddable format
+function getEmbedUrl(url: string): string {
+    if (!url) return '';
+
+    // YouTube: Convert youtu.be or youtube.com/watch URLs to embed format
+    // youtu.be/VIDEO_ID → youtube.com/embed/VIDEO_ID
+    const youtubeShortMatch = url.match(/youtu\.be\/([a-zA-Z0-9_-]+)/);
+    if (youtubeShortMatch) {
+        return `https://www.youtube.com/embed/${youtubeShortMatch[1]}`;
+    }
+
+    // youtube.com/watch?v=VIDEO_ID → youtube.com/embed/VIDEO_ID
+    const youtubeMatch = url.match(/youtube\.com\/watch\?v=([a-zA-Z0-9_-]+)/);
+    if (youtubeMatch) {
+        return `https://www.youtube.com/embed/${youtubeMatch[1]}`;
+    }
+
+    // Google Drive: Convert /view to /preview
+    if (url.includes('drive.google.com')) {
+        return url.replace('/view', '/preview').split('?')[0];
+    }
+
+    return url;
+}
+
 interface ProfileViewProps {
     user: any;
     qrValue: string;
     attendance?: any[];
+    enrollments?: { classLevel: string; status: string }[];
     initialAuthorized: boolean;
 }
 
-export default function ProfileView({ user, qrValue, attendance = [], initialAuthorized }: ProfileViewProps) {
+// Map database classLevel to curriculum key
+const classLevelToCurriculumKey: Record<string, string> = {
+    "LIFE_CLASS": "LIFE CLASS",
+    "SOL_1": "SOL 1",
+    "SOL_2": "SOL 2",
+    "SOL_3": "SOL 3",
+};
+
+const curriculum = {
+    "LIFE CLASS": [
+        { id: 1, title: "Mistakes", description: "Learning from our mistakes", url: "https://youtu.be/2Y3qb4CPBh0?si=7EJSK2yppk_3g3wF" },
+        { id: 2, title: "Best Deal", description: "The best deal of your life", url: "https://drive.google.com/file/d/18ylXOsVTLqgvfsGipUk_aHszI7pCbNDl/view?t=2" },
+        { id: 3, title: "Experience", description: "The best experience of your life", url: "https://drive.google.com/file/d/1EK460jNHQ1kTbcLWKBlw4qWQvQQ7ew_w/view" },
+        { id: 4, title: "Battle", description: "Life is a battle", url: "https://drive.google.com/file/d/1uI3jVNVKLBoHbTUFJeQAafgQKt06fWlY/view" },
+        { id: 6, title: "Secret", description: "Discover the secret that will transform your life", url: "https://drive.google.com/file/d/1rxj7e-qD7nnKv-3UIHyY3pc8uFtmq7Uu/view?t=3" },
+        { id: 7, title: "Decisions", description: "Your decisions defines you", url: "https://drive.google.com/file/d/1FCnGsOAgFAzUAvsQNVtzTy0h8-V2EIrs/view" },
+        { id: 8, title: "God's Best", description: "Nothing less but God's best", url: "https://drive.google.com/file/d/13s23yytyzwIv5pyfEiVkKoZ-2w7lkdlE/view" },
+        { id: 9, title: "Beginning", description: "A new beginning", url: "https://drive.google.com/file/d/1CBM6Ivr8GvfVhYdisUUX6QuiIwxuckhK/view" }
+    ],
+    "SOL 1": {
+        "MODULE 1": [
+            { id: 1, title: "His Love", description: "Pastored in His Love", url: "https://drive.google.com/file/d/1NEQGUFER4q-MbuhXsIvNlUSYe7IuhwMM/view" },
+            { id: 2, title: "Relationship", description: "Cultivating a relationship with God", url: "https://drive.google.com/file/d/1piZ0t8EWCdA9mZ0JJcCS6aQ9v8hbcNUQ/view" },
+            { id: 3, title: "Praise", description: "The power of praise and worship", url: "https://drive.google.com/file/d/1pSRrthORhk5bxldxqtqC8qv6dBoK4Ks8/view" },
+            { id: 4, title: "Strengthened", description: "Strengthened in God", url: "https://drive.google.com/file/d/170ggH8xQa5hdswBhjD3qHAeapGJDgpD-/view" },
+            { id: 5, title: "Warfare", description: "Spiritual warfare", url: "https://drive.google.com/file/d/1YrE9h3-wy9AMZ1GWItw6duNciRS5q0c6/view" },
+            { id: 6, title: "Redemption", description: "The redemptive power of the blood", url: "https://drive.google.com/file/d/1VGSyltQ3PxoZOIrjwpKwGlIX9MD-LydQ/view?t=1" },
+            { id: 7, title: "The Bible", description: "The Bible will transform your life", url: "https://drive.google.com/file/d/11XLP84Ne3bioOfvYq1sAojPO7o2TjoJ6/view" },
+            { id: 8, title: "Anointing", description: "The anointing of the Holy Spirit", url: "https://drive.google.com/file/d/1mO5-2PKz_JMwrcDP98_PIUS6hfi_XxXg/view" },
+            { id: 9, title: "Prosperity", description: "The blessing of prosperity", url: "https://drive.google.com/file/d/1ZUMni4kmxWCv5GlEvrqRD38tZM60d5l8/view" },
+            { id: 10, title: "The Church", description: "Building the church", url: "https://drive.google.com/file/d/1R6RCnrXV_Nf-IAc-zI25G54Gk4uwkqWd/view" }
+        ],
+        "MODULE 2": [
+            { id: 1, title: "Vision", description: "What is vision", url: "https://drive.google.com/file/d/1OOW4WoEo6heWdJa2IxilKu0akjqqbsUs/view" },
+            { id: 2, title: "G12", description: "Principles of G12", url: "https://drive.google.com/file/d/1ng0jhS6425kU1VV6cQGnksb4qD78AfyX/view" },
+            { id: 3, title: "Foundation", description: "A firm foundation", url: "https://drive.google.com/file/d/13AbhmzZhePao7fyQeVPqMppQ3snWWVf8/view" },
+            { id: 4, title: "Government of 12", description: "The vision of the government of 12", url: "https://drive.google.com/file/d/1U1Q1EGj_LAPDNp8rq_VONXSUGYLb8WoF/view" },
+            { id: 5, title: "The Team", description: "Forming the best team", url: "https://drive.google.com/file/d/1E-hUl-Fo96jLJggms4TGbNyoHXD2xO9P/view" },
+            { id: 6, title: "Leadership", description: "Successful leadership", url: "https://drive.google.com/file/d/1HSafVO_JYGBjSiH4pKEzbNP-Kug2kRTN/view" },
+            { id: 7, title: "Winning", description: "The art of winning", url: "https://drive.google.com/file/d/1_ebcYkvOhCsc5vYPVeAGItEvEUM8ykte/view" },
+            { id: 8, title: "Cell Group", description: "Blessing through the cell group", url: "https://drive.google.com/file/d/1jxbKzDmREIMEtX8iTYVkqxP1UN0nNHOt/view" },
+            { id: 9, title: "Consolidate", description: "Ready to consolidate", url: "https://drive.google.com/file/d/1lHsm4tGN9CP3UP8Z197e-W8m9zxF5iwN/view" },
+            { id: 10, title: "144", description: "The power of 144", url: "https://drive.google.com/file/d/1FwIh0iPrlJfGyKvlMfkrf2dDvdiVrepQ/view" }
+        ]
+    },
+    "SOL 2": {
+        "MODULE 3": [
+            { id: 1, title: "Glory", description: "The present glory", url: "https://drive.google.com/file/d/1CEuV43DwF7ghCoZfwW6HvbhoQqwyOq1p/view" },
+            { id: 2, title: "Winning Principles", description: "Key principles of winning", url: "https://drive.google.com/file/d/1VZRYL-3iFIE6OVacV-m9gd0PyZukEVU6/view" },
+            { id: 3, title: "Evangelism Power", description: "The power of evangelism", url: "https://drive.google.com/file/d/1SwEE79nThWVuf-rDMD6zO79eeI3ZXDWQ/view" },
+            { id: 4, title: "Effectiveness", description: "Effective evangelism", url: "https://drive.google.com/file/d/1tbyL8goBvfcFlqDR5BJ9e5MyybzUH7Qs/view" },
+            { id: 5, title: "Anointing", description: "The anointing to win", url: "https://drive.google.com/file/d/1_oBXls6TPAIPTUfn-0mSbDJo-Tlk6W1b/view" },
+            { id: 6, title: "Compassion", description: "Compassion", url: "https://drive.google.com/file/d/1V0L3TcEan8b9b6ERJYZUYv-bOe-UR2O-/view" },
+            { id: 7, title: "Generosity", description: "Generosity", url: "https://drive.google.com/file/d/1exFJS4TuVFdjrBgKxQw3VxHW64M1AX-i/view" },
+            { id: 8, title: "Faith", description: "Faith", url: "https://drive.google.com/file/d/1iR2ek87hDE_32Xfp0jukPHXQWEzINR-t/view" },
+            { id: 9, title: "Cell Vision", description: "The cell vision", url: "https://drive.google.com/file/d/1DoUPSgFayXUMusQUAL4Hgg1y-jLtawgV/view" },
+            { id: 10, title: "Structure", description: "Structure and development", url: "" }
+        ],
+        "MODULE 4": [
+            { id: 1, title: "Purpose", description: "Families with a purpose", url: "https://drive.google.com/file/d/1cwl8_cGSSn5iDTHYwMKZusiOiZRup9sw/view" },
+            { id: 2, title: "Roles", description: "The roles of the parents and the children", url: "https://drive.google.com/file/d/190L-bcsdH5XUXPLn-TNe6ohrswZYxIH-/view" },
+            { id: 3, title: "Inner Healing", description: "Inner healing for the family", url: "https://drive.google.com/file/d/1pEdEJQaBPMgLNQeTMKnB_dUWbsei4C5r/view" },
+            { id: 4, title: "Marriage Pillars", description: "Seven pillars for a happy marriage", url: "https://drive.google.com/file/d/12CmOHn3mdvnkPdRdsqMyaH67a1ANxLMx/view" },
+            { id: 5, title: "Fatherhood", description: "The blessing of fatherhood", url: "https://drive.google.com/file/d/1YMpjfqHrmUG4pteSsxKIG_uCPwNNhmOC/view" },
+            { id: 6, title: "Right Person?", description: "Is this the right person", url: "https://drive.google.com/file/d/1ywQvwMWBRi59WxB4ZhqOetOdeJgdlCsQ/view" },
+            { id: 7, title: "True Love", description: "True love", url: "https://drive.google.com/file/d/15nRnMfLYkCjSLzwwO0pDIxAi94gUeu8P/view" },
+            { id: 8, title: "Courtship", description: "Seven steps for a successful courtship", url: "https://drive.google.com/file/d/1_l1n49NDGRmfXC5RowWq8loiYJVGaaIE/view" },
+            { id: 9, title: "Communication", description: "Strengthening communication for marriage", url: "" },
+            { id: 10, title: "Ten Commandments", description: "Gods ten commandments for the family", url: "" }
+        ]
+    },
+    "SOL 3": {
+        "MODULE 5": [
+            { id: 1, title: "Faith Leader", description: "A leader of faith", url: "https://drive.google.com/file/d/11F8EVW_cJuMwSs2HJWjAifo5QNypq-TD/view" },
+            { id: 2, title: "Love for Sheep", description: "The leaders love for the sheep", url: "https://drive.google.com/file/d/1no1S8Sbf0o75Vl3w21LhG6sWOgwkiAkm/view" },
+            { id: 3, title: "Builder", description: "A leader that builds", url: "https://drive.google.com/file/d/1P72XaB3AKU2nUVGTEoQCJJ5ef7MJ_knY/view" },
+            { id: 4, title: "Servant Heart", description: "A leader with the heart of a servant", url: "https://drive.google.com/file/d/1Fdbcxanw4_UhM8DBtMdc_7q7obsC9MKl/view" },
+            { id: 5, title: "Control", description: "The leader controlled by the Holy Spirit", url: "https://drive.google.com/file/d/1EaS0TtqygxCMuD1aK_Dx4zLGATr4LmMd/view" },
+            { id: 6, title: "Preaching", description: "The leader preaching the word", url: "https://drive.google.com/file/d/1o-CR6jDrQ56RiTiWYEonKiEgAFg8n8RA/view" },
+            { id: 7, title: "Counseling", description: "The leader and counseling", url: "https://drive.google.com/file/d/1gT84Gg6ecycC5zzagSDXxusPl1_ED5_y/view" },
+            { id: 8, title: "Supervision", description: "The leader and supervision", url: "https://drive.google.com/file/d/1lBjmcOfgrd1AwOXiRRWAlrgd9XY3rFGH/view" },
+            { id: 9, title: "Price", description: "The price of leadership", url: "https://drive.google.com/file/d/16DkCMR1P1wvwCClxk1hDECN5ZVZDBNCm/view" },
+            { id: 10, title: "Formation", description: "The leader and the formation of disciples", url: "https://drive.google.com/file/d/1-oM5sg98W4jnocxn9BpfHl4Hk7nvp7Tf/view" }
+        ],
+        "MODULE 6": [
+            { id: 1, title: "Holy Spirit & Me", description: "The holy spirit and me", url: "https://drive.google.com/file/d/1_b7kavauUl_OCz7PX_PqW4s5OdmbsIAi/view" },
+            { id: 2, title: "Preparation", description: "Preparing to receive the holy spirit", url: "https://drive.google.com/file/d/1NJjJ5bGAcIiOkZB5LMb8NMUolr0loaAw/view" },
+            { id: 3, title: "Knowing", description: "Knowing the holy spirit", url: "https://drive.google.com/file/d/1woWgz_MQ5mC7pOawjENvqm1-lpNoqAhq/view" },
+            { id: 4, title: "Fruit Part 1", description: "The fruit of the holy spirit", url: "https://drive.google.com/file/d/1idU0DuYToJI_RIw7zTgmheixayrdE700/view" },
+            { id: 5, title: "Fruit Part 2", description: "The fruit of the holy spirit part 2", url: "https://drive.google.com/file/d/1HS0Ah5b5Gb2lNaROw15pwZQyMVcWz-hR/view" },
+            { id: 6, title: "Fruit Part 3", description: "The fruit of the holy spirit part 3", url: "https://drive.google.com/file/d/1pESsJIQLdbSRrSBn2bS-bl98zYqzbGNn/view" },
+            { id: 7, title: "Gifts Intro", description: "Introduction of the gifts of the holy spirit", url: "https://drive.google.com/file/d/15k_NkX0bxgvmqnJWTJfc67ks6zdRl-Ki/view" },
+            { id: 8, title: "Revelation", description: "Gifts of the revelation", url: "https://drive.google.com/file/d/1QaoqTS-8tU0-YHOtP8uvBpIIhf6OHC9_/view" },
+            { id: 9, title: "Power", description: "Gifts of power", url: "https://drive.google.com/file/d/1c7c9a94suLWy_lB9UTRGMgRIChdcowZ6/view" },
+            { id: 10, title: "Inspiration", description: "Gifts of inspiration", url: "" }
+        ]
+    }
+};
+
+export default function ProfileView({ user, qrValue, attendance = [], enrollments = [], initialAuthorized }: ProfileViewProps) {
+    // Get enrolled class keys from database enrollments
+    const [isDeveloperMode, setIsDeveloperMode] = useState(false);
+    const [isLocalhost, setIsLocalhost] = useState(false);
+
+    useEffect(() => {
+        setIsLocalhost(window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+    }, []);
+
+    // Get enrolled class keys from database enrollments
+    const enrolledClassKeys = isDeveloperMode
+        ? Object.keys(curriculum)
+        : enrollments
+            .filter(e => e.status === 'active' || e.status === 'completed')
+            .map(e => classLevelToCurriculumKey[e.classLevel])
+            .filter(Boolean);
+
+    // Get initial video based on first enrolled class
+    const getFirstLesson = (level: string) => {
+        const levelData = curriculum[level as keyof typeof curriculum];
+        if (!levelData) return null;
+        return Array.isArray(levelData) ? levelData[0] : (Object.values(levelData)[0] as any[])[0];
+    };
+
+    const initialLevel = enrolledClassKeys[0] || "LIFE CLASS";
+    const initialLesson = getFirstLesson(initialLevel);
+
     const [activeTab, setActiveTab] = useState("overview");
-    const [selectedLevel, setSelectedLevel] = useState("LIFE CLASS");
+    const [selectedLevel, setSelectedLevel] = useState(initialLevel);
     const [selectedVideo, setSelectedVideo] = useState({
-        title: "Learning from our mistakes",
-        url: "https://drive.google.com/file/d/1_W8zzegFlI1ps8D3K_ayqWahapGQpf6m/view?t=4"
+        title: initialLesson?.description || "Learning from our mistakes",
+        url: initialLesson?.url || "https://drive.google.com/file/d/1_W8zzegFlI1ps8D3K_ayqWahapGQpf6m/view?t=4"
     });
     const [isPlaying, setIsPlaying] = useState(false);
-
-    const curriculum = {
-        "LIFE CLASS": [
-            { id: 1, title: "Mistakes", description: "Learning from our mistakes", url: "https://drive.google.com/file/d/1_W8zzegFlI1ps8D3K_ayqWahapGQpf6m/view?t=4" },
-            { id: 2, title: "Best Deal", description: "The best deal of your life", url: "https://drive.google.com/file/d/18ylXOsVTLqgvfsGipUk_aHszI7pCbNDl/view?t=2" },
-            { id: 3, title: "Experience", description: "The best experience of your life", url: "https://drive.google.com/file/d/1EK460jNHQ1kTbcLWKBlw4qWQvQQ7ew_w/view" },
-            { id: 4, title: "Battle", description: "Life is a battle", url: "https://drive.google.com/file/d/1uI3jVNVKLBoHbTUFJeQAafgQKt06fWlY/view" },
-            { id: 6, title: "Secret", description: "Discover the secret that will transform your life", url: "https://drive.google.com/file/d/1rxj7e-qD7nnKv-3UIHyY3pc8uFtmq7Uu/view?t=3" },
-            { id: 7, title: "Decisions", description: "Your decisions defines you", url: "https://drive.google.com/file/d/1FCnGsOAgFAzUAvsQNVtzTy0h8-V2EIrs/view" },
-            { id: 8, title: "God's Best", description: "Nothing less but God's best", url: "https://drive.google.com/file/d/13s23yytyzwIv5pyfEiVkKoZ-2w7lkdlE/view" },
-            { id: 9, title: "Beginning", description: "A new beginning", url: "https://drive.google.com/file/d/1CBM6Ivr8GvfVhYdisUUX6QuiIwxuckhK/view" }
-        ],
-        "SOL 1": {
-            "MODULE 1": [
-                { id: 1, title: "His Love", description: "Pastored in His Love", url: "https://drive.google.com/file/d/1NEQGUFER4q-MbuhXsIvNlUSYe7IuhwMM/view" },
-                { id: 2, title: "Relationship", description: "Cultivating a relationship with God", url: "https://drive.google.com/file/d/1piZ0t8EWCdA9mZ0JJcCS6aQ9v8hbcNUQ/view" },
-                { id: 3, title: "Praise", description: "The power of praise and worship", url: "https://drive.google.com/file/d/1pSRrthORhk5bxldxqtqC8qv6dBoK4Ks8/view" },
-                { id: 4, title: "Strengthened", description: "Strengthened in God", url: "https://drive.google.com/file/d/170ggH8xQa5hdswBhjD3qHAeapGJDgpD-/view" },
-                { id: 5, title: "Warfare", description: "Spiritual warfare", url: "https://drive.google.com/file/d/1YrE9h3-wy9AMZ1GWItw6duNciRS5q0c6/view" },
-                { id: 6, title: "Redemption", description: "The redemptive power of the blood", url: "https://drive.google.com/file/d/1VGSyltQ3PxoZOIrjwpKwGlIX9MD-LydQ/view?t=1" },
-                { id: 7, title: "The Bible", description: "The Bible will transform your life", url: "https://drive.google.com/file/d/11XLP84Ne3bioOfvYq1sAojPO7o2TjoJ6/view" },
-                { id: 8, title: "Anointing", description: "The anointing of the Holy Spirit", url: "https://drive.google.com/file/d/1mO5-2PKz_JMwrcDP98_PIUS6hfi_XxXg/view" },
-                { id: 9, title: "Prosperity", description: "The blessing of prosperity", url: "https://drive.google.com/file/d/1ZUMni4kmxWCv5GlEvrqRD38tZM60d5l8/view" },
-                { id: 10, title: "The Church", description: "Building the church", url: "https://drive.google.com/file/d/1R6RCnrXV_Nf-IAc-zI25G54Gk4uwkqWd/view" }
-            ],
-            "MODULE 2": [
-                { id: 1, title: "Vision", description: "What is vision", url: "https://drive.google.com/file/d/1OOW4WoEo6heWdJa2IxilKu0akjqqbsUs/view" },
-                { id: 2, title: "G12", description: "Principles of G12", url: "https://drive.google.com/file/d/1ng0jhS6425kU1VV6cQGnksb4qD78AfyX/view" },
-                { id: 3, title: "Foundation", description: "A firm foundation", url: "https://drive.google.com/file/d/13AbhmzZhePao7fyQeVPqMppQ3snWWVf8/view" },
-                { id: 4, title: "Government of 12", description: "The vision of the government of 12", url: "https://drive.google.com/file/d/1U1Q1EGj_LAPDNp8rq_VONXSUGYLb8WoF/view" },
-                { id: 5, title: "The Team", description: "Forming the best team", url: "https://drive.google.com/file/d/1E-hUl-Fo96jLJggms4TGbNyoHXD2xO9P/view" },
-                { id: 6, title: "Leadership", description: "Successful leadership", url: "https://drive.google.com/file/d/1HSafVO_JYGBjSiH4pKEzbNP-Kug2kRTN/view" },
-                { id: 7, title: "Winning", description: "The art of winning", url: "https://drive.google.com/file/d/1_ebcYkvOhCsc5vYPVeAGItEvEUM8ykte/view" },
-                { id: 8, title: "Cell Group", description: "Blessing through the cell group", url: "https://drive.google.com/file/d/1jxbKzDmREIMEtX8iTYVkqxP1UN0nNHOt/view" },
-                { id: 9, title: "Consolidate", description: "Ready to consolidate", url: "https://drive.google.com/file/d/1lHsm4tGN9CP3UP8Z197e-W8m9zxF5iwN/view" },
-                { id: 10, title: "144", description: "The power of 144", url: "https://drive.google.com/file/d/1FwIh0iPrlJfGyKvlMfkrf2dDvdiVrepQ/view" }
-            ]
-        },
-        "SOL 2": {
-            "MODULE 3": [
-                { id: 1, title: "Glory", description: "The present glory", url: "https://drive.google.com/file/d/1CEuV43DwF7ghCoZfwW6HvbhoQqwyOq1p/view" },
-                { id: 2, title: "Winning Principles", description: "Key principles of winning", url: "https://drive.google.com/file/d/1VZRYL-3iFIE6OVacV-m9gd0PyZukEVU6/view" },
-                { id: 3, title: "Evangelism Power", description: "The power of evangelism", url: "https://drive.google.com/file/d/1SwEE79nThWVuf-rDMD6zO79eeI3ZXDWQ/view" },
-                { id: 4, title: "Effectiveness", description: "Effective evangelism", url: "https://drive.google.com/file/d/1tbyL8goBvfcFlqDR5BJ9e5MyybzUH7Qs/view" },
-                { id: 5, title: "Anointing", description: "The anointing to win", url: "https://drive.google.com/file/d/1_oBXls6TPAIPTUfn-0mSbDJo-Tlk6W1b/view" },
-                { id: 6, title: "Compassion", description: "Compassion", url: "https://drive.google.com/file/d/1V0L3TcEan8b9b6ERJYZUYv-bOe-UR2O-/view" },
-                { id: 7, title: "Generosity", description: "Generosity", url: "https://drive.google.com/file/d/1exFJS4TuVFdjrBgKxQw3VxHW64M1AX-i/view" },
-                { id: 8, title: "Faith", description: "Faith", url: "https://drive.google.com/file/d/1iR2ek87hDE_32Xfp0jukPHXQWEzINR-t/view" },
-                { id: 9, title: "Cell Vision", description: "The cell vision", url: "https://drive.google.com/file/d/1DoUPSgFayXUMusQUAL4Hgg1y-jLtawgV/view" },
-                { id: 10, title: "Structure", description: "Structure and development", url: "" }
-            ],
-            "MODULE 4": [
-                { id: 1, title: "Purpose", description: "Families with a purpose", url: "https://drive.google.com/file/d/1cwl8_cGSSn5iDTHYwMKZusiOiZRup9sw/view" },
-                { id: 2, title: "Roles", description: "The roles of the parents and the children", url: "https://drive.google.com/file/d/190L-bcsdH5XUXPLn-TNe6ohrswZYxIH-/view" },
-                { id: 3, title: "Inner Healing", description: "Inner healing for the family", url: "https://drive.google.com/file/d/1pEdEJQaBPMgLNQeTMKnB_dUWbsei4C5r/view" },
-                { id: 4, title: "Marriage Pillars", description: "Seven pillars for a happy marriage", url: "https://drive.google.com/file/d/12CmOHn3mdvnkPdRdsqMyaH67a1ANxLMx/view" },
-                { id: 5, title: "Fatherhood", description: "The blessing of fatherhood", url: "https://drive.google.com/file/d/1YMpjfqHrmUG4pteSsxKIG_uCPwNNhmOC/view" },
-                { id: 6, title: "Right Person?", description: "Is this the right person", url: "https://drive.google.com/file/d/1ywQvwMWBRi59WxB4ZhqOetOdeJgdlCsQ/view" },
-                { id: 7, title: "True Love", description: "True love", url: "https://drive.google.com/file/d/15nRnMfLYkCjSLzwwO0pDIxAi94gUeu8P/view" },
-                { id: 8, title: "Courtship", description: "Seven steps for a successful courtship", url: "https://drive.google.com/file/d/1_l1n49NDGRmfXC5RowWq8loiYJVGaaIE/view" },
-                { id: 9, title: "Communication", description: "Strengthening communication for marriage", url: "" },
-                { id: 10, title: "Ten Commandments", description: "Gods ten commandments for the family", url: "" }
-            ]
-        },
-        "SOL 3": {
-            "MODULE 5": [
-                { id: 1, title: "Faith Leader", description: "A leader of faith", url: "https://drive.google.com/file/d/11F8EVW_cJuMwSs2HJWjAifo5QNypq-TD/view" },
-                { id: 2, title: "Love for Sheep", description: "The leaders love for the sheep", url: "https://drive.google.com/file/d/1no1S8Sbf0o75Vl3w21LhG6sWOgwkiAkm/view" },
-                { id: 3, title: "Builder", description: "A leader that builds", url: "https://drive.google.com/file/d/1P72XaB3AKU2nUVGTEoQCJJ5ef7MJ_knY/view" },
-                { id: 4, title: "Servant Heart", description: "A leader with the heart of a servant", url: "https://drive.google.com/file/d/1Fdbcxanw4_UhM8DBtMdc_7q7obsC9MKl/view" },
-                { id: 5, title: "Control", description: "The leader controlled by the Holy Spirit", url: "https://drive.google.com/file/d/1EaS0TtqygxCMuD1aK_Dx4zLGATr4LmMd/view" },
-                { id: 6, title: "Preaching", description: "The leader preaching the word", url: "https://drive.google.com/file/d/1o-CR6jDrQ56RiTiWYEonKiEgAFg8n8RA/view" },
-                { id: 7, title: "Counseling", description: "The leader and counseling", url: "https://drive.google.com/file/d/1gT84Gg6ecycC5zzagSDXxusPl1_ED5_y/view" },
-                { id: 8, title: "Supervision", description: "The leader and supervision", url: "https://drive.google.com/file/d/1lBjmcOfgrd1AwOXiRRWAlrgd9XY3rFGH/view" },
-                { id: 9, title: "Price", description: "The price of leadership", url: "https://drive.google.com/file/d/16DkCMR1P1wvwCClxk1hDECN5ZVZDBNCm/view" },
-                { id: 10, title: "Formation", description: "The leader and the formation of disciples", url: "https://drive.google.com/file/d/1-oM5sg98W4jnocxn9BpfHl4Hk7nvp7Tf/view" }
-            ],
-            "MODULE 6": [
-                { id: 1, title: "Holy Spirit & Me", description: "The holy spirit and me", url: "https://drive.google.com/file/d/1_b7kavauUl_OCz7PX_PqW4s5OdmbsIAi/view" },
-                { id: 2, title: "Preparation", description: "Preparing to receive the holy spirit", url: "https://drive.google.com/file/d/1NJjJ5bGAcIiOkZB5LMb8NMUolr0loaAw/view" },
-                { id: 3, title: "Knowing", description: "Knowing the holy spirit", url: "https://drive.google.com/file/d/1woWgz_MQ5mC7pOawjENvqm1-lpNoqAhq/view" },
-                { id: 4, title: "Fruit Part 1", description: "The fruit of the holy spirit", url: "https://drive.google.com/file/d/1idU0DuYToJI_RIw7zTgmheixayrdE700/view" },
-                { id: 5, title: "Fruit Part 2", description: "The fruit of the holy spirit part 2", url: "https://drive.google.com/file/d/1HS0Ah5b5Gb2lNaROw15pwZQyMVcWz-hR/view" },
-                { id: 6, title: "Fruit Part 3", description: "The fruit of the holy spirit part 3", url: "https://drive.google.com/file/d/1pESsJIQLdbSRrSBn2bS-bl98zYqzbGNn/view" },
-                { id: 7, title: "Gifts Intro", description: "Introduction of the gifts of the holy spirit", url: "https://drive.google.com/file/d/15k_NkX0bxgvmqnJWTJfc67ks6zdRl-Ki/view" },
-                { id: 8, title: "Revelation", description: "Gifts of the revelation", url: "https://drive.google.com/file/d/1QaoqTS-8tU0-YHOtP8uvBpIIhf6OHC9_/view" },
-                { id: 9, title: "Power", description: "Gifts of power", url: "https://drive.google.com/file/d/1c7c9a94suLWy_lB9UTRGMgRIChdcowZ6/view" },
-                { id: 10, title: "Inspiration", description: "Gifts of inspiration", url: "" }
-            ]
-        }
-    };
 
     const router = useRouter();
     const verifyMutation = trpc.verifyProfilePin.useMutation();
@@ -214,11 +274,43 @@ export default function ProfileView({ user, qrValue, attendance = [], initialAut
                             </Button>
                         </div>
 
-                        {/* Status Indicator (Optional but adds premium feel) */}
-                        <div className="hidden sm:flex items-center gap-2 px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
-                            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                            <span className="text-[9px] font-black uppercase tracking-[0.2em] text-emerald-600">Session Secure</span>
-                        </div>
+                        {/* Developer Mode Toggle (Localhost Only) */}
+                        {isLocalhost ? (
+                            <div
+                                onClick={() => {
+                                    setIsDeveloperMode(!isDeveloperMode);
+                                    toast.info(isDeveloperMode ? "Developer Mode Disabled" : "Developer Mode Enabled: All videos unlocked");
+                                }}
+                                className={cn(
+                                    "flex items-center gap-2 px-4 py-2 border rounded-full cursor-pointer transition-all duration-300",
+                                    isDeveloperMode
+                                        ? "bg-rose-500/10 border-rose-500/20 shadow-[0_0_15px_rgba(244,63,94,0.1)]"
+                                        : "bg-emerald-500/10 border-emerald-500/20"
+                                )}
+                            >
+                                <div className={cn(
+                                    "w-2 h-2 rounded-full animate-pulse",
+                                    isDeveloperMode ? "bg-rose-500" : "bg-emerald-500"
+                                )} />
+                                <span className={cn(
+                                    "text-[9px] font-black uppercase tracking-[0.2em]",
+                                    isDeveloperMode ? "text-rose-600" : "text-emerald-600"
+                                )}>
+                                    {isDeveloperMode ? (
+                                        <span className="flex items-center gap-2">
+                                            <Wrench className="w-3 h-3" />
+                                            Dev Mode Active
+                                        </span>
+                                    ) : "Session Secure"}
+                                </span>
+                            </div>
+                        ) : (
+                            /* Static Status Indicator for Production */
+                            <div className="flex items-center gap-2 px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
+                                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                                <span className="text-[9px] font-black uppercase tracking-[0.2em] text-emerald-600">Session Secure</span>
+                            </div>
+                        )}
                     </div>
 
                     {/* Mobile Bottom Navigation Bar */}
@@ -510,112 +602,142 @@ export default function ProfileView({ user, qrValue, attendance = [], initialAut
                                                     </div>
                                                 </div>
 
-                                                {/* Level Selector */}
-                                                <div className="flex items-center gap-2 overflow-x-auto pb-4 scrollbar-none -mx-4 px-4 sm:mx-0 sm:px-0 mb-2">
-                                                    {Object.keys(curriculum).map((level) => (
-                                                        <Button
-                                                            key={level}
-                                                            variant={selectedLevel === level ? "default" : "outline"}
-                                                            onClick={() => {
-                                                                setSelectedLevel(level);
-                                                                // Set default video to first lesson of first module/level
-                                                                const levelData = curriculum[level as keyof typeof curriculum];
-                                                                const firstLesson = Array.isArray(levelData) ? levelData[0] : (Object.values(levelData)[0] as any[])[0];
-                                                                if (firstLesson) {
-                                                                    setSelectedVideo({ title: firstLesson.description, url: firstLesson.url });
-                                                                    setIsPlaying(false);
-                                                                }
-                                                            }}
-                                                            className={cn(
-                                                                "rounded-xl h-11 px-6 font-black uppercase text-[10px] sm:text-[11px] tracking-widest shrink-0 transition-all",
-                                                                selectedLevel === level && "shadow-[0_10px_20px_-5px_rgba(var(--primary-rgb),0.3)]"
-                                                            )}
-                                                        >
-                                                            {level}
-                                                        </Button>
-                                                    ))}
-                                                </div>
-
-                                                <div className="grid lg:grid-cols-[1fr_350px] gap-8">
-                                                    {/* Video Player Section */}
-                                                    <div className="space-y-6">
-                                                        <div className="aspect-video w-full rounded-2xl sm:rounded-[2.5rem] overflow-hidden bg-black shadow-2xl ring-1 ring-border/50 relative group">
-                                                            {!isPlaying && selectedVideo.url ? (
-                                                                <div
-                                                                    className="absolute inset-0 flex flex-col items-center justify-center cursor-pointer group/overlay"
-                                                                    onClick={() => setIsPlaying(true)}
-                                                                >
-                                                                    <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent z-0" />
-                                                                    <div className="w-20 h-20 rounded-full bg-primary/20 backdrop-blur-md flex items-center justify-center border border-primary/30 group-hover/overlay:scale-110 group-hover/overlay:bg-primary transition-all duration-500 relative z-10">
-                                                                        <Play className="w-8 h-8 text-white fill-white ml-1" />
-                                                                    </div>
-                                                                    <div className="absolute bottom-6 left-6 right-6 z-10">
-                                                                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary mb-1">Session Available</p>
-                                                                        <h5 className="text-lg font-black text-white uppercase italic leading-none">{selectedVideo.title}</h5>
-                                                                    </div>
-                                                                </div>
-                                                            ) : selectedVideo.url ? (
-                                                                <iframe
-                                                                    src={selectedVideo.url.replace('/view', '/preview').split('?')[0] + "?autoplay=1"}
-                                                                    className="w-full h-full border-none"
-                                                                    allow="autoplay"
-                                                                    allowFullScreen
-                                                                />
-                                                            ) : (
-                                                                <div className="absolute inset-0 flex flex-col items-center justify-center text-muted-foreground bg-muted/20">
-                                                                    <Play className="w-12 h-12 mb-4 opacity-20" />
-                                                                    <p className="font-black uppercase text-xs tracking-widest">Video Not Available Yet</p>
-                                                                </div>
-                                                            )}
+                                                {/* Level Selector - Only show enrolled classes */}
+                                                {enrolledClassKeys.length === 0 ? (
+                                                    <div className="text-center py-12 space-y-4 rounded-3xl bg-muted/20 border border-dashed border-border">
+                                                        <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto">
+                                                            <Book className="w-8 h-8 text-muted-foreground/50" />
                                                         </div>
-                                                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-1 sm:px-4">
-                                                            <div className="space-y-1">
-                                                                <div className="flex items-center gap-2 flex-wrap">
-                                                                    <span className="text-[9px] font-black bg-primary/10 text-primary px-2 py-0.5 rounded-full uppercase tracking-widest">{selectedLevel}</span>
-                                                                    <h4 className="font-black text-lg sm:text-xl uppercase tracking-tighter italic leading-none">{selectedVideo.title}</h4>
-                                                                </div>
-                                                                <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-widest">Active Session Player</p>
-                                                            </div>
-                                                            {selectedVideo.url && (
-                                                                <Link
-                                                                    href={selectedVideo.url}
-                                                                    target="_blank"
-                                                                    rel="noopener noreferrer"
-                                                                    className="w-full sm:w-auto"
-                                                                >
-                                                                    <Button variant="outline" size="sm" className="w-full sm:w-auto rounded-xl sm:rounded-full gap-2 text-[10px] font-black uppercase tracking-widest h-10 px-6">
-                                                                        Open on Drive
-                                                                        <ExternalLink className="w-3 h-3" />
-                                                                    </Button>
-                                                                </Link>
-                                                            )}
+                                                        <div>
+                                                            <h4 className="font-bold text-lg">Not Enrolled in Any Class</h4>
+                                                            <p className="text-muted-foreground text-sm">You are not currently enrolled in any classes.</p>
+                                                            <p className="text-muted-foreground text-sm mt-1">Contact your network leader to get enrolled.</p>
                                                         </div>
+                                                        <Link href="/classes">
+                                                            <Button variant="outline" className="rounded-xl mt-4">
+                                                                View Available Classes
+                                                            </Button>
+                                                        </Link>
                                                     </div>
-
-                                                    {/* Lesson List Section */}
-                                                    <div className="space-y-4 lg:max-h-[600px] lg:overflow-y-auto lg:pr-2 scrollbar-thin scrollbar-thumb-primary/20">
-                                                        {Array.isArray(curriculum[selectedLevel as keyof typeof curriculum]) ? (
-                                                            <div className="space-y-3">
-                                                                {(curriculum[selectedLevel as keyof typeof curriculum] as any[]).map((lesson) => (
-                                                                    <LessonRow
-                                                                        key={lesson.id}
-                                                                        lesson={lesson}
-                                                                        isSelected={selectedVideo.url === lesson.url}
-                                                                        onSelect={() => {
-                                                                            setSelectedVideo({ title: lesson.description, url: lesson.url });
-                                                                            setIsPlaying(true);
+                                                ) : (
+                                                    <>
+                                                        <div className="flex items-center gap-2 overflow-x-auto pb-4 scrollbar-none -mx-4 px-4 sm:mx-0 sm:px-0 mb-2">
+                                                            {Object.keys(curriculum)
+                                                                .filter(level => enrolledClassKeys.includes(level))
+                                                                .map((level) => (
+                                                                    <Button
+                                                                        key={level}
+                                                                        variant={selectedLevel === level ? "default" : "outline"}
+                                                                        onClick={() => {
+                                                                            setSelectedLevel(level);
+                                                                            // Set default video to first lesson of first module/level
+                                                                            const levelData = curriculum[level as keyof typeof curriculum];
+                                                                            const firstLesson = Array.isArray(levelData) ? levelData[0] : (Object.values(levelData)[0] as any[])[0];
+                                                                            if (firstLesson) {
+                                                                                setSelectedVideo({ title: firstLesson.description, url: firstLesson.url });
+                                                                                setIsPlaying(false);
+                                                                            }
                                                                         }}
-                                                                    />
+                                                                        className={cn(
+                                                                            "rounded-xl h-11 px-6 font-black uppercase text-[10px] sm:text-[11px] tracking-widest shrink-0 transition-all",
+                                                                            selectedLevel === level && "shadow-[0_10px_20px_-5px_rgba(var(--primary-rgb),0.3)]"
+                                                                        )}
+                                                                    >
+                                                                        {level}
+                                                                    </Button>
                                                                 ))}
-                                                            </div>
-                                                        ) : (
-                                                            Object.entries(curriculum[selectedLevel as keyof typeof curriculum] as Record<string, any[]>).map(([moduleName, lessons]) => (
-                                                                <div key={moduleName} className="space-y-4">
-                                                                    <div className="sticky top-0 z-10 bg-card/60 backdrop-blur-md py-2 px-1 border-b border-border/50">
-                                                                        <h5 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">{moduleName}</h5>
+                                                        </div>
+
+                                                        <div className="grid lg:grid-cols-[1fr_350px] gap-8">
+                                                            {/* Video Player Section */}
+                                                            <div className="space-y-6">
+                                                                <div className="relative w-full h-0 pb-[56.25%] rounded-2xl sm:rounded-[2.5rem] overflow-hidden bg-black shadow-2xl ring-1 ring-border/50 group">
+                                                                    {!selectedVideo.url ? (
+                                                                        <div className="absolute inset-0 flex flex-col items-center justify-center text-muted-foreground bg-muted/20">
+                                                                            <Play className="w-12 h-12 mb-4 opacity-20" />
+                                                                            <p className="font-black uppercase text-xs tracking-widest">Video Not Available Yet</p>
+                                                                        </div>
+                                                                    ) : (selectedVideo.url.includes('youtube.com') || selectedVideo.url.includes('youtu.be')) ? (
+                                                                        // Direct embed for YouTube
+                                                                        !isPlaying ? (
+                                                                            <div
+                                                                                className="absolute inset-0 flex flex-col items-center justify-center cursor-pointer group/overlay"
+                                                                                onClick={() => setIsPlaying(true)}
+                                                                            >
+                                                                                <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent z-0" />
+                                                                                <div className="w-20 h-20 rounded-full bg-red-600/90 backdrop-blur-md flex items-center justify-center border border-red-500/30 group-hover/overlay:scale-110 transition-all duration-500 relative z-10">
+                                                                                    <Play className="w-8 h-8 text-white fill-white ml-1" />
+                                                                                </div>
+                                                                                <div className="absolute bottom-6 left-6 right-6 z-10">
+                                                                                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-red-400 mb-1">YouTube Video</p>
+                                                                                    <h5 className="text-lg font-black text-white uppercase italic leading-none">{selectedVideo.title}</h5>
+                                                                                </div>
+                                                                            </div>
+                                                                        ) : (
+                                                                            <iframe
+                                                                                src={getEmbedUrl(selectedVideo.url) + "?autoplay=1"}
+                                                                                className="absolute inset-0 w-full h-full border-none"
+                                                                                allow="autoplay; encrypted-media"
+                                                                                allowFullScreen
+                                                                            />
+                                                                        )
+                                                                    ) : (
+                                                                        // Google Drive videos - show preview with open button (embeds are unreliable)
+                                                                        <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900">
+                                                                            <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wMyI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+')] opacity-50" />
+                                                                            <div className="relative z-10 text-center space-y-6 p-8">
+                                                                                <div className="w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br from-blue-500 via-green-500 to-yellow-500 flex items-center justify-center shadow-2xl">
+                                                                                    <Play className="w-10 h-10 text-white fill-white ml-1" />
+                                                                                </div>
+                                                                                <div className="space-y-2">
+                                                                                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-400">Google Drive Video</p>
+                                                                                    <h5 className="text-xl font-black text-white uppercase italic leading-tight max-w-sm">{selectedVideo.title}</h5>
+                                                                                    <p className="text-[10px] text-zinc-400 font-medium uppercase tracking-wider">Click below to watch in Google Drive</p>
+                                                                                </div>
+                                                                                <Link
+                                                                                    href={selectedVideo.url}
+                                                                                    target="_blank"
+                                                                                    rel="noopener noreferrer"
+                                                                                >
+                                                                                    <Button className="rounded-full px-8 h-12 font-black uppercase text-[10px] tracking-widest gap-2 bg-white text-black hover:bg-zinc-200 shadow-xl hover:scale-105 active:scale-95 transition-all">
+                                                                                        <Play className="w-4 h-4 fill-current" />
+                                                                                        Watch on Google Drive
+                                                                                        <ExternalLink className="w-3 h-3" />
+                                                                                    </Button>
+                                                                                </Link>
+                                                                            </div>
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+                                                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-1 sm:px-4">
+                                                                    <div className="space-y-1">
+                                                                        <div className="flex items-center gap-2 flex-wrap">
+                                                                            <span className="text-[9px] font-black bg-primary/10 text-primary px-2 py-0.5 rounded-full uppercase tracking-widest">{selectedLevel}</span>
+                                                                            <h4 className="font-black text-lg sm:text-xl uppercase tracking-tighter italic leading-none">{selectedVideo.title}</h4>
+                                                                        </div>
+                                                                        <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-widest">Active Session Player</p>
                                                                     </div>
-                                                                    <div className="space-y-2">
-                                                                        {lessons.map((lesson) => (
+                                                                    {selectedVideo.url && (
+                                                                        <Link
+                                                                            href={selectedVideo.url}
+                                                                            target="_blank"
+                                                                            rel="noopener noreferrer"
+                                                                            className="w-full sm:w-auto"
+                                                                        >
+                                                                            <Button variant="outline" size="sm" className="w-full sm:w-auto rounded-xl sm:rounded-full gap-2 text-[10px] font-black uppercase tracking-widest h-10 px-6">
+                                                                                Open on Drive
+                                                                                <ExternalLink className="w-3 h-3" />
+                                                                            </Button>
+                                                                        </Link>
+                                                                    )}
+                                                                </div>
+                                                            </div>
+
+                                                            {/* Lesson List Section */}
+                                                            <div className="space-y-4 lg:max-h-[600px] lg:overflow-y-auto lg:pr-2 scrollbar-thin scrollbar-thumb-primary/20">
+                                                                {Array.isArray(curriculum[selectedLevel as keyof typeof curriculum]) ? (
+                                                                    <div className="space-y-3">
+                                                                        {(curriculum[selectedLevel as keyof typeof curriculum] as any[]).map((lesson) => (
                                                                             <LessonRow
                                                                                 key={lesson.id}
                                                                                 lesson={lesson}
@@ -627,37 +749,58 @@ export default function ProfileView({ user, qrValue, attendance = [], initialAut
                                                                             />
                                                                         ))}
                                                                     </div>
-                                                                </div>
-                                                            ))
-                                                        )}
-                                                    </div>
-                                                </div>
+                                                                ) : (
+                                                                    Object.entries(curriculum[selectedLevel as keyof typeof curriculum] as Record<string, any[]>).map(([moduleName, lessons]) => (
+                                                                        <div key={moduleName} className="space-y-4">
+                                                                            <div className="sticky top-0 z-10 bg-card/60 backdrop-blur-md py-2 px-1 border-b border-border/50">
+                                                                                <h5 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">{moduleName}</h5>
+                                                                            </div>
+                                                                            <div className="space-y-2">
+                                                                                {lessons.map((lesson) => (
+                                                                                    <LessonRow
+                                                                                        key={lesson.id}
+                                                                                        lesson={lesson}
+                                                                                        isSelected={selectedVideo.url === lesson.url}
+                                                                                        onSelect={() => {
+                                                                                            setSelectedVideo({ title: lesson.description, url: lesson.url });
+                                                                                            setIsPlaying(true);
+                                                                                        }}
+                                                                                    />
+                                                                                ))}
+                                                                            </div>
+                                                                        </div>
+                                                                    ))
+                                                                )}
+                                                            </div>
+                                                        </div>
 
-                                                {/* Full Archive CTA */}
-                                                <div className="text-center py-10 px-6 sm:px-12 space-y-6 rounded-3xl sm:rounded-[3rem] bg-linear-to-br from-primary/5 via-transparent to-rose-500/5 border border-border/50 relative overflow-hidden group mt-8">
-                                                    <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                                                    <div className="relative space-y-6">
-                                                        <div className="max-w-md mx-auto space-y-3">
-                                                            <h4 className="font-black text-2xl uppercase tracking-tighter italic leading-none">Resource Archive</h4>
-                                                            <p className="text-muted-foreground text-[10px] font-medium leading-relaxed uppercase tracking-widest">
-                                                                Can't find what you're looking for? Access all recorded sessions, modules, and handouts in our full cloud storage archive.
-                                                            </p>
+                                                        {/* Full Archive CTA */}
+                                                        <div className="text-center py-10 px-6 sm:px-12 space-y-6 rounded-3xl sm:rounded-[3rem] bg-linear-to-br from-primary/5 via-transparent to-rose-500/5 border border-border/50 relative overflow-hidden group mt-8">
+                                                            <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                                                            <div className="relative space-y-6">
+                                                                <div className="max-w-md mx-auto space-y-3">
+                                                                    <h4 className="font-black text-2xl uppercase tracking-tighter italic leading-none">Resource Archive</h4>
+                                                                    <p className="text-muted-foreground text-[10px] font-medium leading-relaxed uppercase tracking-widest">
+                                                                        Can't find what you're looking for? Access all recorded sessions, modules, and handouts in our full cloud storage archive.
+                                                                    </p>
+                                                                </div>
+                                                                <div className="pt-2">
+                                                                    <Link
+                                                                        href="https://drive.google.com/drive/folders/13d1rw_OHwwiPMq6hJkc01Ee-RL0OoEUr"
+                                                                        target="_blank"
+                                                                        rel="noopener noreferrer"
+                                                                        className="w-full sm:w-auto inline-block"
+                                                                    >
+                                                                        <Button className="w-full sm:w-auto rounded-2xl px-12 h-14 font-black uppercase text-[10px] tracking-[0.25em] shadow-xl hover:-translate-y-1 active:scale-95 transition-all gap-3 bg-primary text-primary-foreground">
+                                                                            Go to Full Archive
+                                                                            <ExternalLink className="w-4 h-4" />
+                                                                        </Button>
+                                                                    </Link>
+                                                                </div>
+                                                            </div>
                                                         </div>
-                                                        <div className="pt-2">
-                                                            <Link
-                                                                href="https://drive.google.com/drive/folders/13d1rw_OHwwiPMq6hJkc01Ee-RL0OoEUr"
-                                                                target="_blank"
-                                                                rel="noopener noreferrer"
-                                                                className="w-full sm:w-auto inline-block"
-                                                            >
-                                                                <Button className="w-full sm:w-auto rounded-2xl px-12 h-14 font-black uppercase text-[10px] tracking-[0.25em] shadow-xl hover:-translate-y-1 active:scale-95 transition-all gap-3 bg-primary text-primary-foreground">
-                                                                    Go to Full Archive
-                                                                    <ExternalLink className="w-4 h-4" />
-                                                                </Button>
-                                                            </Link>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                                    </>
+                                                )}
                                             </div>
                                         </TabsContent>
                                     </div>

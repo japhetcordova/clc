@@ -39,7 +39,7 @@ export default async function ProfilePage({ params }: { params: { slug: string }
         const storedQrId = cookieStore.get("qrCodeId")?.value;
         const isAuthorized = storedQrId === slug;
 
-        return <ProfileView user={data.user} qrValue={slug} attendance={data.attendance} initialAuthorized={isAuthorized} />;
+        return <ProfileView user={data.user} qrValue={slug} attendance={data.attendance} enrollments={data.enrollments} initialAuthorized={isAuthorized} />;
     } catch (error) {
         console.error("Failed to fetch profile data:", error);
         throw error;
