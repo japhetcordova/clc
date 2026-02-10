@@ -953,6 +953,39 @@ export const appRouter = router({
             return await db.select().from(cellGroupInterests).orderBy(desc(cellGroupInterests.createdAt));
         }),
 
+    getMyEnrollments: publicProcedure
+        .query(async () => {
+            const cookieStore = await cookies();
+            const qrCodeId = cookieStore.get("qrCodeId")?.value;
+            if (!qrCodeId) return [];
+            const [user] = await db.select().from(users).where(eq(users.qrCodeId, qrCodeId)).limit(1);
+            if (!user) return [];
+            return await db.select({
+                id: classEnrollments.id,
+                classLevel: classEnrollments.classLevel,
+                status: classEnrollments.status,
+                enrolledAt: classEnrollments.enrolledAt,
+            }).from(classEnrollments).where(eq(classEnrollments.userId, user.id));
+        }),
+
+    unenrollStudent: publicProcedure
+        .input(z.object({
+            qrCodeId: z.string(),
+            classLevel: z.string()
+        }))
+        .mutation(async ({ input }) => {
+            const { qrCodeId, classLevel } = input;
+            const [user] = await db.select().from(users).where(eq(users.qrCodeId, qrCodeId)).limit(1);
+            if (!user) throw new Error("User not found");
+
+            await db.delete(classEnrollments)
+                .where(and(eq(classEnrollments.userId, user.id), eq(classEnrollments.classLevel, classLevel)));
+
+            revalidatePath("/classes");
+            revalidatePath(`/profile/${qrCodeId}`);
+            return { success: true };
+        }),
+
     enrollStudentByQr: publicProcedure
         .input(z.object({
             qrCodeId: z.string(),
