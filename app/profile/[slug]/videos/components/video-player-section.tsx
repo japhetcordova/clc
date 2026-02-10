@@ -173,8 +173,8 @@ export function VideoPlayerSection({
     };
 
     return (
-        <div className="space-y-6 sm:space-y-10">
-            <div className="flex flex-col gap-4 sm:gap-6 px-1">
+        <div className="flex flex-col gap-6 sm:gap-10">
+            <div className="flex flex-col gap-4 sm:gap-6 px-4 sm:px-1">
                 <div className="flex items-center gap-3">
                     <div className="px-3 py-1 bg-primary/10 border border-primary/20 rounded-full">
                         <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-primary">{selectedLevel}</span>
@@ -187,7 +187,7 @@ export function VideoPlayerSection({
                 </h2>
             </div>
 
-            <div className="relative aspect-video w-full max-h-[60dvh] sm:max-h-none rounded-2xl sm:rounded-[3rem] overflow-hidden bg-black shadow-2xl ring-1 ring-white/10 group isolate">
+            <div className="relative aspect-video w-full max-h-[60dvh] sm:max-h-none rounded-none sm:rounded-[3rem] overflow-hidden bg-black shadow-2xl ring-1 ring-white/10 group isolate">
                 {selectedVideo.url ? (
                     <div className="absolute inset-0 w-full h-full">
                         {renderPlayer()}
@@ -204,7 +204,7 @@ export function VideoPlayerSection({
                 )}
             </div>
 
-            <div className="flex flex-col sm:flex-row items-stretch gap-4 px-1">
+            <div className="flex flex-col sm:flex-row items-stretch gap-4 px-4 sm:px-1">
                 <button
                     onClick={() => toggleWatched(selectedVideo.url)}
                     className={cn(

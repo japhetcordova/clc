@@ -140,9 +140,9 @@ export default function VideosView({ user, qrValue, enrollments = [], initialAut
                                         <div className="h-px bg-white/5" />
                                     </div>
 
-                                    <div className="grid lg:grid-cols-[1fr_400px] gap-8 lg:gap-12 xl:gap-20 items-start">
-                                        <div className="space-y-8 sm:space-y-12">
-                                            <div className="px-2 sm:px-0">
+                                    <div className="flex flex-col lg:grid lg:grid-cols-[1fr_400px] gap-8 lg:gap-12 xl:gap-20 items-start">
+                                        <div className="space-y-8 sm:space-y-12 w-full">
+                                            <div className="px-0 sm:px-0">
                                                 <VideoPlayerSection
                                                     selectedLevel={selectedLevel}
                                                     selectedVideo={selectedVideo}
@@ -158,7 +158,7 @@ export default function VideosView({ user, qrValue, enrollments = [], initialAut
                                             </div>
                                         </div>
 
-                                        <div className="space-y-10 px-4 sm:px-0">
+                                        <div className="space-y-10 px-4 sm:px-0 w-full">
                                             <LessonList
                                                 selectedLevel={selectedLevel}
                                                 watchedVideos={watchedVideos}
