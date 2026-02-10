@@ -146,6 +146,7 @@ export function VideoPlayerSection({
                     controls
                     autoPlay
                     playsInline
+                    onEnded={() => toggleWatched(selectedVideo.url)}
                 />
             );
         }
@@ -204,41 +205,7 @@ export function VideoPlayerSection({
                 )}
             </div>
 
-            <div className="flex flex-col sm:flex-row items-stretch gap-4 px-4 sm:px-1">
-                <button
-                    onClick={() => toggleWatched(selectedVideo.url)}
-                    className={cn(
-                        "flex-1 flex items-center justify-center gap-3 h-14 sm:h-16 rounded-full border transition-all text-[11px] font-black uppercase tracking-[0.2em] shadow-2xl active:scale-95",
-                        isWatched
-                            ? "bg-emerald-500 text-white border-emerald-400 shadow-emerald-500/30"
-                            : "bg-primary text-primary-foreground border-primary/20 shadow-primary/40 hover:scale-[1.01]"
-                    )}
-                >
-                    {isWatched ? (
-                        <>
-                            <CheckCircle className="w-5 h-5" />
-                            Completed
-                        </>
-                    ) : (
-                        <>
-                            <div className="w-2.5 h-2.5 rounded-full border-2 border-current" />
-                            Mark as Done
-                        </>
-                    )}
-                </button>
-                {selectedVideo.url && (
-                    <div className="flex justify-center sm:contents">
-                        <Link href={selectedVideo.url} target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto">
-                            <Button
-                                className="rounded-full h-14 sm:h-16 w-full sm:w-16 border-white/5 bg-card/50 hover:bg-card shadow-xl transition-all active:scale-90 flex items-center justify-center gap-2 sm:gap-0"
-                            >
-                                <ExternalLink className="w-5 h-5 text-muted-foreground" />
-                                <span className="sm:hidden text-[10px] font-black uppercase tracking-widest text-muted-foreground">Open Link</span>
-                            </Button>
-                        </Link>
-                    </div>
-                )}
-            </div>
+
         </div>
     );
 }
