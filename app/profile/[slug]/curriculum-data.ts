@@ -70,28 +70,28 @@ export const curriculum = {
     },
     "SOL 3": {
         "MODULE 5": [
-            { id: 1, title: "A leader of faith", description: "", url: "https://drive.google.com/file/d/11F8EVW_cJuMwSs2HJWjAifo5QNypq-TD/view" },
-            { id: 2, title: "The leaders love for the sheep", description: "", url: "https://drive.google.com/file/d/1no1S8Sbf0o75Vl3w21LhG6sWOgwkiAkm/view" },
-            { id: 3, title: "A leader that builds", description: "", url: "https://drive.google.com/file/d/1P72XaB3AKU2nUVGTEoQCJJ5ef7MJ_knY/view" },
-            { id: 4, title: "A leader with the heart of a servant", description: "", url: "https://drive.google.com/file/d/1Fdbcxanw4_UhM8DBtMdc_7q7obsC9MKl/view" },
-            { id: 5, title: "The leader controlled by the Holy Spirit", description: "", url: "https://drive.google.com/file/d/1EaS0TtqygxCMuD1aK_Dx4zLGATr4LmMd/view" },
+            { id: 1, title: "A leader of faith", description: "", url: "https://pub-71cfc9e8b30e46868845fef5a9b3555f.r2.dev/classes/SOL-3/MODULE-5/1-a-leader-of-faith.mp4" },
+            { id: 2, title: "The leaders love for the sheep", description: "", url: "https://pub-71cfc9e8b30e46868845fef5a9b3555f.r2.dev/classes/SOL-3/MODULE-5/2-the-leaders-love-for-the-sheep.mp4" },
+            { id: 3, title: "A leader that builds", description: "", url: "https://pub-71cfc9e8b30e46868845fef5a9b3555f.r2.dev/classes/SOL-3/MODULE-5/3-a-leader-that-builds.mp4" },
+            { id: 4, title: "A leader with the heart of a servant", description: "", url: "https://pub-71cfc9e8b30e46868845fef5a9b3555f.r2.dev/classes/SOL-3/MODULE-5/4-a-leader-with-the-heart-of-a-servant.mp4" },
+            { id: 5, title: "The leader controlled by the Holy Spirit", description: "", url: "https://pub-71cfc9e8b30e46868845fef5a9b3555f.r2.dev/classes/SOL-3/MODULE-5/5-the-leader-controlled-by-the-holy-spirit.mp4" },
             { id: 6, title: "The leader preaching the word", description: "", url: "https://pub-71cfc9e8b30e46868845fef5a9b3555f.r2.dev/classes/SOL-3/MODULE-5/6-the-leader-preaching-the-word.mp4" },
             { id: 7, title: "The leader and counseling", description: "", url: "https://pub-71cfc9e8b30e46868845fef5a9b3555f.r2.dev/classes/SOL-3/MODULE-5/7-the-leader-and-counseling.mp4" },
-            { id: 8, title: "The leader and supervision", description: "", url: "https://drive.google.com/file/d/1lBjmcOfgrd1AwOXiRRWAlrgd9XY3rFGH/view" },
-            { id: 9, title: "The price of leadership", description: "", url: "https://drive.google.com/file/d/16DkCMR1P1wvwCClxk1hDECN5ZVZDBNCm/view" },
-            { id: 10, title: "The leader and the formation of disciples", description: "", url: "https://drive.google.com/file/d/1-oM5sg98W4jnocxn9BpfHl4Hk7nvp7Tf/view" }
+            { id: 8, title: "The leader and supervision", description: "", url: "https://pub-71cfc9e8b30e46868845fef5a9b3555f.r2.dev/classes/SOL-3/MODULE-5/8-the-leader-and-supervision.mp4" },
+            { id: 9, title: "The price of leadership", description: "", url: "https://pub-71cfc9e8b30e46868845fef5a9b3555f.r2.dev/classes/SOL-3/MODULE-5/9-the-price-of-leadership.mp4" },
+            { id: 10, title: "The leader and the formation of disciples", description: "", url: "https://pub-71cfc9e8b30e46868845fef5a9b3555f.r2.dev/classes/SOL-3/MODULE-5/10-the-leader-and-the-formation-of-disciples.mp4" }
         ],
         "MODULE 6": [
-            { id: 1, title: "The holy spirit and me", description: "", url: "https://drive.google.com/file/d/1_b7kavauUl_OCz7PX_PqW4s5OdmbsIAi/view" },
-            { id: 2, title: "Preparing to receive the holy spirit", description: "", url: "https://drive.google.com/file/d/1NJjJ5bGAcIiOkZB5LMb8NMUolr0loaAw/view" },
-            { id: 3, title: "Knowing the holy spirit", description: "", url: "https://drive.google.com/file/d/1woWgz_MQ5mC7pOawjENvqm1-lpNoqAhq/view" },
-            { id: 4, title: "The fruit of the holy spirit", description: "", url: "https://drive.google.com/file/d/1idU0DuYToJI_RIw7zTgmheixayrdE700/view" },
-            { id: 5, title: "The fruit of the holy spirit part 2", description: "", url: "https://drive.google.com/file/d/1HS0Ah5b5Gb2lNaROw15pwZQyMVcWz-hR/view" },
-            { id: 6, title: "The fruit of the holy spirit part 3", description: "", url: "https://drive.google.com/file/d/1pESsJIQLdbSRrSBn2bS-bl98zYqzbGNn/view" },
-            { id: 7, title: "Introduction of the gifts of the holy spirit", description: "", url: "https://drive.google.com/file/d/15k_NkX0bxgvmqnJWTJfc67ks6zdRl-Ki/view" },
+            { id: 1, title: "The holy spirit and me", description: "", url: "https://pub-71cfc9e8b30e46868845fef5a9b3555f.r2.dev/classes/SOL-3/MODULE-6/1-the-holy-spirit-and-me.mp4" },
+            { id: 2, title: "Preparing to receive the holy spirit", description: "", url: "https://pub-71cfc9e8b30e46868845fef5a9b3555f.r2.dev/classes/SOL-3/MODULE-6/2-preparing-to-receive-the-holy-spirit.mp4" },
+            { id: 3, title: "Knowing the holy spirit", description: "", url: "https://pub-71cfc9e8b30e46868845fef5a9b3555f.r2.dev/classes/SOL-3/MODULE-6/3-knowing-the-holy-spirit.mp4" },
+            { id: 4, title: "The fruit of the holy spirit", description: "", url: "https://pub-71cfc9e8b30e46868845fef5a9b3555f.r2.dev/classes/SOL-3/MODULE-6/4-the-fruit-of-the-holy-spirit.mp4" },
+            { id: 5, title: "The fruit of the holy spirit part 2", description: "", url: "https://pub-71cfc9e8b30e46868845fef5a9b3555f.r2.dev/classes/SOL-3/MODULE-6/5-the-fruit-of-the-holy-spirit-part-2.mp4" },
+            { id: 6, title: "The fruit of the holy spirit part 3", description: "", url: "https://pub-71cfc9e8b30e46868845fef5a9b3555f.r2.dev/classes/SOL-3/MODULE-6/6-the-fruit-of-the-holy-spirit-part-3.mp4" },
+            { id: 7, title: "Introduction of the gifts of the holy spirit", description: "", url: "https://pub-71cfc9e8b30e46868845fef5a9b3555f.r2.dev/classes/SOL-3/MODULE-6/7-introduction-of-the-gifts-of-the-holy-spirit.mp4" },
             { id: 8, title: "Gifts of the revelation", description: "", url: "https://pub-71cfc9e8b30e46868845fef5a9b3555f.r2.dev/classes/SOL-3/MODULE-6/8-gifts-of-the-revelation.mp4" },
-            { id: 9, title: "Gifts of power", description: "", url: "https://drive.google.com/file/d/1c7c9a94suLWy_lB9UTRGMgRIChdcowZ6/view" },
-            { id: 10, title: "Gifts of inspiration", description: "", url: "" }
+            { id: 9, title: "Gifts of power", description: "", url: "https://pub-71cfc9e8b30e46868845fef5a9b3555f.r2.dev/classes/SOL-3/MODULE-6/9-gifts-of-power.mp4" },
+            { id: 10, title: "Gifts of inspiration", description: "", url: "https://pub-71cfc9e8b30e46868845fef5a9b3555f.r2.dev/classes/SOL-3/MODULE-6/10-gifts-of-inspiration.mp4" }
         ]
     }
 };
