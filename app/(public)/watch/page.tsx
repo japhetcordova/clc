@@ -124,7 +124,7 @@ export default async function WatchPage() {
 
     return (
         <div className="min-h-[100dvh] pt-16 md:pt-20 pb-24 md:pb-10 px-3 sm:px-4 md:px-8 bg-background overflow-x-hidden">
-            <div className="max-w-[1920px] mx-auto">
+            <div className="max-w-7xl mx-auto">
                 {/* HERO / HEADER */}
                 <section className="relative pt-8 md:pt-12 pb-10 md:pb-16 overflow-hidden mb-6 md:mb-8 -mx-3 sm:-mx-4 md:-mx-8 px-3 sm:px-4 md:px-8 border-b border-border/50">
                     <div className="absolute inset-0 z-0">
@@ -205,7 +205,7 @@ export default async function WatchPage() {
                                 {activeVideo?.embedHtml ? (
                                     // Use official Facebook embed_html (recommended by Facebook)
                                     <div
-                                        className="absolute inset-0 w-full h-full [&>iframe]:w-full [&>iframe]:h-full [&>iframe]:border-0"
+                                        className="absolute inset-0 w-full h-full [&_iframe]:!w-full [&_iframe]:!h-full [&_iframe]:!border-0"
                                         dangerouslySetInnerHTML={{
                                             __html: activeVideo.embedHtml
                                                 .replace('<iframe', '<iframe playsinline webkit-playsinline="true"')
