@@ -294,7 +294,7 @@ export default async function WatchPage() {
                                 </Link>
                             </div>
 
-                            <div className="grid grid-cols-1 xs:grid-cols-2 gap-3 sm:gap-4 md:gap-6">
+                            <div className="grid grid-cols-2 xs:grid-cols-2 gap-3 sm:gap-4 md:gap-6">
                                 {archives.map((video) => (
                                     <Link key={video.id} href={video.link} target="_blank" className="group">
                                         <Card className="bg-card/40 backdrop-blur-3xl border-border/50 rounded-xl sm:rounded-2xl md:rounded-[2rem] overflow-hidden hover:border-primary/50 transition-all hover:shadow-2xl hover:shadow-primary/5 hover:-translate-y-1">

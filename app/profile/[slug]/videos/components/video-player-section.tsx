@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Play, ExternalLink, Clock, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { getEmbedUrl, getYoutubeId, getCloudflareId } from "../../curriculum-data";
+import { getEmbedUrl, getCloudflareId } from "../../curriculum-data";
 
 interface VideoPlayerSectionProps {
     selectedLevel: string;
@@ -27,51 +27,8 @@ export function VideoPlayerSection({
 
     const renderPlayer = () => {
         if (!selectedVideo.url) return null;
-
-        const isYoutube = selectedVideo.url.includes('youtube.com') || selectedVideo.url.includes('youtu.be');
         const isCloudflare = selectedVideo.url.includes('cloudflarestream.com') || selectedVideo.url.includes('videodelivery.net');
         const isMp4 = selectedVideo.url.endsWith('.mp4') || selectedVideo.url.includes('.mp4?');
-
-        if (isYoutube) {
-            if (!isPlaying) {
-                const youtubeId = getYoutubeId(selectedVideo.url);
-                return (
-                    <div
-                        className="absolute inset-0 flex flex-col items-center justify-center cursor-pointer group/overlay"
-                        onClick={() => setIsPlaying(true)}
-                    >
-                        {youtubeId ? (
-                            <img
-                                src={`https://img.youtube.com/vi/${youtubeId}/maxresdefault.jpg`}
-                                alt={selectedVideo.title}
-                                className="absolute inset-0 w-full h-full object-cover transition-all duration-700 group-hover:scale-105"
-                            />
-                        ) : (
-                            <div className="absolute inset-0 bg-zinc-900" />
-                        )}
-                        <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors z-0" />
-                        <div className="w-16 h-16 rounded-full bg-red-600/90 backdrop-blur-md flex items-center justify-center border border-red-400/30 group-hover/overlay:scale-110 transition-all duration-300 relative z-10 shadow-2xl">
-                            <Play className="w-6 h-6 text-white fill-white ml-1" />
-                        </div>
-                        <div className="absolute bottom-6 left-6 right-6 z-10 text-left">
-                            <p className="text-[8px] font-black uppercase tracking-[0.4em] text-red-500 mb-2 flex items-center gap-2">
-                                <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
-                                YouTube Resource
-                            </p>
-                            <h5 className="text-xl font-black text-white uppercase italic leading-tight line-clamp-2">{selectedVideo.title}</h5>
-                        </div>
-                    </div>
-                );
-            }
-            return (
-                <iframe
-                    src={getEmbedUrl(selectedVideo.url) + "?autoplay=1&modestbranding=1&rel=0"}
-                    className="absolute inset-0 w-full h-full border-none"
-                    allow="autoplay; encrypted-media"
-                    allowFullScreen
-                />
-            );
-        }
 
         if (isCloudflare) {
             if (!isPlaying) {
@@ -151,7 +108,7 @@ export function VideoPlayerSection({
             );
         }
 
-        // Fallback for Google Drive or others
+        // Fallback for external links
         return (
             <div className="absolute inset-0 flex flex-col items-center justify-center bg-zinc-950">
                 <div className="text-center space-y-6 p-12">

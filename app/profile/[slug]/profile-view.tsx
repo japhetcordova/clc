@@ -26,25 +26,6 @@ import { useRouter } from "next/navigation";
 // Helper function to convert video URLs to embeddable format
 function getEmbedUrl(url: string): string {
     if (!url) return '';
-
-    // YouTube: Convert youtu.be or youtube.com/watch URLs to embed format
-    // youtu.be/VIDEO_ID → youtube.com/embed/VIDEO_ID
-    const youtubeShortMatch = url.match(/youtu\.be\/([a-zA-Z0-9_-]+)/);
-    if (youtubeShortMatch) {
-        return `https://www.youtube.com/embed/${youtubeShortMatch[1]}`;
-    }
-
-    // youtube.com/watch?v=VIDEO_ID → youtube.com/embed/VIDEO_ID
-    const youtubeMatch = url.match(/youtube\.com\/watch\?v=([a-zA-Z0-9_-]+)/);
-    if (youtubeMatch) {
-        return `https://www.youtube.com/embed/${youtubeMatch[1]}`;
-    }
-
-    // Google Drive: Convert /view to /preview
-    if (url.includes('drive.google.com')) {
-        return url.replace('/view', '/preview').split('?')[0];
-    }
-
     return url;
 }
 

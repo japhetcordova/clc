@@ -8,11 +8,13 @@ import { Button } from "@/components/ui/button";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import Logo from "./Logo";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 
 export default function Navbar() {
     const [scrolled, setScrolled] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
     const pathname = usePathname();
+    const { me } = useCurrentUser();
 
     const navLinks = [
         { name: "About", href: "/about" },
@@ -103,13 +105,13 @@ export default function Navbar() {
                     </div>
 
                     <div className="flex items-center gap-3">
-                        <Link href="/registration" className="hidden sm:block">
+                        <Link href={me ? `/profile/${me.qrCodeId}` : "/registration"} className="hidden sm:block">
                             <motion.button
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
                                 className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl font-semibold uppercase text-[11px] tracking-widest px-6 h-10 md:h-12 shadow-xl shadow-primary/20 transition-all hover:shadow-primary/40 hover:-translate-y-0.5"
                             >
-                                Join Us
+                                {me ? "My Profile" : "Join Us"}
                             </motion.button>
                         </Link>
 
@@ -202,9 +204,9 @@ export default function Navbar() {
                                 transition={{ delay: 0.3 }}
                                 className="mt-4"
                             >
-                                <Link href="/registration">
+                                <Link href={me ? `/profile/${me.qrCodeId}` : "/registration"}>
                                     <Button className="w-full h-16 rounded-2xl bg-primary text-white font-semibold uppercase  tracking-tighter text-xl shadow-lg shadow-primary/25">
-                                        Join Our Journey
+                                        {me ? "Go to my profile" : "Join Our Journey"}
                                     </Button>
                                 </Link>
                             </motion.div>

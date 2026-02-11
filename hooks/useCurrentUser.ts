@@ -37,5 +37,5 @@ export function useCurrentUser() {
         )
     );
 
-    return { user, qrCodeId, isAdmin, isLoading };
+    return { user, qrCodeId, isAdmin, isLoading, me };
 }

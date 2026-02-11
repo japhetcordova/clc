@@ -15,7 +15,6 @@ import { LevelSelector } from "./components/level-selector";
 import { VideoPlayerSection } from "./components/video-player-section";
 import { LessonList } from "./components/lesson-list";
 import { EmptyState } from "./components/empty-state";
-import { ArchiveLink } from "./components/archive-link";
 
 interface VideosViewProps {
     user: any;
@@ -153,9 +152,6 @@ export default function VideosView({ user, qrValue, enrollments = [], initialAut
                                                 />
                                             </div>
 
-                                            <div className="hidden lg:block pt-10 border-t border-white/5">
-                                                <ArchiveLink />
-                                            </div>
                                         </div>
 
                                         <div className="space-y-10 px-4 sm:px-0 w-full">
@@ -170,9 +166,6 @@ export default function VideosView({ user, qrValue, enrollments = [], initialAut
                                                 }}
                                             />
 
-                                            <div className="lg:hidden pt-10 border-t border-white/5">
-                                                <ArchiveLink />
-                                            </div>
                                         </div>
                                     </div>
                                 </div>

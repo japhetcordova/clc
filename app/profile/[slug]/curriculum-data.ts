@@ -100,24 +100,6 @@ export const curriculum = {
 export function getEmbedUrl(url: string): string {
     if (!url) return '';
 
-    // YouTube: Convert youtu.be or youtube.com/watch URLs to embed format
-    // youtu.be/VIDEO_ID → youtube.com/embed/VIDEO_ID
-    const youtubeShortMatch = url.match(/youtu\.be\/([a-zA-Z0-9_-]+)/);
-    if (youtubeShortMatch) {
-        return `https://www.youtube.com/embed/${youtubeShortMatch[1]}`;
-    }
-
-    // youtube.com/watch?v=VIDEO_ID → youtube.com/embed/VIDEO_ID
-    const youtubeMatch = url.match(/youtube\.com\/watch\?v=([a-zA-Z0-9_-]+)/);
-    if (youtubeMatch) {
-        return `https://www.youtube.com/embed/${youtubeMatch[1]}`;
-    }
-
-    // Google Drive: Convert /view to /preview
-    if (url.includes('drive.google.com')) {
-        return url.replace('/view', '/preview').split('?')[0];
-    }
-
     // Cloudflare Stream: Normalize to iframe embed
     if (url.includes('cloudflarestream.com') || url.includes('videodelivery.net')) {
         const cloudflareMatch = url.match(/(?:cloudflarestream\.com|videodelivery\.net)\/([a-zA-Z0-9_-]+)/);
@@ -134,17 +116,6 @@ export function getLessonCount(level: string): number {
     if (!levelData) return 0;
     if (Array.isArray(levelData)) return levelData.length;
     return Object.values(levelData).reduce((sum, lessons) => sum + lessons.length, 0);
-}
-
-export function getYoutubeId(url: string): string | null {
-    if (!url) return null;
-    const shortMatch = url.match(/youtu\.be\/([a-zA-Z0-9_-]+)/);
-    if (shortMatch) return shortMatch[1];
-    const match = url.match(/youtube\.com\/watch\?v=([a-zA-Z0-9_-]+)/);
-    if (match) return match[1];
-    const embedMatch = url.match(/youtube\.com\/embed\/([a-zA-Z0-9_-]+)/);
-    if (embedMatch) return embedMatch[1];
-    return null;
 }
 
 export function getCloudflareId(url: string): string | null {
