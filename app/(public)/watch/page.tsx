@@ -123,7 +123,7 @@ export default async function WatchPage() {
 
 
     return (
-        <div className="min-h-screen pt-16 md:pt-20 pb-6 md:pb-10 px-3 sm:px-4 md:px-8 bg-background">
+        <div className="min-h-screen pt-16 md:pt-20 pb-24 md:pb-10 px-3 sm:px-4 md:px-8 bg-background">
             <div className="max-w-[1920px] mx-auto">
                 {/* HERO / HEADER */}
                 <section className="relative pt-8 md:pt-12 pb-10 md:pb-16 overflow-hidden mb-6 md:mb-8 -mx-3 sm:-mx-4 md:-mx-8 px-3 sm:px-4 md:px-8 border-b border-border/50">
@@ -152,15 +152,15 @@ export default async function WatchPage() {
                             </p>
                         </div>
 
-                        <div className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 w-full sm:w-auto">
+                        <div className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 w-full sm:w-auto mt-4 md:mt-0">
                             <Link href="https://www.facebook.com/clctagum/live" target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto">
-                                <Button className="w-full sm:w-auto h-12 sm:h-14 px-6 sm:px-8 rounded-xl sm:rounded-2xl bg-[#1877F2] hover:bg-[#1877F2]/90 text-white font-bold uppercase tracking-widest text-[10px] sm:text-xs gap-2 sm:gap-3 shadow-xl shadow-[#1877F2]/20">
+                                <Button className="w-full sm:w-auto h-12 sm:h-14 px-6 sm:px-8 rounded-xl sm:rounded-2xl bg-[#1877F2] hover:bg-[#1877F2]/90 text-white font-bold uppercase tracking-widest text-[11px] sm:text-xs gap-2 sm:gap-3 shadow-xl shadow-[#1877F2]/20">
                                     <Facebook className="w-4 sm:w-5 h-4 sm:h-5" />
                                     Watch on Facebook
                                 </Button>
                             </Link>
                             <Link href="https://www.youtube.com/@clctagum" target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto">
-                                <Button variant="outline" className="w-full sm:w-auto h-12 sm:h-14 px-6 sm:px-8 rounded-xl sm:rounded-2xl border-border/50 font-bold uppercase tracking-widest text-[10px] sm:text-xs gap-2 sm:gap-3 hover:bg-red-500/10 hover:border-red-500/50 hover:text-red-500 transition-all">
+                                <Button variant="outline" className="w-full sm:w-auto h-12 sm:h-14 px-6 sm:px-8 rounded-xl sm:rounded-2xl border-border/50 font-bold uppercase tracking-widest text-[11px] sm:text-xs gap-2 sm:gap-3 hover:bg-red-500/10 hover:border-red-500/50 hover:text-red-500 transition-all">
                                     <Youtube className="w-4 sm:w-5 h-4 sm:h-5 text-red-500" />
                                     YouTube Channel
                                 </Button>
@@ -260,22 +260,20 @@ export default async function WatchPage() {
                                     </span>
                                 </div>
                             </div>
-                            <div className="flex flex-wrap gap-1 sm:gap-2">
-                                <Link href="https://www.facebook.com/clctagum/live" target="_blank">
-                                    <Button variant="ghost" className="h-9 sm:h-10 px-2 sm:px-3 rounded-lg sm:rounded-xl gap-1 sm:gap-2 font-black uppercase text-[9px] sm:text-[10px] tracking-widest text-muted-foreground hover:text-primary">
-                                        <MessageCircle className="w-3 sm:w-4 h-3 sm:h-4" />
-                                        <span className="hidden xs:inline">Join Chat</span>
-                                        <span className="xs:hidden">Chat</span>
+                            <div className="flex flex-wrap gap-2 w-full">
+                                <Link href="https://www.facebook.com/clctagum/live" target="_blank" className="flex-1 min-w-[100px]">
+                                    <Button variant="ghost" className="w-full h-11 sm:h-10 px-2 sm:px-3 rounded-xl gap-2 font-black uppercase text-[10px] tracking-widest text-muted-foreground hover:text-primary bg-muted/30 hover:bg-muted/50 border border-transparent">
+                                        <MessageCircle className="w-4 h-4" />
+                                        <span>Chat</span>
                                     </Button>
                                 </Link>
-                                <Button variant="ghost" className="h-9 sm:h-10 px-2 sm:px-3 rounded-lg sm:rounded-xl gap-1 sm:gap-2 font-black uppercase text-[9px] sm:text-[10px] tracking-widest text-muted-foreground hover:text-primary">
-                                    <Heart className="w-3 sm:w-4 h-3 sm:h-4 text-rose-500" />
-                                    <span className="hidden xs:inline">Support</span>
-                                    <span className="xs:hidden">Give</span>
+                                <Button variant="ghost" className="flex-1 min-w-[100px] h-11 sm:h-10 px-2 sm:px-3 rounded-xl gap-2 font-black uppercase text-[10px] tracking-widest text-muted-foreground hover:text-primary bg-muted/30 hover:bg-muted/50 border border-transparent">
+                                    <Heart className="w-4 h-4 text-rose-500" />
+                                    <span>Give</span>
                                 </Button>
-                                <Button variant="ghost" className="h-9 sm:h-10 px-2 sm:px-3 rounded-lg sm:rounded-xl gap-1 sm:gap-2 font-black uppercase text-[9px] sm:text-[10px] tracking-widest text-muted-foreground hover:text-primary border border-transparent hover:border-border">
-                                    <ArrowUpRight className="w-3 sm:w-4 h-3 sm:h-4" />
-                                    Share
+                                <Button variant="ghost" className="flex-1 min-w-[100px] h-11 sm:h-10 px-2 sm:px-3 rounded-xl gap-2 font-black uppercase text-[10px] tracking-widest text-muted-foreground hover:text-primary bg-muted/30 hover:bg-muted/50 border border-transparent">
+                                    <ArrowUpRight className="w-4 h-4" />
+                                    <span>Share</span>
                                 </Button>
                             </div>
                         </div>
@@ -294,7 +292,7 @@ export default async function WatchPage() {
                                 </Link>
                             </div>
 
-                            <div className="grid grid-cols-2 xs:grid-cols-2 gap-3 sm:gap-4 md:gap-6">
+                            <div className="grid grid-cols-2 sm:grid-cols-2 gap-3 sm:gap-4 md:gap-6">
                                 {archives.map((video) => (
                                     <Link key={video.id} href={video.link} target="_blank" className="group">
                                         <Card className="bg-card/40 backdrop-blur-3xl border-border/50 rounded-xl sm:rounded-2xl md:rounded-[2rem] overflow-hidden hover:border-primary/50 transition-all hover:shadow-2xl hover:shadow-primary/5 hover:-translate-y-1">
