@@ -37,14 +37,32 @@ export async function syncFacebookVideos(accessToken?: string) {
     try {
         console.log("Starting Facebook Video Sync...");
 
-        // 1. Fetch ACTIVE live videos with embed_html and picture (the correct approach)
+        // 0. Auto-upgrade to Page Access Token if possible
+        // This is necessary because User Access Tokens often lack permission to fetch Page videos directly
+        let effectiveToken = accessToken;
+        try {
+            const accountsResponse = await fetch(`https://graph.facebook.com/v19.0/me/accounts?access_token=${accessToken}`);
+            if (accountsResponse.ok) {
+                const accountsData = await accountsResponse.json();
+                const page = accountsData.data?.find((p: any) => p.id === FB_PAGE_ID);
+                if (page?.access_token) {
+                    console.log("Successfully upgraded to Page Access Token");
+                    effectiveToken = page.access_token;
+                }
+            }
+        } catch (err) {
+            console.warn("Failed to check for Page Access Token, proceeding with original token:", err);
+        }
+
+        // 1. Fetch ACTIVE live videos
+        const broadcastStatuses = JSON.stringify(["LIVE"]);
         const liveResponse = await fetch(
-            `https://graph.facebook.com/v19.0/${FB_PAGE_ID}/live_videos?fields=id,title,description,embed_html,status,creation_time,video{id,thumbnails},picture&broadcast_status=["LIVE"]&access_token=${accessToken}`
+            `https://graph.facebook.com/v19.0/${FB_PAGE_ID}/live_videos?fields=id,title,description,embed_html,status,creation_time,video{id,thumbnails},picture&broadcast_status=${encodeURIComponent(broadcastStatuses)}&access_token=${effectiveToken}`
         );
 
         // 2. Fetch recent videos for archive
         const videosResponse = await fetch(
-            `https://graph.facebook.com/v19.0/${FB_PAGE_ID}/videos?fields=id,title,description,thumbnails,embed_html,created_time&access_token=${accessToken}`
+            `https://graph.facebook.com/v19.0/${FB_PAGE_ID}/videos?fields=id,title,description,thumbnails,picture,embed_html,created_time&access_token=${effectiveToken}`
         );
 
         // Reset all isLive to false before updating
@@ -52,42 +70,47 @@ export async function syncFacebookVideos(accessToken?: string) {
 
         // Handle live videos first (priority)
         let liveCount = 0;
+        let upcomingCount = 0;
+
         if (liveResponse.ok) {
             const liveData = await liveResponse.json();
             const liveVideos = liveData.data || [];
-            console.log(`Found ${liveVideos.length} LIVE broadcasts`);
+            console.log(`Found ${liveVideos.length} LIVE/SCHEDULED broadcasts`);
 
             for (const liveV of liveVideos) {
-                if (liveV.status === "LIVE" && liveV.embed_html) {
-                    const fbId = liveV.video?.id || liveV.id;
-                    liveCount++;
+                // We process both LIVE and SCHEDULED
+                const isActuallyLive = liveV.status === "LIVE";
+                if (isActuallyLive) liveCount++;
+                if (liveV.status === "SCHEDULED_PUBLISHED") upcomingCount++;
 
-                    // Get thumbnail: prioritize video.thumbnails, then picture, then fallback
-                    const thumbnail = liveV.video?.thumbnails?.data?.[0]?.uri
-                        || liveV.picture
-                        || `/bg/word.webp`;
+                const fbId = liveV.video?.id || liveV.id;
 
-                    await db.insert(videos)
-                        .values({
-                            fbId: fbId,
-                            title: liveV.title || "Live Worship Service",
-                            description: liveV.description || "",
+                // Get thumbnail: prioritize video.thumbnails, then picture, then fallback
+                const thumbnail = liveV.video?.thumbnails?.data?.[0]?.uri
+                    || liveV.picture
+                    || `/bg/word.webp`;
+
+                await db.insert(videos)
+                    .values({
+                        fbId: fbId,
+                        title: liveV.title || "Worship Service Live",
+                        description: liveV.description || "",
+                        thumbnail: thumbnail,
+                        videoUrl: `https://www.facebook.com/${FB_PAGE_ID}/videos/${fbId}/`,
+                        embedHtml: liveV.embed_html || null,
+                        isLive: isActuallyLive,
+                        publishedAt: new Date(liveV.creation_time || Date.now()),
+                    })
+                    .onConflictDoUpdate({
+                        target: videos.fbId,
+                        set: {
+                            isLive: isActuallyLive,
+                            embedHtml: liveV.embed_html || null,
+                            title: liveV.title || "Worship Service Live",
                             thumbnail: thumbnail,
-                            videoUrl: `https://www.facebook.com/${FB_PAGE_ID}/videos/${fbId}/`,
-                            embedHtml: liveV.embed_html, // Official Facebook embed
-                            isLive: true,
                             publishedAt: new Date(liveV.creation_time || Date.now()),
-                        })
-                        .onConflictDoUpdate({
-                            target: videos.fbId,
-                            set: {
-                                isLive: true,
-                                embedHtml: liveV.embed_html,
-                                title: liveV.title || "Live Worship Service",
-                                thumbnail: thumbnail, // Update thumbnail on conflict too
-                            }
-                        });
-                }
+                        }
+                    });
             }
         } else {
             console.warn("Failed to fetch live_videos:", await liveResponse.text());
@@ -104,12 +127,15 @@ export async function syncFacebookVideos(accessToken?: string) {
         const fbVideos = videosData.data || [];
 
         for (const video of fbVideos) {
-            const thumbnail = video.thumbnails?.data?.[0]?.uri || "";
+            // Priority: thumbnails query, then picture, then fallback
+            const thumbnail = video.thumbnails?.data?.[0]?.uri
+                || video.picture
+                || "";
 
             await db.insert(videos)
                 .values({
                     fbId: video.id,
-                    title: video.title || "Untitled Service",
+                    title: video.title || "Worship Service",
                     description: video.description || "",
                     thumbnail: thumbnail,
                     videoUrl: `https://www.facebook.com/${FB_PAGE_ID}/videos/${video.id}/`,
@@ -120,16 +146,17 @@ export async function syncFacebookVideos(accessToken?: string) {
                 .onConflictDoUpdate({
                     target: videos.fbId,
                     set: {
-                        title: video.title || "Untitled Service",
+                        title: video.title || "Worship Service",
                         description: video.description || "",
                         thumbnail: thumbnail,
                         embedHtml: video.embed_html || null,
+                        publishedAt: new Date(video.created_time),
                     }
                 });
         }
 
-        console.log(`Facebook Sync Completed. Live: ${liveCount}, Archived: ${fbVideos.length}`);
-        return { success: true, liveCount, archivedCount: fbVideos.length };
+        console.log(`Facebook Sync Completed. Live: ${liveCount}, Upcoming: ${upcomingCount}, Archived: ${fbVideos.length}`);
+        return { success: true, liveCount, upcomingCount, archivedCount: fbVideos.length };
     } catch (error) {
         console.error("Failed to sync Facebook videos:", error);
         return { success: false, error: String(error) };
