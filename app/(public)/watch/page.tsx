@@ -208,11 +208,18 @@ export default async function WatchPage() {
                                         className="absolute inset-0 w-full h-full [&_iframe]:!w-full [&_iframe]:!h-full [&_iframe]:!border-0"
                                         dangerouslySetInnerHTML={{
                                             __html: activeVideo.embedHtml
-                                                .replace(/width="\d+"/g, '')
-                                                .replace(/height="\d+"/g, '')
-                                                .replace(/style="[^"]*"/g, '') // Strip existing styles to avoid conflicts
-                                                .replace('<iframe', '<iframe style="width:100%;height:100%;border:none;overflow:hidden;" playsinline webkit-playsinline="true"')
+                                                // 1. Force iframe attributes to 100%
+                                                .replace(/width="\d+"/g, 'width="100%"')
+                                                .replace(/height="\d+"/g, 'height="100%"')
+                                                // 2. Strip standard inline styles
+                                                .replace(/style="[^"]*"/g, '')
+                                                // 3. Inject strict responsive styles and standard attributes
+                                                .replace('<iframe', '<iframe style="width:100% !important; height:100% !important; border:none !important; overflow:hidden !important;" playsinline webkit-playsinline="true"')
+                                                // 4. Ensure allowfullscreen is correct
                                                 .replace('allowfullscreen="true"', 'allowfullscreen="true" playsinline="true"')
+                                                // 5. Attempt to remove width/height query params from src (if present in the string)
+                                                .replace(/&width=\d+/g, '')
+                                                .replace(/width=\d+&/g, '')
                                         }}
                                     />
                                 ) : (
