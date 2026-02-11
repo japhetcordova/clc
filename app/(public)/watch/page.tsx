@@ -208,7 +208,10 @@ export default async function WatchPage() {
                                         className="absolute inset-0 w-full h-full [&_iframe]:!w-full [&_iframe]:!h-full [&_iframe]:!border-0"
                                         dangerouslySetInnerHTML={{
                                             __html: activeVideo.embedHtml
-                                                .replace('<iframe', '<iframe playsinline webkit-playsinline="true"')
+                                                .replace(/width="\d+"/g, '')
+                                                .replace(/height="\d+"/g, '')
+                                                .replace(/style="[^"]*"/g, '') // Strip existing styles to avoid conflicts
+                                                .replace('<iframe', '<iframe style="width:100%;height:100%;border:none;overflow:hidden;" playsinline webkit-playsinline="true"')
                                                 .replace('allowfullscreen="true"', 'allowfullscreen="true" playsinline="true"')
                                         }}
                                     />
