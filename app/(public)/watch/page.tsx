@@ -172,21 +172,36 @@ export default async function WatchPage() {
                 <div className="grid lg:grid-cols-12 gap-4 sm:gap-6 lg:gap-8">
                     {/* MAIN PLAYER AREA */}
                     <div className="lg:col-span-8 space-y-4 sm:space-y-6 lg:space-y-8">
-                        <div className="space-y-3 sm:space-y-4">
-                            <div className="flex items-center justify-between gap-2">
-                                <div className="flex items-center gap-2 sm:gap-3">
-                                    <div className="w-1.5 sm:w-2 h-6 sm:h-8 bg-rose-500 rounded-full" />
-                                    <h2 className="text-xl sm:text-2xl md:text-3xl font-black uppercase italic tracking-tighter">Live <span className="text-rose-500">Stream</span></h2>
+                        <div className="flex flex-col gap-6 sm:gap-10">
+                            {/* Header Section mimicking VideoPlayerSection */}
+                            <div className="flex flex-col gap-4 sm:gap-6 px-4 sm:px-1">
+                                <div className="flex items-center gap-3">
+                                    <div className="px-3 py-1 bg-primary/10 border border-primary/20 rounded-full">
+                                        <div className="flex items-center gap-2">
+                                            {liveVideo && <div className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />}
+                                            <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-primary">
+                                                {liveVideo ? "Live Stream" : "Latest Message"}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/40 italic">Now Playing</span>
                                 </div>
-                                <div className="flex items-center gap-2 sm:gap-4 text-[9px] sm:text-xs font-bold uppercase tracking-widest text-muted-foreground bg-muted/30 px-2 sm:px-4 py-1.5 sm:py-2 rounded-full">
-                                    <Users className="w-3 sm:w-4 h-3 sm:h-4 text-primary" />
-                                    <span className="hidden xs:inline">{liveVideo ? "Live Now" : "Latest Message"}</span>
-                                    <span className="xs:hidden">{liveVideo ? "Live" : "Latest"}</span>
-                                </div>
+
+                                <h2 className="text-xl sm:text-4xl font-black uppercase tracking-tighter leading-tight">
+                                    {activeVideo ? (
+                                        <EditableVideoTitle
+                                            videoId={activeVideo.id}
+                                            initialTitle={activeVideo.manualTitle || activeVideo.title || "Worship Service"}
+                                            className="text-foreground"
+                                        />
+                                    ) : (
+                                        "Worship Service"
+                                    )}
+                                </h2>
                             </div>
 
-                            {/* FB LIVE EMBED - Using official embed_html when available */}
-                            <div className="relative aspect-video rounded-xl sm:rounded-2xl md:rounded-[2.5rem] overflow-hidden bg-muted/30 border border-border/50 group shadow-xl sm:shadow-2xl">
+                            {/* PLAYER CONTAINER from VideoPlayerSection */}
+                            <div className="relative aspect-video w-full max-h-[60dvh] sm:max-h-none rounded-none sm:rounded-[3rem] overflow-hidden bg-black shadow-2xl ring-1 ring-white/10 group isolate">
                                 {activeVideo?.embedHtml ? (
                                     // Use official Facebook embed_html (recommended by Facebook)
                                     <div
@@ -207,38 +222,11 @@ export default async function WatchPage() {
                                         allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share; playsinline"
                                     />
                                 )}
-
-                                {/* Overlay on hover */}
-                                <div className="absolute inset-0 pointer-events-none bg-linear-to-t from-black/40 to-transparent flex items-end p-4 sm:p-6 md:p-8 opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <div className="space-y-1 sm:space-y-2">
-                                        <div className="text-white font-black italic uppercase tracking-tighter text-base sm:text-xl md:text-2xl">
-                                            {activeVideo ? (
-                                                <EditableVideoTitle
-                                                    videoId={activeVideo.id}
-                                                    initialTitle={activeVideo.manualTitle || activeVideo.title || "Worship Service"}
-                                                    className="text-white"
-                                                />
-                                            ) : "Worship Service"}
-                                        </div>
-                                        <p className="text-white/80 font-bold uppercase tracking-widest text-[10px] sm:text-xs">Christian Life Center Tagum City</p>
-                                    </div>
-                                </div>
                             </div>
 
+                            {/* CONTROLS / DETAILS (Adapted to sit below the new layout) */}
                             <div className="flex flex-col sm:flex-row flex-wrap items-start sm:items-center justify-between gap-3 sm:gap-4 p-4 sm:p-6 bg-card/50 border border-border/50 rounded-xl sm:rounded-2xl md:rounded-[2rem]">
                                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-6 w-full sm:w-auto">
-                                    <div className="flex flex-col">
-                                        <span className="text-[9px] sm:text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Currently {liveVideo ? "Playing" : "Offline / Latest"}</span>
-                                        <div className="font-black uppercase italic tracking-tighter text-base sm:text-lg md:text-xl line-clamp-2">
-                                            {activeVideo ? (
-                                                <EditableVideoTitle
-                                                    videoId={activeVideo.id}
-                                                    initialTitle={activeVideo.manualTitle || activeVideo.title || "Worship Service"}
-                                                    className="text-foreground"
-                                                />
-                                            ) : "Worship Service"}
-                                        </div>
-                                    </div>
                                     <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
                                         <Button
                                             asChild
@@ -254,31 +242,32 @@ export default async function WatchPage() {
                                             </a>
                                         </Button>
                                     </div>
+                                    <div className="h-10 w-px bg-border hidden lg:block" />
+                                    <div className="hidden lg:flex flex-col">
+                                        <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Platform</span>
+                                        <span className="font-bold text-xs uppercase tracking-widest flex items-center gap-2 text-primary">
+                                            <Facebook className="w-3 h-3 fill-primary" />
+                                            {liveVideo ? "Facebook Live" : "Facebook Playback"}
+                                        </span>
+                                    </div>
                                 </div>
-                                <div className="h-10 w-px bg-border hidden lg:block" />
-                                <div className="hidden lg:flex flex-col">
-                                    <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Platform</span>
-                                    <span className="font-bold text-xs uppercase tracking-widest flex items-center gap-2 text-primary">
-                                        <Facebook className="w-3 h-3 fill-primary" />
-                                        {liveVideo ? "Facebook Live" : "Facebook Playback"}
-                                    </span>
-                                </div>
-                            </div>
-                            <div className="flex flex-wrap gap-2 w-full">
-                                <Link href="https://www.facebook.com/clctagum/live" target="_blank" className="flex-1 min-w-[100px]">
-                                    <Button variant="ghost" className="w-full h-11 sm:h-10 px-2 sm:px-3 rounded-xl gap-2 font-black uppercase text-[10px] tracking-widest text-muted-foreground hover:text-primary bg-muted/30 hover:bg-muted/50 border border-transparent">
-                                        <MessageCircle className="w-4 h-4" />
-                                        <span>Chat</span>
+
+                                <div className="flex flex-wrap gap-2 w-full sm:w-auto">
+                                    <Link href="https://www.facebook.com/clctagum/live" target="_blank" className="flex-1 sm:flex-none">
+                                        <Button variant="ghost" className="w-full sm:w-auto h-11 sm:h-10 px-2 sm:px-3 rounded-xl gap-2 font-black uppercase text-[10px] tracking-widest text-muted-foreground hover:text-primary bg-muted/30 hover:bg-muted/50 border border-transparent">
+                                            <MessageCircle className="w-4 h-4" />
+                                            <span>Chat</span>
+                                        </Button>
+                                    </Link>
+                                    <Button variant="ghost" className="flex-1 sm:flex-none h-11 sm:h-10 px-2 sm:px-3 rounded-xl gap-2 font-black uppercase text-[10px] tracking-widest text-muted-foreground hover:text-primary bg-muted/30 hover:bg-muted/50 border border-transparent">
+                                        <Heart className="w-4 h-4 text-rose-500" />
+                                        <span>Give</span>
                                     </Button>
-                                </Link>
-                                <Button variant="ghost" className="flex-1 min-w-[100px] h-11 sm:h-10 px-2 sm:px-3 rounded-xl gap-2 font-black uppercase text-[10px] tracking-widest text-muted-foreground hover:text-primary bg-muted/30 hover:bg-muted/50 border border-transparent">
-                                    <Heart className="w-4 h-4 text-rose-500" />
-                                    <span>Give</span>
-                                </Button>
-                                <Button variant="ghost" className="flex-1 min-w-[100px] h-11 sm:h-10 px-2 sm:px-3 rounded-xl gap-2 font-black uppercase text-[10px] tracking-widest text-muted-foreground hover:text-primary bg-muted/30 hover:bg-muted/50 border border-transparent">
-                                    <ArrowUpRight className="w-4 h-4" />
-                                    <span>Share</span>
-                                </Button>
+                                    <Button variant="ghost" className="flex-1 sm:flex-none h-11 sm:h-10 px-2 sm:px-3 rounded-xl gap-2 font-black uppercase text-[10px] tracking-widest text-muted-foreground hover:text-primary bg-muted/30 hover:bg-muted/50 border border-transparent">
+                                        <ArrowUpRight className="w-4 h-4" />
+                                        <span>Share</span>
+                                    </Button>
+                                </div>
                             </div>
                         </div>
 
