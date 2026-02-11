@@ -118,12 +118,12 @@ export default async function WatchPage() {
 
     // Fallback URL if no official embed_html is available
     const fallbackEmbedUrl = activeVideo?.videoUrl
-        ? `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(activeVideo.videoUrl)}&show_text=0&width=1280`
-        : "https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Fclctagum%2Flive&show_text=0&width=1280";
+        ? `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(activeVideo.videoUrl)}&show_text=0&width=1280&playsinline=1`
+        : "https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Fclctagum%2Flive&show_text=0&width=1280&playsinline=1";
 
 
     return (
-        <div className="min-h-screen pt-16 md:pt-20 pb-24 md:pb-10 px-3 sm:px-4 md:px-8 bg-background">
+        <div className="min-h-[100dvh] pt-16 md:pt-20 pb-24 md:pb-10 px-3 sm:px-4 md:px-8 bg-background overflow-x-hidden">
             <div className="max-w-[1920px] mx-auto">
                 {/* HERO / HEADER */}
                 <section className="relative pt-8 md:pt-12 pb-10 md:pb-16 overflow-hidden mb-6 md:mb-8 -mx-3 sm:-mx-4 md:-mx-8 px-3 sm:px-4 md:px-8 border-b border-border/50">
@@ -160,8 +160,8 @@ export default async function WatchPage() {
                                 </Button>
                             </Link>
                             <Link href="https://www.youtube.com/@clctagum" target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto">
-                                <Button variant="outline" className="w-full sm:w-auto h-12 sm:h-14 px-6 sm:px-8 rounded-xl sm:rounded-2xl border-border/50 font-bold uppercase tracking-widest text-[11px] sm:text-xs gap-2 sm:gap-3 hover:bg-red-500/10 hover:border-red-500/50 hover:text-red-500 transition-all">
-                                    <Youtube className="w-4 sm:w-5 h-4 sm:h-5 text-red-500" />
+                                <Button variant="outline" className="w-full sm:w-auto h-12 sm:h-14 px-6 sm:px-8 rounded-xl sm:rounded-2xl border-white/20 text-white font-bold uppercase tracking-widest text-[11px] sm:text-xs gap-2 sm:gap-3 hover:bg-red-500 hover:border-red-500 hover:text-white transition-all bg-black/20 backdrop-blur-sm">
+                                    <Youtube className="w-4 sm:w-5 h-4 sm:h-5 text-red-500 group-hover:text-white transition-colors" />
                                     YouTube Channel
                                 </Button>
                             </Link>
@@ -191,7 +191,11 @@ export default async function WatchPage() {
                                     // Use official Facebook embed_html (recommended by Facebook)
                                     <div
                                         className="absolute inset-0 w-full h-full [&>iframe]:w-full [&>iframe]:h-full [&>iframe]:border-0"
-                                        dangerouslySetInnerHTML={{ __html: activeVideo.embedHtml }}
+                                        dangerouslySetInnerHTML={{
+                                            __html: activeVideo.embedHtml
+                                                .replace('<iframe', '<iframe playsinline webkit-playsinline="true"')
+                                                .replace('allowfullscreen="true"', 'allowfullscreen="true" playsinline="true"')
+                                        }}
                                     />
                                 ) : (
                                     // Fallback to manual embed URL
@@ -200,7 +204,7 @@ export default async function WatchPage() {
                                         className="absolute inset-0 w-full h-full"
                                         style={{ border: 'none' }}
                                         allowFullScreen={true}
-                                        allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+                                        allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share; playsinline"
                                     />
                                 )}
 
@@ -292,7 +296,7 @@ export default async function WatchPage() {
                                 </Link>
                             </div>
 
-                            <div className="grid grid-cols-2 sm:grid-cols-2 gap-3 sm:gap-4 md:gap-6">
+                            <div className="grid grid-cols-2 xs:grid-cols-2 gap-3 sm:gap-4 md:gap-6">
                                 {archives.map((video) => (
                                     <Link key={video.id} href={video.link} target="_blank" className="group">
                                         <Card className="bg-card/40 backdrop-blur-3xl border-border/50 rounded-xl sm:rounded-2xl md:rounded-[2rem] overflow-hidden hover:border-primary/50 transition-all hover:shadow-2xl hover:shadow-primary/5 hover:-translate-y-1">
