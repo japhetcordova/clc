@@ -215,7 +215,7 @@ export default function LocationsContent() {
             <div className="fixed bottom-[100px] right-6 md:hidden z-50">
                 <Button
                     onClick={() => setView(view === "list" ? "map" : "list")}
-                    className="h-12 px-6 rounded-full bg-slate-900 text-white shadow-2xl flex items-center gap-3 border border-white/10 backdrop-blur-xl group active:scale-95 transition-all"
+                    className="h-12 px-6 rounded-full bg-foreground text-background shadow-2xl flex items-center gap-3 border border-border/50 backdrop-blur-xl group active:scale-95 transition-all"
                 >
                     {view === "list" ? (
                         <>

@@ -17,6 +17,7 @@ import { TRPCProvider } from "@/lib/trpc/client";
 import MobileNav from "@/components/MobileNav";
 import InstallPWA from "@/components/InstallPWA";
 import OfflineAlert from "@/components/OfflineAlert";
+import { ThemeProvider } from "@/components/ThemeProvider";
 
 const siteConfig = {
   name: "Christian Life Center Tagum City",
@@ -163,12 +164,19 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        <TRPCProvider>
-          <main className="flex-1 pb-20 md:pb-0">
-            {children}
-          </main>
-          <MobileNav />
-        </TRPCProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <TRPCProvider>
+            <main className="flex-1 pb-20 md:pb-0">
+              {children}
+            </main>
+            <MobileNav />
+          </TRPCProvider>
+        </ThemeProvider>
         <script
           dangerouslySetInnerHTML={{
             __html: `

@@ -59,61 +59,59 @@
 :root {
   --radius: 1rem;
 
-  /* Backgrounds: Dark Green-Charcoal */
-  --background: oklch(0.18 0.01 140);
-  --foreground: oklch(0.98 0.01 140);
+  /* Backgrounds: Light Green-Tinted White */
+  --background: oklch(0.99 0.005 140);
+  --foreground: oklch(0.15 0.02 140);
 
-  --card: oklch(0.22 0.02 140);
-  --card-foreground: oklch(0.98 0.01 140);
+  --card: oklch(0.97 0.01 140);
+  --card-foreground: oklch(0.15 0.02 140);
 
-  --popover: oklch(0.22 0.02 140);
-  --popover-foreground: oklch(0.98 0.01 140);
+  --popover: oklch(0.99 0.005 140);
+  --popover-foreground: oklch(0.15 0.02 140);
 
-  /* Primary: Leaf Green (logo accent) */
-  --primary: oklch(0.72 0.18 140);
-  --primary-foreground: oklch(0.15 0.02 140);
+  /* Primary: Leaf Green (Adjusted for Light Mode contrast) */
+  --primary: oklch(0.62 0.16 140);
+  --primary-foreground: oklch(0.98 0.01 140);
 
-  /* Secondary: Muted Green-Gray */
-  --secondary: oklch(0.32 0.04 150);
-  --secondary-foreground: oklch(0.96 0.01 140);
+  /* Secondary: Muted Light Green */
+  --secondary: oklch(0.92 0.03 150);
+  --secondary-foreground: oklch(0.2 0.04 150);
 
   /* Muted UI surfaces */
-  --muted: oklch(0.28 0.02 140);
-  --muted-foreground: oklch(0.7 0.02 140);
+  --muted: oklch(0.94 0.02 140);
+  --muted-foreground: oklch(0.45 0.02 140);
 
-  /* Accent: Brighter Fresh Green (CTAs, highlights) */
-  --accent: oklch(0.78 0.22 135);
+  /* Accent: Brighter Fresh Green */
+  --accent: oklch(0.85 0.18 135);
   --accent-foreground: oklch(0.15 0.02 135);
 
   /* Destructive */
-  --destructive: oklch(0.62 0.22 25);
+  --destructive: oklch(0.6 0.18 25);
 
   /* Borders & inputs */
-  --border: oklch(0.3 0.02 140);
-  --input: oklch(0.3 0.02 140);
-  --ring: oklch(0.72 0.18 140 / 0.6);
+  --border: oklch(0.88 0.01 140);
+  --input: oklch(0.88 0.01 140);
+  --ring: oklch(0.62 0.16 140 / 0.5);
 
-  /* Charts (eco-tech friendly) */
-  --chart-1: oklch(0.72 0.18 140);
-  --chart-2: oklch(0.65 0.15 155);
-  --chart-3: oklch(0.58 0.12 170);
-  --chart-4: oklch(0.75 0.1 110);
-  --chart-5: oklch(0.6 0.14 90);
+  /* Charts */
+  --chart-1: oklch(0.62 0.16 140);
+  --chart-2: oklch(0.55 0.14 155);
+  --chart-3: oklch(0.48 0.12 170);
+  --chart-4: oklch(0.65 0.1 110);
+  --chart-5: oklch(0.5 0.14 90);
 
   /* Sidebar */
-  --sidebar: oklch(0.2 0.01 140);
-  --sidebar-foreground: oklch(0.98 0.01 140);
+  --sidebar: oklch(0.96 0.01 140);
+  --sidebar-foreground: oklch(0.15 0.02 140);
+  --sidebar-primary: oklch(0.62 0.16 140);
+  --sidebar-primary-foreground: oklch(0.98 0.01 140);
+  --sidebar-accent: oklch(0.9 0.03 150);
+  --sidebar-accent-foreground: oklch(0.2 0.04 150);
+  --sidebar-border: oklch(0.88 0.01 140);
+  --sidebar-ring: oklch(0.62 0.16 140 / 0.5);
 
-  --sidebar-primary: oklch(0.72 0.18 140);
-  --sidebar-primary-foreground: oklch(0.15 0.02 140);
-
-  --sidebar-accent: oklch(0.3 0.04 150);
-  --sidebar-accent-foreground: oklch(0.96 0.01 140);
-
-  --sidebar-border: oklch(0.3 0.02 140);
-  --sidebar-ring: oklch(0.72 0.18 140 / 0.6);
+  --primary-glow: 22, 163, 74;
 }
-
 
 .dark {
   /* Original Dark Mode: Deep Forest Green/Charcoal */
@@ -160,6 +158,8 @@
   --sidebar-accent-foreground: oklch(0.9 0.03 150);
   --sidebar-border: oklch(0.25 0.06 150);
   --sidebar-ring: oklch(0.7 0.18 140 / 0.4);
+
+  --primary-glow: 52, 211, 153;
 }
 
 /* Premium Theme - Luxurious Amber & Indigo */

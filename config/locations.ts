@@ -200,6 +200,7 @@ export const MAP_CONFIG = {
     defaultCenter: [7.4515, 125.8024] as [number, number],
     defaultZoom: 13,
     activeZoom: 16,
-    tileLayer: "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png",
+    tileLayerDark: "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png",
+    tileLayerLight: "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png",
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
 };

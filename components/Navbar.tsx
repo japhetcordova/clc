@@ -2,13 +2,14 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Church as ChurchIcon, Menu, X, ChevronRight } from "lucide-react";
+import { Church as ChurchIcon, Menu, X, ChevronRight, Sun, Moon } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import Logo from "./Logo";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
+import { useTheme } from "next-themes";
 
 export default function Navbar() {
     const [scrolled, setScrolled] = useState(false);
@@ -16,6 +17,7 @@ export default function Navbar() {
     const pathname = usePathname();
     const { me } = useCurrentUser();
     const [mounted, setMounted] = useState(false);
+    const { theme, setTheme } = useTheme();
 
     const navLinks = [
         { name: "Highlights", href: "/highlights" },
@@ -112,6 +114,16 @@ export default function Navbar() {
                     </div>
 
                     <div className="flex items-center gap-3">
+                        <motion.button
+                            whileHover={{ scale: 1.1, rotate: 10 }}
+                            whileTap={{ scale: 0.9 }}
+                            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                            className="p-3 hover:bg-white/10 rounded-xl transition-colors text-muted-foreground hover:text-primary"
+                            aria-label="Toggle Theme"
+                        >
+                            {mounted && (theme === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />)}
+                        </motion.button>
+
                         <Link href={(mounted && me) ? `/profile/${me.qrCodeId}` : "/registration"} className="hidden sm:block">
                             <motion.button
                                 whileHover={{ scale: 1.05 }}
@@ -216,6 +228,33 @@ export default function Navbar() {
                                         {(mounted && me) ? "Go to my profile" : "Join Our Journey"}
                                     </Button>
                                 </Link>
+                            </motion.div>
+
+                            <motion.div
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: 0.35 }}
+                                className="flex justify-between items-center p-4 rounded-2xl border border-border/50 bg-card/30"
+                            >
+                                <span className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Appearance</span>
+                                <Button
+                                    variant="outline"
+                                    size="lg"
+                                    onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                                    className="rounded-xl border-border bg-background"
+                                >
+                                    {mounted && (theme === "dark" ? (
+                                        <div className="flex items-center gap-2">
+                                            <Sun className="w-4 h-4" />
+                                            <span>Light Mode</span>
+                                        </div>
+                                    ) : (
+                                        <div className="flex items-center gap-2">
+                                            <Moon className="w-4 h-4" />
+                                            <span>Dark Mode</span>
+                                        </div>
+                                    ))}
+                                </Button>
                             </motion.div>
                         </div>
                     </motion.div>
