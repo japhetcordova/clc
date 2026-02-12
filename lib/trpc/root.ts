@@ -8,8 +8,13 @@ import { cookies } from "next/headers";
 import { getLiveVideo, getRecentVideos, syncFacebookVideos } from "@/lib/video-service";
 import fs from "fs";
 import path from "path";
+import { getVOTD } from "@/lib/votd";
 
 export const appRouter = router({
+    getVOTD: publicProcedure.query(async () => {
+        return await getVOTD();
+    }),
+
     getClassVideos: publicProcedure
         .query(async () => {
             const classesDir = path.join(process.cwd(), "public", "classes");

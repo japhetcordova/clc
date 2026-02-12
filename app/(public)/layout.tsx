@@ -19,7 +19,9 @@ export default function PublicLayout({
             <main className="flex-1">
                 {children}
             </main>
-            <Footer />
+            <div className="hidden md:block">
+                <Footer />
+            </div>
         </div>
     );
 }
