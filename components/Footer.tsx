@@ -72,6 +72,8 @@ export default function Footer() {
                         <h4 className="font-semibold uppercase text-xs tracking-[0.2em] text-foreground">Navigation</h4>
                         <ul className="space-y-4">
                             {[
+                                { name: "Highlights Gallery", href: "/highlights" },
+                                { name: "Building Project", href: "/building" },
                                 { name: "About Christian Life Center Tagum ", href: "/about" },
                                 { name: "Our Locations", href: "/locations" },
                                 { name: "Watch Live", href: "/watch" },

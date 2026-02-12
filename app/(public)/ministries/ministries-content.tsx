@@ -32,18 +32,13 @@ import { DEFAULT_MINISTRIES } from "@/config/ministries";
 export default function MinistriesContent() {
     const [searchQuery, setSearchQuery] = useState("");
     const [activeMinistryId, setActiveMinistryId] = useState<string | null>(DEFAULT_MINISTRIES[0].id);
-    const [activeCategory, setActiveCategory] = useState("All");
-
-    const categories = ["All", "Creative", "Hospitality", "Technical", "Operations", "Family"];
 
     const filteredMinistries = useMemo(() => {
         return DEFAULT_MINISTRIES.filter(min => {
-            const matchesSearch = min.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            return min.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                 min.description.toLowerCase().includes(searchQuery.toLowerCase());
-            const matchesCategory = activeCategory === "All" || min.category === activeCategory;
-            return matchesSearch && matchesCategory;
         });
-    }, [searchQuery, activeCategory]);
+    }, [searchQuery]);
 
     const activeMinistry = DEFAULT_MINISTRIES.find(m => m.id === activeMinistryId);
 
@@ -87,26 +82,6 @@ export default function MinistriesContent() {
                             />
                         </div>
 
-                        <div className="flex gap-6 overflow-x-auto pb-2 custom-scrollbar-horizontal scrollbar-hide">
-                            {categories.map((category) => (
-                                <button
-                                    key={category}
-                                    onClick={() => setActiveCategory(category)}
-                                    className={cn(
-                                        "whitespace-nowrap pb-2 text-[10px] font-black uppercase tracking-[0.2em] transition-all relative shrink-0",
-                                        activeCategory === category ? "text-primary" : "text-muted-foreground hover:text-foreground"
-                                    )}
-                                >
-                                    {category}
-                                    {activeCategory === category && (
-                                        <motion.div
-                                            layoutId="activeTab"
-                                            className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"
-                                        />
-                                    )}
-                                </button>
-                            ))}
-                        </div>
                     </div>
                 </div>
 
@@ -134,11 +109,6 @@ export default function MinistriesContent() {
                                         <p className="text-[11px] font-medium text-muted-foreground leading-relaxed line-clamp-2">
                                             {min.description}
                                         </p>
-                                        <div className="flex items-center gap-2 pt-1">
-                                            <span className="text-[9px] font-black text-primary uppercase tracking-widest opacity-80">
-                                                {min.category}
-                                            </span>
-                                        </div>
                                     </div>
                                     <div className="relative w-20 h-20 rounded-2xl overflow-hidden shadow-lg ring-1 ring-border group/img shrink-0">
                                         <Image
@@ -194,9 +164,6 @@ export default function MinistriesContent() {
                                         />
                                         <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/20 to-transparent flex items-end p-6 md:p-12">
                                             <div className="space-y-2">
-                                                <span className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] text-primary bg-primary/10 px-4 py-1.5 rounded-full backdrop-blur-md border border-primary/20">
-                                                    {activeMinistry.category} Department
-                                                </span>
                                                 <h2 className="text-4xl md:text-7xl font-black italic uppercase tracking-tighter text-white leading-none">
                                                     {activeMinistry.name}
                                                 </h2>

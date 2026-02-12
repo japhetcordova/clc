@@ -15,8 +15,11 @@ export default function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
     const pathname = usePathname();
     const { me } = useCurrentUser();
+    const [mounted, setMounted] = useState(false);
 
     const navLinks = [
+        { name: "Highlights", href: "/highlights" },
+        { name: "Building", href: "/building" },
         { name: "About", href: "/about" },
         { name: "Outreach", href: "/locations" },
         { name: "Watch", href: "/watch" },
@@ -26,6 +29,10 @@ export default function Navbar() {
         { name: "Classes", href: "/classes" },
         { name: "Verse of the Day", href: "/word" },
     ];
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -105,13 +112,13 @@ export default function Navbar() {
                     </div>
 
                     <div className="flex items-center gap-3">
-                        <Link href={me ? `/profile/${me.qrCodeId}` : "/registration"} className="hidden sm:block">
+                        <Link href={(mounted && me) ? `/profile/${me.qrCodeId}` : "/registration"} className="hidden sm:block">
                             <motion.button
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
                                 className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl font-semibold uppercase text-[11px] tracking-widest px-6 h-10 md:h-12 shadow-xl shadow-primary/20 transition-all hover:shadow-primary/40 hover:-translate-y-0.5"
                             >
-                                {me ? "My Profile" : "Join Us"}
+                                {(mounted && me) ? "My Profile" : "Join Us"}
                             </motion.button>
                         </Link>
 
@@ -204,9 +211,9 @@ export default function Navbar() {
                                 transition={{ delay: 0.3 }}
                                 className="mt-4"
                             >
-                                <Link href={me ? `/profile/${me.qrCodeId}` : "/registration"}>
+                                <Link href={(mounted && me) ? `/profile/${me.qrCodeId}` : "/registration"}>
                                     <Button className="w-full h-16 rounded-2xl bg-primary text-white font-semibold uppercase  tracking-tighter text-xl shadow-lg shadow-primary/25">
-                                        {me ? "Go to my profile" : "Join Our Journey"}
+                                        {(mounted && me) ? "Go to my profile" : "Join Our Journey"}
                                     </Button>
                                 </Link>
                             </motion.div>
