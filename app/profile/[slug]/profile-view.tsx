@@ -436,51 +436,85 @@ export default function ProfileView({ user, qrValue, attendance = [], enrollment
                                         </TabsContent>
 
                                         <TabsContent value="activity" className="mt-0 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                                            <div className="space-y-4">
-                                                <div className="flex items-center justify-between">
-                                                    <h3 className="text-sm font-black uppercase text-muted-foreground tracking-widest flex items-center gap-2">
-                                                        <Calendar className="w-4 h-4 text-primary" />
-                                                        Recent Attendance
-                                                    </h3>
-                                                    <span className="text-[10px] font-bold bg-primary/10 text-primary px-2 py-0.5 rounded-full uppercase tracking-widest">
-                                                        {attendance?.length || 0} Records
-                                                    </span>
+                                            <div className="space-y-6">
+                                                {/* Redeem Points Balance Card */}
+                                                <div className="relative overflow-hidden rounded-[2rem] border border-amber-500/20 bg-gradient-to-br from-amber-500/10 via-amber-400/5 to-yellow-500/10 p-6 shadow-lg">
+                                                    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-amber-400/10 via-transparent to-transparent" />
+                                                    <div className="absolute top-2 right-2 w-24 h-24 bg-amber-400/10 rounded-full blur-2xl" />
+                                                    <div className="relative flex items-center justify-between gap-4">
+                                                        <div className="space-y-1">
+                                                            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-amber-600 dark:text-amber-400 flex items-center gap-2">
+                                                                <Sparkles className="w-3.5 h-3.5" />
+                                                                Redeem Points
+                                                            </p>
+                                                            <p className="text-xs text-muted-foreground font-medium">Earn +1 for every attendance</p>
+                                                        </div>
+                                                        <div className="flex items-center gap-2">
+                                                            <div className="relative">
+                                                                <div className="absolute inset-0 bg-amber-400/20 rounded-full blur-md animate-pulse" />
+                                                                <div className="relative w-12 h-12 rounded-full bg-gradient-to-br from-amber-400 to-yellow-600 flex items-center justify-center shadow-lg shadow-amber-500/20 ring-2 ring-amber-400/30">
+                                                                    <span className="text-white font-black text-sm">RP</span>
+                                                                </div>
+                                                            </div>
+                                                            <div className="text-right">
+                                                                <p className="text-3xl sm:text-4xl font-black tracking-tighter text-amber-600 dark:text-amber-400 tabular-nums">
+                                                                    {user.redeemPoints ?? 0}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
 
-                                                {(attendance && attendance.length > 0) ? (
-                                                    <div className="space-y-3">
-                                                        {attendance.map((record: any) => (
-                                                            <div key={record.id} className="flex items-center justify-between p-4 rounded-2xl bg-muted/30 border border-border/50 hover:bg-muted/50 transition-colors group">
-                                                                <div className="flex items-center gap-4">
-                                                                    <div className="p-2.5 rounded-xl bg-green-500/10 text-green-500 ring-1 ring-green-500/20">
-                                                                        <Check className="w-4 h-4" />
+                                                {/* Attendance Records */}
+                                                <div className="space-y-4">
+                                                    <div className="flex items-center justify-between">
+                                                        <h3 className="text-sm font-black uppercase text-muted-foreground tracking-widest flex items-center gap-2">
+                                                            <Calendar className="w-4 h-4 text-primary" />
+                                                            Recent Attendance
+                                                        </h3>
+                                                        <span className="text-[10px] font-bold bg-primary/10 text-primary px-2 py-0.5 rounded-full uppercase tracking-widest">
+                                                            {attendance?.length || 0} Records
+                                                        </span>
+                                                    </div>
+
+                                                    {(attendance && attendance.length > 0) ? (
+                                                        <div className="space-y-3">
+                                                            {attendance.map((record: any) => (
+                                                                <div key={record.id} className="flex items-center justify-between p-4 rounded-2xl bg-muted/30 border border-border/50 hover:bg-muted/50 transition-colors group">
+                                                                    <div className="flex items-center gap-4">
+                                                                        <div className="p-2.5 rounded-xl bg-green-500/10 text-green-500 ring-1 ring-green-500/20">
+                                                                            <Check className="w-4 h-4" />
+                                                                        </div>
+                                                                        <div>
+                                                                            <div className="flex items-center gap-2">
+                                                                                <p className="text-sm font-bold text-foreground">Service Attendance</p>
+                                                                                <span className="text-[9px] font-black uppercase tracking-widest bg-amber-500/10 text-amber-600 dark:text-amber-400 px-1.5 py-0.5 rounded-md border border-amber-500/20">+1 RP</span>
+                                                                            </div>
+                                                                            <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
+                                                                                {new Date(record.scannedAt).toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+                                                                            </p>
+                                                                        </div>
                                                                     </div>
-                                                                    <div>
-                                                                        <p className="text-sm font-bold text-foreground">Service Attendance</p>
-                                                                        <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
-                                                                            {new Date(record.scannedAt).toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+                                                                    <div className="text-right">
+                                                                        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground bg-background px-2 py-1 rounded-lg border border-border/50">
+                                                                            {new Date(record.scannedAt).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}
                                                                         </p>
                                                                     </div>
                                                                 </div>
-                                                                <div className="text-right">
-                                                                    <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground bg-background px-2 py-1 rounded-lg border border-border/50">
-                                                                        {new Date(record.scannedAt).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}
-                                                                    </p>
-                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    ) : (
+                                                        <div className="text-center py-12 space-y-4 rounded-3xl bg-muted/20 border border-dashed border-border">
+                                                            <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto">
+                                                                <Calendar className="w-8 h-8 text-muted-foreground/50" />
                                                             </div>
-                                                        ))}
-                                                    </div>
-                                                ) : (
-                                                    <div className="text-center py-12 space-y-4 rounded-3xl bg-muted/20 border border-dashed border-border">
-                                                        <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto">
-                                                            <Calendar className="w-8 h-8 text-muted-foreground/50" />
+                                                            <div>
+                                                                <h4 className="font-bold text-lg">No Recent Activity</h4>
+                                                                <p className="text-muted-foreground text-sm">Attendance records will appear here.</p>
+                                                            </div>
                                                         </div>
-                                                        <div>
-                                                            <h4 className="font-bold text-lg">No Recent Activity</h4>
-                                                            <p className="text-muted-foreground text-sm">Attendance records will appear here.</p>
-                                                        </div>
-                                                    </div>
-                                                )}
+                                                    )}
+                                                </div>
                                             </div>
                                         </TabsContent>
                                     </div>

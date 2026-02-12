@@ -12,6 +12,7 @@ export const users = pgTable("users", {
     ministry: text("ministry").notNull(), // Worship Team, Media, etc.
     qrCodeId: text("qr_code_id").notNull().unique(), // Hashed/Secure ID for QR
     isPremium: boolean("is_premium").default(false).notNull(),
+    redeemPoints: integer("redeem_points").default(0).notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
 }, (t) => [
     // Indexes for demographic filtering and grouping

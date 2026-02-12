@@ -250,6 +250,11 @@ export const appRouter = router({
                 };
             }
 
+            // Award +1 redeem point for successful attendance
+            await db.update(users)
+                .set({ redeemPoints: sql`${users.redeemPoints} + 1` })
+                .where(eq(users.id, user.id));
+
             revalidatePath("/admin");
             return { success: true, user, slot: displaySlot };
         }),
