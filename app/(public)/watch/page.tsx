@@ -118,44 +118,46 @@ export default async function WatchPage() {
             {/* Standard Mobile Header for consistency */}
 
             <div className="max-w-7xl mx-auto">
-                {/* HERO / HEADER */}
-                <section className="relative pt-8 md:pt-12 pb-10 md:pb-16 overflow-hidden mb-6 md:mb-8 -mx-3 sm:-mx-4 md:-mx-8 px-3 sm:px-4 md:px-8 border-b border-border/50">
+                {/* HERO / HEADER - Compact */}
+                <section className="relative pt-4 md:pt-10 pb-6 md:pb-12 overflow-hidden mb-2 md:mb-6 -mx-3 sm:-mx-4 md:-mx-8 px-4 sm:px-6 md:px-8 border-b border-border/50">
                     <div className="absolute inset-0 z-0">
                         <Image
                             src="/bg/events.webp"
                             alt="Watch Background"
                             fill
-                            className="object-cover opacity-20 scale-105"
+                            className="object-cover opacity-15 scale-105 transition-transform duration-1000 group-hover:scale-100"
                             priority
                         />
                         <div className="absolute inset-0 bg-linear-to-b from-background via-background/80 to-background" />
                     </div>
 
-                    <div className="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-8">
-                        <div className="space-y-4 max-w-2xl">
-                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-500/10 border border-rose-500/20 text-rose-500">
-                                <div className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
-                                <span className="text-[10px] font-bold uppercase tracking-widest">Live Experience</span>
+                    <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+                        <div className="space-y-3 max-w-2xl">
+                            <div className="flex flex-wrap items-center gap-3">
+                                <h1 className="text-3xl sm:text-4xl md:text-6xl font-black tracking-tighter text-foreground uppercase italic leading-none">
+                                    Worship <span className="text-primary italic">Anywhere</span>
+                                </h1>
+                                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-rose-500/10 border border-rose-500/20 text-rose-500 shrink-0">
+                                    <div className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
+                                    <span className="text-[9px] font-black uppercase tracking-wider">Live</span>
+                                </div>
                             </div>
-                            <h1 className="text-3xl sm:text-4xl md:text-7xl font-black tracking-tighter text-foreground uppercase italic leading-none">
-                                Worship <span className="text-primary italic">Anywhere</span>
-                            </h1>
-                            <p className="text-muted-foreground text-xs sm:text-sm md:text-lg font-medium max-w-xl leading-relaxed">
-                                Experience the presence of God through our live worship services and messages. Distance is not a barrier to encountering His grace.
+                            <p className="text-muted-foreground text-[11px] sm:text-xs md:text-sm font-medium leading-relaxed max-w-lg opacity-80 line-clamp-1 md:line-clamp-none">
+                                Encounter God's presence through our live worship services and messages.
                             </p>
                         </div>
 
-                        <div className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 w-full sm:w-auto mt-4 md:mt-0">
-                            <Link href="https://www.facebook.com/clctagum/live" target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto">
-                                <Button className="w-full sm:w-auto h-12 sm:h-14 px-6 sm:px-8 rounded-xl sm:rounded-2xl bg-[#1877F2] hover:bg-[#1877F2]/90 text-white font-bold uppercase tracking-widest text-[11px] sm:text-xs gap-2 sm:gap-3 shadow-xl shadow-[#1877F2]/20">
-                                    <Facebook className="w-4 sm:w-5 h-4 sm:h-5" />
-                                    Watch on Facebook
+                        <div className="flex items-center gap-2 w-full sm:w-auto">
+                            <Link href="https://www.facebook.com/clctagum/live" target="_blank" rel="noopener noreferrer" className="flex-1 sm:flex-none">
+                                <Button className="w-full h-10 px-5 rounded-xl bg-[#1877F2] hover:bg-[#1877F2]/90 text-white font-black uppercase tracking-widest text-[9px] gap-2 shadow-lg shadow-[#1877F2]/10 transition-all active:scale-95">
+                                    <Facebook className="w-3.5 h-3.5" />
+                                    {/* Shorter text for mobile */}
+                                    <span className="sm:inline">Facebook Live</span>
                                 </Button>
                             </Link>
-                            <Link href="https://www.youtube.com/@clctagum" target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto">
-                                <Button variant="outline" className="w-full sm:w-auto h-12 sm:h-14 px-6 sm:px-8 rounded-xl sm:rounded-2xl border-white/20 text-white font-bold uppercase tracking-widest text-[11px] sm:text-xs gap-2 sm:gap-3 hover:bg-red-500 hover:border-red-500 hover:text-white transition-all bg-black/20 backdrop-blur-sm">
-                                    <Youtube className="w-4 sm:w-5 h-4 sm:h-5 text-red-500 group-hover:text-white transition-colors" />
-                                    YouTube Channel
+                            <Link href="https://www.youtube.com/@clctagum" target="_blank" rel="noopener noreferrer" className="hidden xs:block">
+                                <Button variant="ghost" className="h-10 px-3 rounded-xl border border-white/10 text-muted-foreground font-black uppercase tracking-widest text-[9px] gap-2 hover:bg-red-500/10 hover:text-red-500 transition-all">
+                                    <Youtube className="w-4 h-4" />
                                 </Button>
                             </Link>
                         </div>
@@ -166,21 +168,21 @@ export default async function WatchPage() {
                     {/* MAIN PLAYER AREA */}
                     <div className="lg:col-span-8 space-y-4 sm:space-y-6 lg:space-y-8">
                         <div className="flex flex-col gap-6 sm:gap-10">
-                            {/* Header Section mimicking VideoPlayerSection */}
-                            <div className="flex flex-col gap-4 sm:gap-6 px-4 sm:px-1">
+                            {/* Header Section - Compact Meta Row */}
+                            <div className="flex flex-col gap-2 px-2 sm:px-1">
                                 <div className="flex items-center gap-3">
-                                    <div className="px-3 py-1 bg-primary/10 border border-primary/20 rounded-full">
-                                        <div className="flex items-center gap-2">
+                                    <div className="px-2 py-0.5 bg-primary/10 border border-primary/20 rounded-md">
+                                        <div className="flex items-center gap-1.5">
                                             {liveVideo && <div className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />}
-                                            <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-primary">
-                                                {liveVideo ? "Live Stream" : "Latest Message"}
+                                            <span className="text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-primary">
+                                                {liveVideo ? "Live Now" : "Latest"}
                                             </span>
                                         </div>
                                     </div>
-                                    <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/40 italic">Now Playing</span>
+                                    <span className="text-[8px] sm:text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground/30 italic">Now Playing</span>
                                 </div>
 
-                                <h2 className="text-xl sm:text-4xl font-black uppercase tracking-tighter leading-tight">
+                                <h2 className="text-xl sm:text-3xl font-black uppercase tracking-tighter leading-[0.9] pr-8">
                                     {activeVideo ? (
                                         <EditableVideoTitle
                                             videoId={activeVideo.id}
@@ -193,83 +195,55 @@ export default async function WatchPage() {
                                 </h2>
                             </div>
 
-                            {/* PLAYER CONTAINER from VideoPlayerSection */}
-                            <div className="relative aspect-video w-full max-h-[60dvh] sm:max-h-none rounded-none sm:rounded-[3rem] overflow-hidden bg-black shadow-2xl ring-1 ring-white/10 group isolate">
+                            {/* PLAYER CONTAINER - Action-Overlay Grid */}
+                            <div className="relative aspect-video w-full rounded-2xl sm:rounded-[2rem] overflow-hidden bg-black shadow-2xl ring-1 ring-white/5 group isolate">
                                 {activeVideo?.embedHtml ? (
-                                    // Use official Facebook embed_html (recommended by Facebook)
                                     <div
                                         className="absolute inset-0 w-full h-full [&_iframe]:!w-full [&_iframe]:!h-full [&_iframe]:!border-0"
                                         dangerouslySetInnerHTML={{
                                             __html: activeVideo.embedHtml
-                                                // 1. Force iframe attributes to 100%
                                                 .replace(/width="\d+"/g, 'width="100%"')
                                                 .replace(/height="\d+"/g, 'height="100%"')
-                                                // 2. Strip standard inline styles
                                                 .replace(/style="[^"]*"/g, '')
-                                                // 3. Inject strict responsive styles and standard attributes
-                                                .replace('<iframe', '<iframe style="width:100% !important; height:100% !important; border:none !important; overflow:hidden !important;" playsinline webkit-playsinline="true"')
-                                                // 4. Ensure allowfullscreen is correct
-                                                .replace('allowfullscreen="true"', 'allowfullscreen="true" playsinline="true"')
-                                                // 5. Attempt to remove width/height query params from src (if present in the string)
-                                                .replace(/&width=\d+/g, '')
-                                                .replace(/width=\d+&/g, '')
+                                                .replace('<iframe', '<iframe style="width:100% !important; height:100% !important; border:none !important;" playsinline')
                                         }}
                                     />
                                 ) : (
-                                    // Fallback to manual embed URL
-                                    <iframe
-                                        src={fallbackEmbedUrl}
-                                        className="absolute inset-0 w-full h-full"
-                                        style={{ border: 'none' }}
-                                        allowFullScreen={true}
-                                        allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share; playsinline"
-                                    />
+                                    <iframe src={fallbackEmbedUrl} className="absolute inset-0 w-full h-full border-none" allowFullScreen allow="autoplay; playsinline" />
                                 )}
-                            </div>
 
-                            {/* CONTROLS / DETAILS (Adapted to sit below the new layout) */}
-                            <div className="flex flex-col sm:flex-row flex-wrap items-start sm:items-center justify-between gap-3 sm:gap-4 p-4 sm:p-6 bg-card/50 border border-border/50 rounded-xl sm:rounded-2xl md:rounded-[2rem]">
-                                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-6 w-full sm:w-auto">
-                                    <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
-                                        <Button
-                                            asChild
-                                            variant="outline"
-                                            className="w-full sm:w-auto h-10 sm:h-12 px-4 sm:px-6 rounded-lg sm:rounded-xl border-primary/20 bg-primary/5 font-black uppercase text-[9px] sm:text-[10px] tracking-widest gap-2 hover:bg-primary hover:text-white transition-all shadow-lg"
-                                        >
-                                            <a
-                                                href={activeVideo?.videoUrl || "https://www.facebook.com/clctagum/live"}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                            >
-                                                Watch on Facebook <Share2 className="w-3 sm:w-3.5 h-3 sm:h-3.5" />
-                                            </a>
-                                        </Button>
-                                    </div>
-                                    <div className="h-10 w-px bg-border hidden lg:block" />
-                                    <div className="hidden lg:flex flex-col">
-                                        <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Platform</span>
-                                        <span className="font-bold text-xs uppercase tracking-widest flex items-center gap-2 text-primary">
-                                            <Facebook className="w-3 h-3 fill-primary" />
-                                            {liveVideo ? "Facebook Live" : "Facebook Playback"}
-                                        </span>
-                                    </div>
+                                {/* Overlay Actions - Top Right Share */}
+                                <div className="absolute top-4 right-4 z-20 flex flex-col gap-2">
+                                    <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full bg-black/40 backdrop-blur-md border border-white/10 text-white opacity-0 group-hover:opacity-100 transition-all active:scale-90">
+                                        <Share2 className="w-4 h-4" />
+                                    </Button>
                                 </div>
 
-                                <div className="flex flex-wrap gap-2 w-full sm:w-auto">
-                                    <Link href="https://www.facebook.com/clctagum/live" target="_blank" className="flex-1 sm:flex-none">
-                                        <Button variant="ghost" className="w-full sm:w-auto h-11 sm:h-10 px-2 sm:px-3 rounded-xl gap-2 font-black uppercase text-[10px] tracking-widest text-muted-foreground hover:text-primary bg-muted/30 hover:bg-muted/50 border border-transparent">
-                                            <MessageCircle className="w-4 h-4" />
-                                            <span>Chat</span>
+                                {/* Overlay Actions - Bottom Left Watch on FB */}
+                                <div className="absolute bottom-4 left-4 z-20">
+                                    <Link href={activeVideo?.videoUrl || "https://www.facebook.com/clctagum/live"} target="_blank">
+                                        <Button className="h-10 px-4 rounded-xl bg-[#1877F2]/80 backdrop-blur-md border border-white/10 text-white font-black uppercase tracking-widest text-[9px] gap-2 opacity-0 group-hover:opacity-100 transition-all hover:bg-[#1877F2]">
+                                            <Facebook className="w-3.5 h-3.5" />
+                                            <span>Watch with Chat</span>
                                         </Button>
                                     </Link>
-                                    <Button variant="ghost" className="flex-1 sm:flex-none h-11 sm:h-10 px-2 sm:px-3 rounded-xl gap-2 font-black uppercase text-[10px] tracking-widest text-muted-foreground hover:text-primary bg-muted/30 hover:bg-muted/50 border border-transparent">
-                                        <Heart className="w-4 h-4 text-rose-500" />
-                                        <span>Give</span>
+                                </div>
+                            </div>
+
+                            {/* COMPACT INTERACTION ROW */}
+                            <div className="flex items-center gap-2 px-2">
+                                <div className="flex-1 flex items-center gap-1.5">
+                                    <Button variant="ghost" className="h-9 px-3 rounded-xl gap-2 font-black uppercase text-[9px] tracking-widest text-muted-foreground bg-card/40 border border-white/5 hover:bg-primary/5 hover:text-primary transition-all">
+                                        <Heart className="w-3.5 h-3.5" />
+                                        <span className="hidden sm:inline">Partner</span>
                                     </Button>
-                                    <Button variant="ghost" className="flex-1 sm:flex-none h-11 sm:h-10 px-2 sm:px-3 rounded-xl gap-2 font-black uppercase text-[10px] tracking-widest text-muted-foreground hover:text-primary bg-muted/30 hover:bg-muted/50 border border-transparent">
-                                        <ArrowUpRight className="w-4 h-4" />
-                                        <span>Share</span>
+                                    <Button variant="ghost" className="h-9 px-3 rounded-xl gap-2 font-black uppercase text-[9px] tracking-widest text-muted-foreground bg-card/40 border border-white/5 hover:bg-primary/5 hover:text-primary transition-all">
+                                        <MessageCircle className="w-3.5 h-3.5" />
+                                        <span className="hidden sm:inline">Connect</span>
                                     </Button>
+                                </div>
+                                <div className="hidden sm:flex items-center gap-1 text-muted-foreground/30 italic uppercase font-black text-[8px] tracking-[0.2em]">
+                                    CLC Digital Experience
                                 </div>
                             </div>
                         </div>
@@ -288,32 +262,39 @@ export default async function WatchPage() {
                                 </Link>
                             </div>
 
-                            <div className="grid grid-cols-2 xs:grid-cols-2 gap-3 sm:gap-4 md:gap-6">
+                            <div className="grid grid-cols-2 xs:grid-cols-2 gap-2 sm:gap-4 md:gap-6">
                                 {archives.map((video) => (
                                     <Link key={video.id} href={video.link} target="_blank" className="group">
-                                        <Card className="bg-card/40 backdrop-blur-3xl border-border/50 rounded-xl sm:rounded-2xl md:rounded-[2rem] overflow-hidden hover:border-primary/50 transition-all hover:shadow-2xl hover:shadow-primary/5 hover:-translate-y-1">
+                                        <Card className="bg-card/40 backdrop-blur-3xl border-white/5 rounded-xl sm:rounded-2xl overflow-hidden hover:border-primary/40 transition-all hover:shadow-2xl hover:shadow-primary/5 active:scale-95 p-0 gap-0">
                                             <CardContent className="p-0">
                                                 <div className="relative aspect-video">
                                                     <Image
                                                         src={video.image}
                                                         alt={video.title}
                                                         fill
-                                                        className="object-cover group-hover:scale-110 transition-transform duration-700"
+                                                        className="object-cover group-hover:scale-105 transition-transform duration-500"
                                                         unoptimized={video.image.startsWith("http")}
                                                     />
-                                                    <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors" />
-                                                    <div className="absolute bottom-2 sm:bottom-4 right-2 sm:right-4 bg-black/70 backdrop-blur-md px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-[8px] sm:text-[10px] font-bold text-white tracking-widest">
-                                                        {video.duration}
+                                                    <div className="absolute inset-0 bg-linear-to-t from-black via-black/20 to-transparent" />
+
+                                                    {/* Top Left Date Badge */}
+                                                    <div className="absolute top-2 left-2 z-10 px-1.5 py-0.5 bg-black/60 backdrop-blur-md rounded border border-white/10 text-[7px] sm:text-[9px] font-black uppercase text-white tracking-wider">
+                                                        {video.date}
                                                     </div>
+
+                                                    {/* Middle Play Icon */}
                                                     <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                                        <div className="w-10 sm:w-12 h-10 sm:h-12 bg-primary rounded-full flex items-center justify-center text-white shadow-xl">
-                                                            <Play className="w-5 sm:w-6 h-5 sm:h-6 fill-white ml-0.5 sm:ml-1" />
+                                                        <div className="w-8 h-8 sm:w-10 sm:h-10 bg-primary/90 rounded-full flex items-center justify-center text-white">
+                                                            <Play className="w-4 h-4 sm:w-5 sm:h-5 fill-white" />
                                                         </div>
                                                     </div>
-                                                </div>
-                                                <div className="p-3 sm:p-4 md:p-6 space-y-1 sm:space-y-2">
-                                                    <p className="text-[8px] sm:text-[10px] font-black uppercase text-primary tracking-widest">{video.date}</p>
-                                                    <h3 className="font-bold text-sm sm:text-base md:text-lg leading-tight group-hover:text-primary transition-colors line-clamp-2">{video.title}</h3>
+
+                                                    {/* Bottom Overlay Title */}
+                                                    <div className="absolute bottom-0 left-0 right-0 p-2 sm:p-3 bg-linear-to-t from-black/80 to-transparent">
+                                                        <h3 className="font-bold text-[10px] sm:text-xs md:text-sm leading-tight text-white line-clamp-2">
+                                                            {video.title}
+                                                        </h3>
+                                                    </div>
                                                 </div>
                                             </CardContent>
                                         </Card>
@@ -326,7 +307,7 @@ export default async function WatchPage() {
                     {/* SIDEBAR Correctly nested in grid */}
                     <div className="lg:col-span-4 space-y-4 sm:space-y-6 lg:space-y-8">
                         {/* SCHEDULE CARD */}
-                        <Card className="bg-primary/5 border-primary/20 rounded-xl sm:rounded-2xl md:rounded-[2.5rem] overflow-hidden shadow-xl">
+                        <Card className="bg-primary/5 border-primary/20 rounded-xl sm:rounded-2xl md:rounded-[2.5rem] overflow-hidden shadow-xl p-0 gap-0">
                             <CardContent className="p-4 sm:p-6 md:p-8 space-y-4 sm:space-y-6 md:space-y-8">
                                 <div className="space-y-2">
                                     <div className="flex items-center gap-2 sm:gap-3">
@@ -360,7 +341,7 @@ export default async function WatchPage() {
                         </Card>
 
                         {/* GIVING CTAS */}
-                        <Card className="bg-card/50 border-border/50 rounded-xl sm:rounded-2xl md:rounded-[2.5rem] overflow-hidden">
+                        <Card className="bg-card/50 border-border/50 rounded-xl sm:rounded-2xl md:rounded-[2.5rem] overflow-hidden p-0 gap-0">
                             <CardContent className="p-4 sm:p-6 md:p-8 space-y-4 sm:space-y-6">
                                 <div className="w-10 sm:w-12 h-10 sm:h-12 bg-rose-500/10 rounded-xl sm:rounded-2xl flex items-center justify-center text-rose-500 mb-1 sm:mb-2">
                                     <Heart className="w-5 sm:w-6 h-5 sm:h-6 fill-rose-500" />

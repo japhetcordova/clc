@@ -131,75 +131,74 @@ export default function MobileDashboard() {
     return (
         <div className="min-h-screen bg-background pb-32">
             {/* Optimized Global Header Overlay */}
-            <div className="fixed top-0 left-0 right-0 z-50 px-4 pt-4 flex items-center justify-between pointer-events-none">
+            <div className="fixed top-0 left-0 right-0 z-50 px-3 pt-3 flex items-center justify-between pointer-events-none">
                 <div className="pointer-events-auto">
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-11 w-11 rounded-full bg-background/40 backdrop-blur-xl border border-white/10 shadow-xl hover:bg-background/60">
+                            <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full bg-background/40 backdrop-blur-xl border border-white/10 shadow-xl hover:bg-background/60">
                                 <MoreHorizontal className="w-5 h-5 text-foreground" />
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="start" className="w-56 rounded-2xl border-white/10 backdrop-blur-2xl bg-background/90 p-2 shadow-2xl">
                             <DropdownMenuItem asChild>
-                                <Link href={me?.qrCodeId ? `/profile/${me.qrCodeId}` : "/my-qr"} className="flex items-center gap-3 p-3 cursor-pointer rounded-xl hover:bg-primary/10 transition-colors">
-                                    <div className="p-2 rounded-lg bg-primary/10 text-primary">
+                                <Link href={me?.qrCodeId ? `/profile/${me.qrCodeId}` : "/my-qr"} className="flex items-center gap-3 p-2.5 cursor-pointer rounded-xl hover:bg-primary/10 transition-colors">
+                                    <div className="p-1.5 rounded-lg bg-primary/10 text-primary">
                                         <User className="w-4 h-4" />
                                     </div>
-                                    <span className="font-bold text-sm">My Profile</span>
+                                    <span className="font-bold text-xs">My Profile</span>
                                 </Link>
                             </DropdownMenuItem>
                             <DropdownMenuSeparator className="bg-white/5" />
-                            <DropdownMenuItem onClick={handleLogout} className="flex items-center gap-3 p-3 cursor-pointer rounded-xl hover:bg-destructive/10 text-destructive transition-colors">
-                                <div className="p-2 rounded-lg bg-destructive/10">
+                            <DropdownMenuItem onClick={handleLogout} className="flex items-center gap-3 p-2.5 cursor-pointer rounded-xl hover:bg-destructive/10 text-destructive transition-colors">
+                                <div className="p-1.5 rounded-lg bg-destructive/10">
                                     <LogOut className="w-4 h-4" />
                                 </div>
-                                <span className="font-bold text-sm">Logout</span>
+                                <span className="font-bold text-xs">Logout</span>
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </div>
 
                 <div className="pointer-events-auto flex items-center gap-2">
-                    {/* Points Chip */}
+                    {/* Points Chip - Compact */}
                     <Link href={me?.qrCodeId ? `/profile/${me.qrCodeId}` : "#"}>
-                        <div className="flex items-center gap-2 px-4 py-2 bg-amber-500/10 backdrop-blur-xl border border-amber-500/20 rounded-full shadow-lg shadow-amber-500/10 group active:scale-95 transition-all">
-                            <Sparkles className="w-4 h-4 text-amber-500 fill-amber-500/20 group-hover:animate-pulse" />
-                            <span className="text-[11px] font-black tabular-nums text-amber-600 dark:text-amber-400 tracking-wider">
-                                {user?.redeemPoints ?? 0} RP
+                        <div className="flex items-center gap-1.5 px-3 py-1 bg-amber-500/10 backdrop-blur-xl border border-amber-500/20 rounded-full shadow-lg transition-all active:scale-95">
+                            <Sparkles className="w-3.5 h-3.5 text-amber-500 fill-amber-500/20" />
+                            <span className="text-[10px] font-black tabular-nums text-amber-600 dark:text-amber-400">
+                                {user?.redeemPoints ?? 0}
                             </span>
                         </div>
                     </Link>
                 </div>
             </div>
 
-            {/* Header / Hero Section with Highlight */}
-            <header className="relative min-h-[480px] flex flex-col overflow-hidden pb-12">
+            {/* Header / Hero Section - Reduced Height */}
+            <header className="relative min-h-[340px] flex flex-col overflow-hidden pb-8">
                 {/* Background Image */}
                 <div className="absolute inset-0 z-0">
                     <Image
                         src={display.imageUrl}
                         alt="Sunday Service Highlight"
                         fill
-                        className="object-cover scale-105"
+                        className="object-cover scale-100"
                         priority
                         unoptimized={display.imageUrl.startsWith("http")}
                     />
                     {/* Premium Overlays */}
-                    <div className="absolute inset-0 bg-linear-to-b from-black/60 via-background/40 to-background" />
-                    <div className="absolute inset-0 bg-linear-to-r from-background/20 to-transparent" />
+                    <div className="absolute inset-0 bg-linear-to-b from-black/20 via-background/60 to-background" />
                 </div>
 
-                {/* Sub-hero content for depth */}
-                <div className="relative z-10 mt-auto px-6 pb-8 space-y-4">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 backdrop-blur-md rounded-full border border-primary/20">
-                        <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                        <span className="text-[9px] font-black uppercase tracking-[0.2em] text-primary">Live Now / Featured</span>
+                {/* Compact sub-hero badge */}
+                <div className="relative z-10 mt-auto px-6 pb-6">
+                    <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-primary/20 backdrop-blur-md rounded-full border border-primary/20">
+                        <div className="w-1 h-1 rounded-full bg-primary animate-pulse" />
+                        <span className="text-[8px] font-black uppercase tracking-wider text-primary">Featured</span>
                     </div>
                 </div>
             </header>
 
-            <main className="px-6 space-y-8 relative z-20">
-                <div className="space-y-4 -mt-54">
+            <main className="px-5 space-y-6 relative z-20">
+                <div className="space-y-4 -mt-24">
 
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}

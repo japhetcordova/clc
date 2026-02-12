@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { trpc } from "@/lib/trpc/client";
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -43,6 +43,30 @@ export default function ClassEnrollmentClient({ currentUser }: { currentUser: Us
     const [isProcessing, setIsProcessing] = useState(false);
     const enrollMutation = trpc.enrollStudentByQr.useMutation();
     const unenrollMutation = trpc.unenrollStudent.useMutation();
+    const [isVisible, setIsVisible] = useState(true);
+    const [lastScrollY, setLastScrollY] = useState(0);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            const currentScrollY = window.scrollY;
+
+            // Show if we've scrolled up, hide if we've scrolled down
+            // But always show if near the top
+            if (currentScrollY < 100) {
+                setIsVisible(true);
+            } else if (currentScrollY > lastScrollY) {
+                setIsVisible(false);
+            } else {
+                setIsVisible(true);
+            }
+
+            setLastScrollY(currentScrollY);
+        };
+
+        window.addEventListener("scroll", handleScroll, { passive: true });
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, [lastScrollY]);
+
     const { data: myEnrollments, refetch: refetchEnrollments } = trpc.getMyEnrollments.useQuery(undefined, {
         enabled: !!currentUser,
     });
@@ -188,17 +212,15 @@ export default function ClassEnrollmentClient({ currentUser }: { currentUser: Us
     ];
 
     return (
-        <div className="w-full max-w-6xl mx-auto space-y-16 pb-20">
-
-
+        <div className="w-full max-w-6xl mx-auto space-y-8 md:space-y-16">
             {/* THE LEVELS */}
-            <div className="space-y-12">
-                <div className="text-center space-y-2">
-                    <h2 className="text-3xl font-semibold uppercase  tracking-tight">The Training <span className="text-primary">Track</span></h2>
-                    <p className="text-muted-foreground font-thin uppercase text-[10px] tracking-[0.3em]">Levels of Discipleship</p>
+            <div className="space-y-8">
+                <div className="space-y-1 px-4 sm:px-0">
+                    <h2 className="text-xl sm:text-3xl font-black uppercase italic tracking-tighter">The Training <span className="text-primary">Track</span></h2>
+                    <p className="text-muted-foreground font-black uppercase text-[8px] tracking-[0.3em] opacity-40">Levels of Discipleship</p>
                 </div>
 
-                <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 px-4 sm:px-0">
                     {journeyData.map((level, idx) => {
                         const enrolledInThis = activeEnrollments.some(e => e.classLevel === level.id);
                         return (
@@ -209,45 +231,44 @@ export default function ClassEnrollmentClient({ currentUser }: { currentUser: Us
                                 viewport={{ once: true }}
                                 transition={{ delay: idx * 0.1 }}
                             >
-                                <Card className={cn("h-full border-2 rounded-[2.5rem] overflow-hidden hover:shadow-2xl transition-all duration-500 relative", level.color)}>
+                                <Card className={cn("h-full border-white/5 rounded-[2rem] overflow-hidden hover:shadow-2xl transition-all duration-500 relative bg-card/40 backdrop-blur-3xl p-0 gap-0", level.color)}>
                                     {enrolledInThis && (
-                                        <div className="absolute top-4 right-4 z-10">
-                                            <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-500/30 backdrop-blur-md">
-                                                <CheckCircle2 className="w-3 h-3 text-emerald-500" />
-                                                <span className="text-[9px] font-semibold uppercase tracking-widest text-emerald-500">Enrolled</span>
+                                        <div className="absolute top-3 right-3 z-10">
+                                            <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-500/30 backdrop-blur-md">
+                                                <CheckCircle2 className="w-2.5 h-2.5 text-emerald-500" />
+                                                <span className="text-[8px] font-black uppercase tracking-widest text-emerald-500">Enrolled</span>
                                             </div>
                                         </div>
                                     )}
-                                    <CardHeader className="space-y-4 p-8">
-
-                                        <div className="space-y-1">
-                                            <CardTitle className="text-2xl font-semibold uppercase  tracking-tighter">{level.title}</CardTitle>
-                                            <CardDescription className="font-thin text-[10px] uppercase tracking-widest text-muted-foreground">{level.subtitle}</CardDescription>
+                                    <CardHeader className="space-y-2 p-5 sm:p-8">
+                                        <div className="space-y-0.5">
+                                            <CardTitle className="text-xl sm:text-2xl font-black uppercase italic tracking-tighter">{level.title}</CardTitle>
+                                            <CardDescription className="font-black text-[8px] sm:text-[10px] uppercase tracking-widest text-muted-foreground opacity-60 font-mono italic">{level.subtitle}</CardDescription>
                                         </div>
                                     </CardHeader>
-                                    <CardContent className="px-8 pb-8 space-y-6">
-                                        <p className="text-sm font-thin leading-relaxed">{level.description}</p>
-                                        <div className="space-y-4">
-                                            <div className="space-y-2">
-                                                <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60">Key Focus</p>
-                                                <ul className="space-y-1.5">
+                                    <CardContent className="px-5 sm:px-8 pb-5 sm:pb-8 space-y-4">
+                                        <p className="text-[11px] sm:text-sm font-medium leading-relaxed opacity-80">{level.description}</p>
+                                        <div className="space-y-3">
+                                            <div className="space-y-1.5">
+                                                <p className="text-[8px] font-black uppercase tracking-widest text-muted-foreground/40">Key Focus</p>
+                                                <ul className="space-y-1">
                                                     {level.focus.map((item, i) => (
-                                                        <li key={i} className="flex gap-2 text-xs font-thin items-start leading-tight">
+                                                        <li key={i} className="flex gap-2 text-[10px] sm:text-xs font-medium items-start leading-tight">
                                                             <div className={cn("w-1.5 h-1.5 rounded-full mt-1 shrink-0", level.accent)} />
                                                             {item}
                                                         </li>
                                                     ))}
                                                 </ul>
                                             </div>
-                                            <div className="space-y-2">
-                                                <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60">Qualifiers</p>
-                                                <p className="text-xs font-thin text-foreground/80 leading-tight">
+                                            <div className="space-y-1">
+                                                <p className="text-[8px] font-black uppercase tracking-widest text-muted-foreground/40">Qualifiers</p>
+                                                <p className="text-[10px] sm:text-xs font-medium text-foreground/70 leading-tight italic">
                                                     {level.qualifiers}
                                                 </p>
                                             </div>
-                                            <div className="pt-2">
-                                                <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60">Outcome Goal</p>
-                                                <p className="text-xs font-thin mt-1 leading-relaxed text-foreground/80">{level.purpose}</p>
+                                            <div className="pt-1">
+                                                <p className="text-[8px] font-black uppercase tracking-widest text-muted-foreground/40">Outcome Goal</p>
+                                                <p className="text-[10px] sm:text-xs font-bold mt-1 leading-relaxed text-primary/80 italic">{level.purpose}</p>
                                             </div>
                                         </div>
                                     </CardContent>
@@ -260,18 +281,26 @@ export default function ClassEnrollmentClient({ currentUser }: { currentUser: Us
 
 
 
-            {/* ACTION BAR (Fixed/Floating) */}
-            <div className="fixed bottom-24 sm:bottom-10 left-1/2 -translate-x-1/2 w-[95%] max-w-2xl z-[60]">
-                <div className="bg-background/80 backdrop-blur-3xl border border-white/20 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.5)] rounded-[2rem] p-3 flex flex-col sm:flex-row items-center gap-3">
+            {/* ACTION BAR (Fixed/Floating) - Optimized Smart Visibility */}
+            <motion.div
+                initial={{ y: 0, opacity: 1 }}
+                animate={{
+                    y: isVisible ? 0 : 100,
+                    opacity: isVisible ? 1 : 0
+                }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+                className="fixed bottom-22 sm:bottom-10 left-1/2 -translate-x-1/2 w-[92%] max-w-lg z-[60]"
+            >
+                <div className="bg-background/20 backdrop-blur-3xl border border-white/10 shadow-2xl rounded-[1.2rem] p-1.5 flex items-center gap-1.5">
                     {isEnrolled ? (
                         <>
-                            {/* ENROLLED STATE */}
+                            {/* ENROLLED STATE - Single row */}
                             <Button
                                 onClick={handleContinueToClass}
-                                className="w-full sm:flex-1 h-14 sm:h-16 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white font-semibold uppercase text-lg shadow-xl shadow-emerald-500/20 active:scale-95 transition-all flex items-center justify-center gap-3 px-8"
+                                className="flex-1 h-11 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white font-black uppercase text-[10px] tracking-wider active:scale-95 transition-all flex items-center justify-center gap-2"
                             >
-                                <PlayCircle className="w-6 h-6" />
-                                Continue to Class
+                                <PlayCircle className="w-3.5 h-3.5" />
+                                Continue
                             </Button>
 
                             <DropdownMenu>
@@ -279,11 +308,9 @@ export default function ClassEnrollmentClient({ currentUser }: { currentUser: Us
                                     <Button
                                         variant="outline"
                                         disabled={isProcessing}
-                                        className="w-full sm:w-auto h-14 sm:h-16 rounded-2xl border-2 border-red-500/20 bg-background/50 hover:bg-red-500/5 text-red-500 font-semibold uppercase text-lg shadow-xl active:scale-95 transition-all flex items-center justify-center gap-3 px-8"
+                                        className="w-20 h-11 rounded-lg border border-red-500/20 bg-background/20 text-red-500 font-black uppercase text-[10px] tracking-wider active:scale-95 transition-all flex items-center justify-center gap-1"
                                     >
-                                        <LogOut className="w-5 h-5" />
-                                        Leave Class
-                                        <ChevronDown className="w-5 h-5" />
+                                        Leave
                                     </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end" className="w-[300px] bg-background/95 backdrop-blur-2xl border border-border/50 rounded-2xl p-2 shadow-2xl z-[70]">
@@ -315,24 +342,23 @@ export default function ClassEnrollmentClient({ currentUser }: { currentUser: Us
                         </>
                     ) : (
                         <>
-                            {/* NOT ENROLLED STATE */}
+                            {/* NOT ENROLLED STATE - High Performance Single Row */}
                             <Button
                                 disabled={isProcessing}
                                 onClick={() => handleEnroll("LIFE_CLASS")}
-                                className="w-full sm:flex-1 h-14 sm:h-16 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white font-semibold uppercase  text-lg shadow-xl shadow-emerald-500/20 active:scale-95 transition-all flex items-center justify-center gap-3 px-8"
+                                className="flex-1 h-11 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white font-black uppercase text-[10px] tracking-wider active:scale-95 transition-all flex items-center justify-center gap-2"
                             >
                                 Enroll Life Class
-                                <ArrowRight className="w-6 h-6" />
+                                <ArrowRight className="w-3.5 h-3.5" />
                             </Button>
 
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
                                     <Button
                                         variant="outline"
-                                        className="w-full sm:w-auto h-14 sm:h-16 rounded-2xl border-2 border-primary/20 bg-background/50 hover:bg-primary/5 text-primary font-semibold uppercase  text-lg shadow-xl active:scale-95 transition-all flex items-center justify-center gap-3 px-8"
+                                        className="w-24 h-11 rounded-lg border border-primary/20 bg-background/20 text-primary font-black uppercase text-[10px] tracking-wider active:scale-95 transition-all flex items-center justify-center"
                                     >
-                                        Continue Path
-                                        <ChevronDown className="w-6 h-6" />
+                                        SOL Path
                                     </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end" className="w-[280px] bg-background/95 backdrop-blur-2xl border border-border/50 rounded-2xl p-2 shadow-2xl z-[70]">
@@ -386,7 +412,7 @@ export default function ClassEnrollmentClient({ currentUser }: { currentUser: Us
                         </>
                     )}
                 </div>
-            </div>
+            </motion.div>
         </div>
     );
 }   

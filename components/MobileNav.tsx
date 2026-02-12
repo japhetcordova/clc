@@ -23,7 +23,7 @@ export default function MobileNav() {
     // Only show on mobile
     return (
         <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 pb-safe">
-            <div className="bg-background/90 backdrop-blur-2xl border-t border-border/50 px-2 py-2 flex items-center justify-between shadow-[0_-8px_30px_rgb(0,0,0,0.12)]">
+            <div className="bg-background/90 backdrop-blur-2xl border-t border-border/50 px-1 py-1.5 flex items-center justify-between shadow-[0_-8px_30px_rgb(0,0,0,0.12)]">
                 {links.map((link) => {
                     const isActive = pathname === link.href ||
                         (link.href !== "/" && pathname.startsWith(link.href)) ||
