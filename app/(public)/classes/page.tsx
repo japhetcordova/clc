@@ -1,6 +1,7 @@
 ﻿import ClassEnrollmentClient from "./ClassEnrollmentClient";
 import Image from "next/image";
 import { GraduationCap } from "lucide-react";
+import { redirect } from "next/navigation";
 
 import { trpcServer } from "@/lib/trpc/server";
 
@@ -27,6 +28,15 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function ClassesPage() {
     const caller = await trpcServer();
     const user = await caller.getMe();
+
+    if (user) {
+        const enrollments = await caller.getMyEnrollments();
+        const activeEnrollments = enrollments.filter((e) => e.status === "active" || e.status === "completed");
+
+        if (activeEnrollments.length > 0) {
+            redirect(`/profile/${user.qrCodeId}/videos`);
+        }
+    }
 
     return (
         <div className="flex flex-col min-h-screen bg-background relative overflow-hidden">

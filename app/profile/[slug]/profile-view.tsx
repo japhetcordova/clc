@@ -2,7 +2,6 @@
 
 import { motion } from "framer-motion";
 import { User as UserIcon, Phone, Mail, Users as UsersIcon, Calendar, Share2, Download, Edit3, Settings, ShieldCheck, Lightbulb, Home, Eye, Sparkles, LogOut, Lock, ExternalLink, Play, Book, Wrench } from "lucide-react";
-import { QRCodeSVG } from "qrcode.react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
@@ -11,9 +10,6 @@ import { cn } from "@/lib/utils";
 import ProfileClient, { ProfileIDPreview } from "./profile-client";
 import EditProfile from "./edit-profile";
 import SuggestionForm from "@/components/SuggestionForm";
-import BackButton from "@/components/BackButton";
-import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger, DrawerClose } from "@/components/ui/drawer";
-import { ListFilter, MoreHorizontal } from "lucide-react";
 import useMediaQuery from "@/hooks/use-media-query";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Copy, Check } from "lucide-react";
@@ -64,6 +60,8 @@ export default function ProfileView({ user, qrValue, attendance = [], enrollment
     const verifyMutation = trpc.verifyProfilePin.useMutation();
     const logoutMutation = trpc.logout.useMutation();
 
+    const isMobile = useMediaQuery("(max-width: 1024px)");
+
     const handleLogout = async () => {
         await logoutMutation.mutateAsync();
         localStorage.removeItem(`profile_auth_${qrValue}`);
@@ -72,7 +70,12 @@ export default function ProfileView({ user, qrValue, attendance = [], enrollment
         document.documentElement.classList.remove("premium");
         document.documentElement.removeAttribute("data-theme");
         toast.success("Profile access locked.");
-        window.location.reload();
+
+        if (isMobile) {
+            window.location.href = "/mobile";
+        } else {
+            window.location.href = "/";
+        }
     };
 
     const fadeInUp = {
@@ -155,61 +158,41 @@ export default function ProfileView({ user, qrValue, attendance = [], enrollment
                                     "flex items-center gap-2 px-4 py-2 border rounded-full cursor-pointer transition-all duration-300",
                                     isDeveloperMode
                                         ? "bg-rose-500/10 border-rose-500/20 shadow-[0_0_15px_rgba(244,63,94,0.1)]"
-                                        : "bg-emerald-500/10 border-emerald-500/20"
+                                        : "bg-amber-500/10 border-amber-500/20 shadow-[0_0_10px_rgba(245,158,11,0.1)]"
                                 )}
                             >
                                 <div className={cn(
                                     "w-2 h-2 rounded-full animate-pulse",
-                                    isDeveloperMode ? "bg-rose-500" : "bg-emerald-500"
+                                    isDeveloperMode ? "bg-rose-500" : "bg-amber-500"
                                 )} />
                                 <span className={cn(
                                     "text-[9px] font-black uppercase tracking-[0.2em]",
-                                    isDeveloperMode ? "text-rose-600" : "text-emerald-600"
+                                    isDeveloperMode ? "text-rose-600" : "text-amber-600 dark:text-amber-400"
                                 )}>
                                     {isDeveloperMode ? (
                                         <span className="flex items-center gap-2">
                                             <Wrench className="w-3 h-3" />
                                             Dev Mode Active
                                         </span>
-                                    ) : "Session Secure"}
+                                    ) : (
+                                        <span className="flex items-center gap-2">
+                                            {user.redeemPoints ?? 0} Reedem Points
+                                        </span>
+                                    )}
                                 </span>
                             </div>
                         ) : (
                             /* Static Status Indicator for Production */
-                            <div className="flex items-center gap-2 px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
-                                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                                <span className="text-[9px] font-black uppercase tracking-[0.2em] text-emerald-600">Session Secure</span>
+                            /* Redeem Points Display */
+                            <div className="flex items-center gap-2 px-4 py-2 bg-amber-500/10 border border-amber-500/20 rounded-full shadow-[0_0_10px_rgba(245,158,11,0.1)]">
+                                <span className="text-[9px] font-black uppercase tracking-[0.15em] text-amber-600 dark:text-amber-400">
+                                    {user.redeemPoints ?? 0} Reeden Points
+                                </span>
                             </div>
                         )}
                     </div>
 
-                    {/* Mobile Bottom Navigation Bar */}
-                    <div className="xs:hidden fixed bottom-1 left-1 right-1 z-40 bg-card/80 backdrop-blur-3xl border border-border/50 px-6 py-3 flex items-center justify-between pb-safe rounded-[2rem] shadow-2xl ring-1 ring-white/5">
-                        <Link href="/mobile" className="flex flex-col items-center gap-1 group">
-                            <div className="p-2 rounded-xl group-active:bg-primary/10 transition-colors">
-                                <Home className="w-5 h-5 text-muted-foreground group-active:text-primary" />
-                            </div>
-                            <span className="text-[8px] font-black uppercase tracking-widest text-muted-foreground group-active:text-primary leading-none">Home</span>
-                        </Link>
-                        <Link href={`/profile/${qrValue}/videos`} className="flex flex-col items-center gap-1 group">
-                            <div className="p-2 rounded-xl group-active:bg-primary/10 transition-colors">
-                                <Book className="w-5 h-5 text-muted-foreground group-active:text-primary" />
-                            </div>
-                            <span className="text-[8px] font-black uppercase tracking-widest text-muted-foreground group-active:text-primary leading-none">Videos</span>
-                        </Link>
-                        <button
-                            onClick={() => {
-                                (document.querySelector('[value="overview"]') as HTMLElement)?.click();
-                                window.scrollTo({ top: 0, behavior: 'smooth' });
-                            }}
-                            className="flex flex-col items-center gap-1 group"
-                        >
-                            <div className="p-2 rounded-xl group-active:bg-primary/10 transition-colors">
-                                <UserIcon className="w-5 h-5 text-muted-foreground group-active:text-primary" />
-                            </div>
-                            <span className="text-[8px] font-black uppercase tracking-widest text-muted-foreground group-active:text-primary leading-none">Info</span>
-                        </button>
-                    </div>
+
 
                     <div className="w-full grid lg:grid-cols-[400px_1fr] gap-8">
                         {/* Left Column: ID Card & Quick Actions */}
@@ -288,63 +271,6 @@ export default function ProfileView({ user, qrValue, attendance = [], enrollment
                                 </Link>
                             </div>
 
-                            {/* Mobile Quick Actions Floating Trigger */}
-                            <div className="lg:hidden fixed bottom-6 right-6 z-50">
-                                <Drawer>
-                                    <DrawerTrigger asChild>
-                                        <Button size="lg" className="h-14 w-14 rounded-full shadow-2xl shadow-primary/40 bg-primary text-primary-foreground hover:scale-110 active:scale-90 transition-all">
-                                            <MoreHorizontal className="w-6 h-6 shrink-0" />
-                                        </Button>
-                                    </DrawerTrigger>
-                                    <DrawerContent className="bg-card/95 backdrop-blur-2xl border-t border-border/50 rounded-t-[2rem]">
-                                        <div className="p-6 pb-12 space-y-6">
-                                            <DrawerHeader className="p-0">
-                                                <DrawerTitle className="text-xl font-black uppercase italic tracking-tighter text-left">Account Actions</DrawerTitle>
-                                            </DrawerHeader>
-                                            <div className="grid grid-cols-1 gap-3">
-                                                <EditProfile user={user} />
-                                                <SuggestionForm
-                                                    userId={user.id}
-                                                    triggerButton={
-                                                        <Button
-                                                            variant="outline"
-                                                            className="w-full border-2 border-primary/10 hover:bg-primary/5 rounded-2xl font-black flex items-center justify-start px-6 gap-4 h-14 uppercase text-[10px] tracking-[0.2em] transition-all"
-                                                        >
-                                                            <ShieldCheck className="w-5 h-5 text-primary" />
-                                                            Create Suggestion
-                                                        </Button>
-                                                    }
-                                                />
-                                                <Link href="/suggestions" className="w-full">
-                                                    <Button
-                                                        variant="outline"
-                                                        className="w-full border-2 border-primary/10 hover:bg-primary/5 rounded-2xl font-black flex items-center justify-start px-6 gap-4 h-14 uppercase text-[10px] tracking-[0.2em] transition-all"
-                                                    >
-                                                        <Lightbulb className="w-5 h-5 text-primary" />
-                                                        Community Board
-                                                    </Button>
-                                                </Link>
-                                                <ProfileIDPreview
-                                                    user={user}
-                                                    qrValue={qrValue}
-                                                    trigger={
-                                                        <Button
-                                                            variant="outline"
-                                                            className="w-full border-2 border-primary/10 hover:bg-primary/5 rounded-2xl font-black flex items-center justify-start px-6 gap-4 h-14 uppercase text-[10px] tracking-[0.2em] transition-all"
-                                                        >
-                                                            <Download className="w-5 h-5 text-primary" />
-                                                            Access Digital ID
-                                                        </Button>
-                                                    }
-                                                />
-                                            </div>
-                                            <DrawerClose asChild>
-                                                <Button variant="ghost" className="w-full rounded-2xl h-12 font-bold uppercase text-[10px] tracking-widest">Close Menu</Button>
-                                            </DrawerClose>
-                                        </div>
-                                    </DrawerContent>
-                                </Drawer>
-                            </div>
                         </div>
 
                         {/* Right Column: Detailed Info */}
@@ -367,42 +293,13 @@ export default function ProfileView({ user, qrValue, attendance = [], enrollment
                                             </TabsTrigger>
                                         ))}
 
-                                        <Link href={`/profile/${qrValue}/videos`} className="ml-auto">
-                                            <Button
-                                                variant="ghost"
-                                                className="rounded-xl px-4 sm:px-6 py-2.5 sm:py-3 text-muted-foreground hover:text-primary font-bold uppercase text-[10px] tracking-widest transition-all shrink-0 flex items-center gap-2"
-                                            >
-                                                <Book className="w-4 h-4" />
-                                                <span className="hidden sm:inline">Materials</span>
-                                                <span className="sm:hidden">Videos</span>
-                                                <ExternalLink className="w-3 h-3 ml-1" />
-                                            </Button>
-                                        </Link>
+
                                     </TabsList>
 
                                     <div className="p-4 sm:p-6 md:p-8 flex-1">
                                         <TabsContent value="overview" className="mt-0 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
                                             <div className="grid gap-6">
-                                                <div className="space-y-4">
-                                                    <h3 className="text-sm font-black uppercase text-muted-foreground tracking-widest flex items-center gap-2">
-                                                        <ShieldCheck className="w-4 h-4 text-primary" />
-                                                        Member Status
-                                                    </h3>
-                                                    <div className="p-6 rounded-[2rem] bg-linear-to-br from-primary/10 via-background to-rose-500/5 border border-primary/20 relative overflow-hidden group">
-                                                        <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
-                                                            <div className="space-y-2 text-center sm:text-left">
-                                                                <h4 className="font-black text-xl uppercase tracking-tighter italic">Journey Materials</h4>
-                                                                <p className="text-muted-foreground text-[10px] font-medium uppercase tracking-widest">Access your curriculum videos and resources</p>
-                                                            </div>
-                                                            <Link href={`/profile/${qrValue}/videos`}>
-                                                                <Button className="rounded-xl h-12 px-8 font-black uppercase text-[10px] tracking-widest gap-2">
-                                                                    Open Materials
-                                                                    <Book className="w-4 h-4" />
-                                                                </Button>
-                                                            </Link>
-                                                        </div>
-                                                    </div>
-                                                </div>
+
 
                                                 <div className="space-y-4">
                                                     <h3 className="text-sm font-black uppercase text-muted-foreground tracking-widest flex items-center gap-2">
@@ -437,34 +334,6 @@ export default function ProfileView({ user, qrValue, attendance = [], enrollment
 
                                         <TabsContent value="activity" className="mt-0 animate-in fade-in slide-in-from-bottom-4 duration-500">
                                             <div className="space-y-6">
-                                                {/* Redeem Points Balance Card */}
-                                                <div className="relative overflow-hidden rounded-[2rem] border border-amber-500/20 bg-gradient-to-br from-amber-500/10 via-amber-400/5 to-yellow-500/10 p-6 shadow-lg">
-                                                    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-amber-400/10 via-transparent to-transparent" />
-                                                    <div className="absolute top-2 right-2 w-24 h-24 bg-amber-400/10 rounded-full blur-2xl" />
-                                                    <div className="relative flex items-center justify-between gap-4">
-                                                        <div className="space-y-1">
-                                                            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-amber-600 dark:text-amber-400 flex items-center gap-2">
-                                                                <Sparkles className="w-3.5 h-3.5" />
-                                                                Redeem Points
-                                                            </p>
-                                                            <p className="text-xs text-muted-foreground font-medium">Earn +1 for every attendance</p>
-                                                        </div>
-                                                        <div className="flex items-center gap-2">
-                                                            <div className="relative">
-                                                                <div className="absolute inset-0 bg-amber-400/20 rounded-full blur-md animate-pulse" />
-                                                                <div className="relative w-12 h-12 rounded-full bg-gradient-to-br from-amber-400 to-yellow-600 flex items-center justify-center shadow-lg shadow-amber-500/20 ring-2 ring-amber-400/30">
-                                                                    <span className="text-white font-black text-sm">RP</span>
-                                                                </div>
-                                                            </div>
-                                                            <div className="text-right">
-                                                                <p className="text-3xl sm:text-4xl font-black tracking-tighter text-amber-600 dark:text-amber-400 tabular-nums">
-                                                                    {user.redeemPoints ?? 0}
-                                                                </p>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
                                                 {/* Attendance Records */}
                                                 <div className="space-y-4">
                                                     <div className="flex items-center justify-between">
