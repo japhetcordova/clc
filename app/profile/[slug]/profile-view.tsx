@@ -1,7 +1,9 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { User as UserIcon, Phone, Mail, Users as UsersIcon, Calendar, Share2, Download, Edit3, Settings, ShieldCheck, Lightbulb, Home, Eye, Sparkles, LogOut, Lock, ExternalLink, Play, Book, Wrench } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
+import { User as UserIcon, Phone, Mail, Users as UsersIcon, Calendar, Share2, Download, Edit3, Settings, ShieldCheck, Lightbulb, Home, Eye, Sparkles, LogOut, Lock, ExternalLink, Play, Book, Wrench, MoreHorizontal, QrCode } from "lucide-react";
+import { QRCodeSVG } from "qrcode.react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
@@ -122,74 +124,37 @@ export default function ProfileView({ user, qrValue, attendance = [], enrollment
                     transition={{ duration: 0.5, ease: "easeOut" }}
                     className="max-w-[1920px] mx-auto relative z-10 flex flex-col gap-6 sm:gap-8 md:pt-4"
                 >
-                    {/* Unified Navigation & Status Bar */}
-                    <div className="flex items-center justify-between w-full px-2 sm:px-0">
-                        <div className="flex items-center bg-card/60 backdrop-blur-3xl rounded-[1.25rem] border border-border/50 p-1 shadow-2xl ring-1 ring-white/5 animate-in fade-in slide-in-from-top-4 duration-500">
-                            <Link href="/mobile">
-                                <Button
-                                    variant="ghost"
-                                    className="rounded-xl h-10 px-3 sm:px-4 text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all font-black uppercase text-[10px] tracking-widest gap-2"
-                                >
-                                    <Home className="w-4 h-4 text-primary" />
-                                    <span className="hidden xs:inline">Home</span>
+                    {/* Optimized Header */}
+                    <div className="flex items-center justify-between w-full px-2 pt-2">
+                        {/* Overflow Menu */}
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="icon" className="group rounded-full bg-background/50 backdrop-blur-md border border-border/50 shadow-sm hover:bg-primary/10">
+                                    <MoreHorizontal className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
                                 </Button>
-                            </Link>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="start" className="w-48 rounded-xl border-border/50 backdrop-blur-xl bg-background/95">
+                                <DropdownMenuItem asChild>
+                                    <Link href="/mobile" className="flex items-center gap-2 cursor-pointer font-medium p-3">
+                                        <Home className="w-4 h-4" />
+                                        Home
+                                    </Link>
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem onClick={handleLogout} className="flex items-center gap-2 cursor-pointer font-medium text-destructive focus:text-destructive p-3">
+                                    <LogOut className="w-4 h-4" />
+                                    Lock Profile
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
 
-                            <div className="w-[1px] h-5 bg-border/50 mx-1" />
-
-                            <Button
-                                variant="ghost"
-                                onClick={handleLogout}
-                                className="rounded-xl h-10 px-3 sm:px-4 text-destructive hover:bg-destructive/10 hover:text-destructive transition-all font-black uppercase text-[10px] tracking-widest gap-2"
-                            >
-                                <LogOut className="w-4 h-4" />
-                                <span className="hidden xs:inline">Lock <span className="hidden sm:inline">Profile</span></span>
-                            </Button>
+                        {/* Redeem Points Chip */}
+                        <div className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-500/10 border border-amber-500/20 rounded-full shadow-[0_0_10px_rgba(245,158,11,0.1)]">
+                            <Sparkles className="w-3.5 h-3.5 text-amber-500 fill-amber-500/20" />
+                            <span className="text-[10px] font-black tabular-nums text-amber-600 dark:text-amber-400">
+                                {user.redeemPoints ?? 0}
+                            </span>
                         </div>
-
-                        {/* Developer Mode Toggle (Localhost Only) */}
-                        {isLocalhost ? (
-                            <div
-                                onClick={() => {
-                                    setIsDeveloperMode(!isDeveloperMode);
-                                    toast.info(isDeveloperMode ? "Developer Mode Disabled" : "Developer Mode Enabled: All videos unlocked");
-                                }}
-                                className={cn(
-                                    "flex items-center gap-2 px-4 py-2 border rounded-full cursor-pointer transition-all duration-300",
-                                    isDeveloperMode
-                                        ? "bg-rose-500/10 border-rose-500/20 shadow-[0_0_15px_rgba(244,63,94,0.1)]"
-                                        : "bg-amber-500/10 border-amber-500/20 shadow-[0_0_10px_rgba(245,158,11,0.1)]"
-                                )}
-                            >
-                                <div className={cn(
-                                    "w-2 h-2 rounded-full animate-pulse",
-                                    isDeveloperMode ? "bg-rose-500" : "bg-amber-500"
-                                )} />
-                                <span className={cn(
-                                    "text-[9px] font-black uppercase tracking-[0.2em]",
-                                    isDeveloperMode ? "text-rose-600" : "text-amber-600 dark:text-amber-400"
-                                )}>
-                                    {isDeveloperMode ? (
-                                        <span className="flex items-center gap-2">
-                                            <Wrench className="w-3 h-3" />
-                                            Dev Mode Active
-                                        </span>
-                                    ) : (
-                                        <span className="flex items-center gap-2">
-                                            {user.redeemPoints ?? 0} Reedem Points
-                                        </span>
-                                    )}
-                                </span>
-                            </div>
-                        ) : (
-                            /* Static Status Indicator for Production */
-                            /* Redeem Points Display */
-                            <div className="flex items-center gap-2 px-4 py-2 bg-amber-500/10 border border-amber-500/20 rounded-full shadow-[0_0_10px_rgba(245,158,11,0.1)]">
-                                <span className="text-[9px] font-black uppercase tracking-[0.15em] text-amber-600 dark:text-amber-400">
-                                    {user.redeemPoints ?? 0} Reeden Points
-                                </span>
-                            </div>
-                        )}
                     </div>
 
 
@@ -197,54 +162,41 @@ export default function ProfileView({ user, qrValue, attendance = [], enrollment
                     <div className="w-full grid lg:grid-cols-[400px_1fr] gap-8">
                         {/* Left Column: ID Card & Quick Actions */}
                         <div className="space-y-6">
-                            <Card className="overflow-hidden border-none shadow-2xl bg-card/80 backdrop-blur-xl ring-1 ring-white/10 relative group">
-                                <div className="absolute inset-0 bg-linear-to-br from-primary/10 via-transparent to-rose-500/5 opacity-50" />
+                            <div className="relative bg-card/60 backdrop-blur-3xl rounded-[2.5rem] border border-border/50 overflow-hidden shadow-2xl">
+                                <div className="absolute inset-0 bg-linear-to-b from-primary/5 via-transparent to-transparent opacity-50" />
 
-                                <div className="relative pt-12 pb-8 px-6 text-center space-y-4">
-                                    {/* Interactive QR Section */}
-                                    <div className="px-2 sm:px-6 pb-6 sm:pb-8">
-                                        <div className="bg-white p-3 sm:p-4 rounded-2xl shadow-inner shadow-black/5 mx-auto w-fit mb-4 sm:mb-6">
-                                            <div className="relative">
-                                                <ProfileClient
-                                                    user={user}
-                                                    qrValue={qrValue}
-                                                />
-                                            </div>
-                                        </div>
+                                <div className="relative p-8 flex flex-col items-center gap-6 text-center">
+                                    <div className="bg-white p-3 rounded-[2rem] shadow-sm ring-4 ring-white/10">
+                                        <ProfileClient user={user} qrValue={qrValue} />
                                     </div>
 
                                     <div className="space-y-1">
                                         <div className="flex items-center justify-center gap-2">
-                                            <h1 className="text-xl sm:text-2xl font-black text-foreground tracking-tight">{user.firstName} {user.lastName}</h1>
+                                            <h1 className="text-2xl font-black tracking-tight text-foreground">{user.firstName} {user.lastName}</h1>
                                             {user.isPremium && (
                                                 <div className="bg-amber-500/10 p-1 rounded-full border border-amber-500/20 shrink-0">
                                                     <Sparkles className="w-3 h-3 text-amber-500" />
                                                 </div>
                                             )}
                                         </div>
-                                        <p className="text-[10px] sm:text-sm font-medium text-muted-foreground uppercase tracking-widest">{user.ministry}</p>
+                                        <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{user.ministry}</p>
                                     </div>
 
-                                    {/* Actions: Desktop Show, Mobile Hidden (moved to drawer) */}
-                                    <div className="hidden lg:flex justify-center gap-2 pt-2 pb-4">
-                                        <div className="w-full max-w-[200px]">
-                                            <ProfileIDPreview
-                                                user={user}
-                                                qrValue={qrValue}
-                                                trigger={
-                                                    <button className="w-full group relative flex items-center justify-center gap-2 px-4 py-2 bg-primary/10 hover:bg-primary/20 rounded-full border border-primary/20 hover:border-primary/40 transition-all cursor-pointer overflow-hidden">
-                                                        <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                                                        <Eye className="w-3.5 h-3.5 text-primary relative z-10" />
-                                                        <span className="text-[10px] font-black uppercase tracking-widest text-primary relative z-10">Download ID</span>
-                                                    </button>
-                                                }
-                                            />
-                                        </div>
+                                    <div className="hidden lg:block w-full max-w-[200px] pt-2">
+                                        <ProfileIDPreview
+                                            user={user}
+                                            qrValue={qrValue}
+                                            trigger={
+                                                <button className="w-full group relative flex items-center justify-center gap-2 px-4 py-2 bg-primary/10 hover:bg-primary/20 rounded-full border border-primary/20 hover:border-primary/40 transition-all cursor-pointer overflow-hidden">
+                                                    <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                                    <Eye className="w-3.5 h-3.5 text-primary relative z-10" />
+                                                    <span className="text-[10px] font-black uppercase tracking-widest text-primary relative z-10">Download ID</span>
+                                                </button>
+                                            }
+                                        />
                                     </div>
                                 </div>
-
-
-                            </Card>
+                            </div>
 
                             <div className="hidden lg:grid grid-cols-1 gap-4">
                                 <EditProfile user={user} />
@@ -277,7 +229,7 @@ export default function ProfileView({ user, qrValue, attendance = [], enrollment
                         <div className="space-y-6">
                             <Card className="h-full border-none shadow-xl bg-card/50 backdrop-blur-md ring-1 ring-border p-1">
                                 <Tabs defaultValue="overview" className="h-full flex flex-col">
-                                    <TabsList className="sticky top-0 z-20 w-full justify-start p-1.5 sm:p-2 bg-background/80 backdrop-blur-3xl border-b border-border/50 rounded-none h-auto gap-1.5 sm:gap-2 overflow-x-auto scrollbar-none flex-nowrap">
+                                    <TabsList className="sticky top-0 z-20 w-full p-1 bg-muted/40 backdrop-blur-xl border-b border-border/50 h-auto grid grid-cols-2 gap-1 rounded-none">
                                         {[
                                             { id: "overview", label: "Info", icon: <UserIcon className="w-4 h-4" /> },
                                             { id: "activity", label: "Logs", icon: <Calendar className="w-4 h-4" /> }
@@ -285,15 +237,12 @@ export default function ProfileView({ user, qrValue, attendance = [], enrollment
                                             <TabsTrigger
                                                 key={tab.id}
                                                 value={tab.id}
-                                                className="rounded-xl px-4 sm:px-6 py-2.5 sm:py-3 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-bold uppercase text-[10px] tracking-widest transition-all shrink-0 flex items-center gap-2"
+                                                className="rounded-lg py-2 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm font-bold uppercase text-[10px] tracking-widest transition-all flex items-center justify-center gap-2"
                                             >
                                                 {tab.icon}
-                                                <span className="hidden sm:inline">{tab.label}</span>
-                                                <span className="sm:hidden">{tab.label}</span>
+                                                <span>{tab.label}</span>
                                             </TabsTrigger>
                                         ))}
-
-
                                     </TabsList>
 
                                     <div className="p-4 sm:p-6 md:p-8 flex-1">
@@ -413,36 +362,38 @@ function InfoItem({ icon, label, value, isCopyable }: { icon: any, label: string
     };
 
     return (
-        <div className="group relative flex items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-2xl bg-muted/30 border border-border/50 hover:bg-muted/50 transition-colors overflow-hidden">
-            <div className="shrink-0 p-2 sm:p-2.5 rounded-xl bg-background shadow-sm text-muted-foreground group-hover:text-primary transition-colors">
-                {React.cloneElement(icon, { className: "w-3.5 h-3.5 sm:w-4 h-4" } as any)}
+        <div className="group flex items-center justify-between py-3 px-1 border-b border-border/40 last:border-0 hover:bg-muted/5 transition-colors">
+            <div className="flex items-center gap-3 min-w-0">
+                <div className="shrink-0 p-1.5 rounded-lg bg-primary/5 text-muted-foreground group-hover:text-primary transition-colors">
+                    {React.cloneElement(icon, { className: "w-3.5 h-3.5" } as any)}
+                </div>
+                <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground truncate opacity-70 group-hover:opacity-100 transition-opacity">
+                    {label}
+                </p>
             </div>
-            <div className="min-w-0 flex-1">
-                <p className="text-[10px] font-black uppercase text-muted-foreground tracking-widest truncate">{label}</p>
 
+            <div className="flex items-center gap-2 pl-4 shrink-0">
                 <TooltipProvider delayDuration={300}>
                     <Tooltip>
                         <TooltipTrigger asChild>
-                            <div className="flex items-center gap-2 cursor-default">
-                                <p className="text-sm font-bold text-foreground truncate">{value}</p>
-                            </div>
+                            <p className="text-xs sm:text-sm font-bold text-foreground text-right">{value}</p>
                         </TooltipTrigger>
                         <TooltipContent>
                             <p>{value}</p>
                         </TooltipContent>
                     </Tooltip>
                 </TooltipProvider>
-            </div>
 
-            {isCopyable && (
-                <button
-                    onClick={handleCopy}
-                    className="shrink-0 p-2 rounded-lg hover:bg-background text-muted-foreground hover:text-foreground opacity-0 group-hover:opacity-100 transition-all focus:opacity-100 focus:outline-none"
-                    title="Copy to clipboard"
-                >
-                    {copied ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
-                </button>
-            )}
+                {isCopyable && (
+                    <button
+                        onClick={handleCopy}
+                        className="p-1.5 rounded-md hover:bg-primary/10 text-muted-foreground hover:text-primary transition-all focus:outline-none"
+                        title="Copy"
+                    >
+                        {copied ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
+                    </button>
+                )}
+            </div>
         </div>
     );
 }

@@ -49,7 +49,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 
 export default async function WatchPage() {
-    // Optional: Auto-sync if token is provided in env
+    // ... data fetching ...
     const fbToken = process.env.FB_ACCESS_TOKEN;
     if (fbToken) {
         try {
@@ -72,22 +72,15 @@ export default async function WatchPage() {
         { day: "Friday Night", time: "6:00 PM", label: "Regeneration Upnext" },
     ];
 
-    // Filter out live videos, untitled videos, and videos without proper thumbnails
+    // Filter logic...
     const archivedVideos = recentVideos.filter(v => {
-        // Exclude live videos (shown in main player)
         if (v.isLive) return false;
-
-        // Exclude videos with no title or "Untitled" in the title
         const title = v.manualTitle || v.title || "";
         if (!title || title.toLowerCase().includes("untitled")) return false;
-
-        // Exclude videos without real thumbnails (must have a valid URL, not just fallback)
         if (!v.thumbnail || v.thumbnail === "/bg/word.webp" || !v.thumbnail.startsWith("http")) return false;
-
         return true;
     });
 
-    // Fallback if no archived videos in DB
     const archives = archivedVideos.length > 0 ? archivedVideos.map(v => ({
         id: v.id,
         title: v.manualTitle || v.title || "Worship Service",
@@ -115,8 +108,6 @@ export default async function WatchPage() {
     ];
 
     const activeVideo = liveVideo || (recentVideos.length > 0 ? recentVideos[0] : null);
-
-    // Fallback URL if no official embed_html is available
     const fallbackEmbedUrl = activeVideo?.videoUrl
         ? `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(activeVideo.videoUrl)}&show_text=0&width=1280&playsinline=1`
         : "https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Fclctagum%2Flive&show_text=0&width=1280&playsinline=1";
@@ -124,6 +115,8 @@ export default async function WatchPage() {
 
     return (
         <div className="min-h-[100dvh] pt-16 md:pt-20 pb-24 md:pb-10 px-3 sm:px-4 md:px-8 bg-background overflow-x-hidden">
+            {/* Standard Mobile Header for consistency */}
+
             <div className="max-w-7xl mx-auto">
                 {/* HERO / HEADER */}
                 <section className="relative pt-8 md:pt-12 pb-10 md:pb-16 overflow-hidden mb-6 md:mb-8 -mx-3 sm:-mx-4 md:-mx-8 px-3 sm:px-4 md:px-8 border-b border-border/50">

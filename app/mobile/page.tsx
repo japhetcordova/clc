@@ -3,21 +3,35 @@
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 
-import { motion } from "framer-motion";
-import { QrCode, Shield, User, Users, Calendar, MessageSquare, Settings, Bell, Heart, MapPin, BookOpen, ChevronRight, Scan, Sparkles, Info } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { QrCode, Shield, User, Users, Calendar, MessageSquare, Settings, Bell, Heart, MapPin, BookOpen, ChevronRight, Scan, Sparkles, Info, MoreHorizontal, Home, LogOut, ExternalLink } from "lucide-react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import Logo from "@/components/Logo";
 import { EventCarousel } from "@/components/EventCarousel";
-
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { trpc } from "@/lib/trpc/client";
 
 export default function MobileDashboard() {
-    const { isAdmin } = useCurrentUser();
+    const router = useRouter();
+    const utils = trpc.useContext();
+    const { user, isAdmin, me } = useCurrentUser();
     const { data: activeHighlight } = trpc.getActiveMobileHighlight.useQuery();
     const { data: publicEvents } = trpc.getPublicEvents.useQuery();
+
+    const logoutMutation = trpc.logout.useMutation({
+        onSuccess: () => {
+            localStorage.removeItem("isAuthorized");
+            utils.getMe.invalidate();
+            router.push("/");
+            toast.success("Successfully logged out");
+        },
+    });
+
+    const handleLogout = () => logoutMutation.mutate();
 
     const defaultHighlight = {
         titlePrefix: "When you",
@@ -116,21 +130,71 @@ export default function MobileDashboard() {
 
     return (
         <div className="min-h-screen bg-background pb-32">
+            {/* Optimized Global Header Overlay */}
+            <div className="fixed top-0 left-0 right-0 z-50 px-4 pt-4 flex items-center justify-between pointer-events-none">
+                <div className="pointer-events-auto">
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon" className="h-11 w-11 rounded-full bg-background/40 backdrop-blur-xl border border-white/10 shadow-xl hover:bg-background/60">
+                                <MoreHorizontal className="w-5 h-5 text-foreground" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="start" className="w-56 rounded-2xl border-white/10 backdrop-blur-2xl bg-background/90 p-2 shadow-2xl">
+                            <DropdownMenuItem asChild>
+                                <Link href={me?.qrCodeId ? `/profile/${me.qrCodeId}` : "/my-qr"} className="flex items-center gap-3 p-3 cursor-pointer rounded-xl hover:bg-primary/10 transition-colors">
+                                    <div className="p-2 rounded-lg bg-primary/10 text-primary">
+                                        <User className="w-4 h-4" />
+                                    </div>
+                                    <span className="font-bold text-sm">My Profile</span>
+                                </Link>
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator className="bg-white/5" />
+                            <DropdownMenuItem onClick={handleLogout} className="flex items-center gap-3 p-3 cursor-pointer rounded-xl hover:bg-destructive/10 text-destructive transition-colors">
+                                <div className="p-2 rounded-lg bg-destructive/10">
+                                    <LogOut className="w-4 h-4" />
+                                </div>
+                                <span className="font-bold text-sm">Logout</span>
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </div>
+
+                <div className="pointer-events-auto flex items-center gap-2">
+                    {/* Points Chip */}
+                    <Link href={me?.qrCodeId ? `/profile/${me.qrCodeId}` : "#"}>
+                        <div className="flex items-center gap-2 px-4 py-2 bg-amber-500/10 backdrop-blur-xl border border-amber-500/20 rounded-full shadow-lg shadow-amber-500/10 group active:scale-95 transition-all">
+                            <Sparkles className="w-4 h-4 text-amber-500 fill-amber-500/20 group-hover:animate-pulse" />
+                            <span className="text-[11px] font-black tabular-nums text-amber-600 dark:text-amber-400 tracking-wider">
+                                {user?.redeemPoints ?? 0} RP
+                            </span>
+                        </div>
+                    </Link>
+                </div>
+            </div>
+
             {/* Header / Hero Section with Highlight */}
-            <header className="relative min-h-[450px] flex flex-col overflow-hidden pb-12">
+            <header className="relative min-h-[480px] flex flex-col overflow-hidden pb-12">
                 {/* Background Image */}
                 <div className="absolute inset-0 z-0">
                     <Image
                         src={display.imageUrl}
                         alt="Sunday Service Highlight"
                         fill
-                        className="object-cover"
+                        className="object-cover scale-105"
                         priority
                         unoptimized={display.imageUrl.startsWith("http")}
                     />
                     {/* Premium Overlays */}
-                    <div className="absolute inset-0 bg-linear-to-b from-background/20 via-background/60 to-background" />
-                    <div className="absolute inset-0 bg-linear-to-r from-background/40 to-transparent" />
+                    <div className="absolute inset-0 bg-linear-to-b from-black/60 via-background/40 to-background" />
+                    <div className="absolute inset-0 bg-linear-to-r from-background/20 to-transparent" />
+                </div>
+
+                {/* Sub-hero content for depth */}
+                <div className="relative z-10 mt-auto px-6 pb-8 space-y-4">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 backdrop-blur-md rounded-full border border-primary/20">
+                        <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                        <span className="text-[9px] font-black uppercase tracking-[0.2em] text-primary">Live Now / Featured</span>
+                    </div>
                 </div>
             </header>
 
@@ -146,32 +210,32 @@ export default function MobileDashboard() {
                         <EventCarousel events={publicEvents} hideHeader noCard className="pb-0" />
                     </motion.div>
                 </div>
-                {/* Main Menu Grid */}
-                <div className="grid grid-cols-1 gap-4">
+                {/* Main Menu Grid - Optimized List Layout */}
+                <div className="grid grid-cols-1 gap-3">
                     {menuItems.map((item, i) => {
                         const Icon = item.icon;
                         return (
                             <motion.div
                                 key={item.title}
-                                initial={{ opacity: 0, y: 20 }}
+                                initial={{ opacity: 0, y: 15 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: i * 0.1 }}
+                                transition={{ delay: i * 0.05 }}
                             >
                                 <Link href={item.href}>
-                                    <div className="bg-card p-6 rounded-[2rem] border border-border shadow-sm flex items-center gap-5 active:scale-[0.98] transition-all group">
-                                        <div className={`${item.color} p-4 rounded-2xl text-white shadow-lg shadow-black/20`}>
-                                            <Icon className="w-6 h-6" />
+                                    <div className="bg-card/40 backdrop-blur-md p-4 rounded-[1.5rem] border border-white/5 shadow-sm flex items-center gap-4 active:scale-[0.98] transition-all group hover:bg-card/60">
+                                        <div className={`${item.color} p-3 rounded-xl text-white shadow-lg shadow-black/10 transition-transform group-hover:scale-110`}>
+                                            <Icon className="w-5 h-5" />
                                         </div>
-                                        <div className="flex-1">
-                                            <h3 className="font-black text-lg uppercase italic tracking-tighter text-foreground group-hover:text-primary transition-colors">
+                                        <div className="flex-1 min-w-0">
+                                            <h3 className="font-black text-sm uppercase tracking-tighter text-foreground group-hover:text-primary transition-colors">
                                                 {item.title}
                                             </h3>
-                                            <p className="text-muted-foreground font-bold text-[10px] uppercase tracking-wider">
+                                            <p className="text-muted-foreground font-bold text-[9px] uppercase tracking-widest opacity-60">
                                                 {item.description}
                                             </p>
                                         </div>
-                                        <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
-                                            <ChevronRight className="w-4 h-4 text-muted-foreground opacity-50" />
+                                        <div className="w-8 h-8 rounded-full bg-muted/30 flex items-center justify-center opacity-40 group-hover:opacity-100 transition-opacity">
+                                            <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />
                                         </div>
                                     </div>
                                 </Link>
