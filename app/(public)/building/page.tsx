@@ -11,7 +11,7 @@ export default function BuildingPage() {
             {/* HERO SECTION */}
             <div className="relative w-full rounded-3xl overflow-hidden shadow-2xl mb-12 border border-primary/20 bg-black">
                 <video
-                    src="/church.mp4"
+                    src="https://pub-71cfc9e8b30e46868845fef5a9b3555f.r2.dev/CLC%20Tagum%20Church%20Lot%20Aerial%20Shot.mp4"
                     autoPlay
                     loop
                     muted
