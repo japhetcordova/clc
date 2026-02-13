@@ -1,7 +1,6 @@
 "use client";
 
 import { motion } from "framer-motion";
-import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Heart, Home, ArrowRight, Wallet } from "lucide-react";
@@ -10,17 +9,18 @@ export default function BuildingPage() {
     return (
         <div className="pt-24 pb-20 px-4 md:px-8 max-w-7xl mx-auto">
             {/* HERO SECTION */}
-            <div className="relative h-[60vh] md:h-[80vh] w-full rounded-3xl overflow-hidden shadow-2xl mb-12 border border-primary/20">
-                <Image
-                    src="https://images.unsplash.com/photo-1621252179027-94459d278661?q=80&w=2070&auto=format&fit=crop"
-                    alt="Our Church Building Blueprint"
-                    fill
-                    className="object-cover opacity-60 mix-blend-luminosity"
-                    priority
+            <div className="relative w-full rounded-3xl overflow-hidden shadow-2xl mb-12 border border-primary/20 bg-black">
+                <video
+                    src="/church.mp4"
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    className="w-full h-auto block"
                 />
                 <div className="absolute inset-0 bg-indigo-950/40 mix-blend-multiply" />
                 <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
-                <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent flex flex-col justify-end p-8 md:p-16">
+                <div className="absolute inset-0 bg-gradient-to-t from-black flex flex-col justify-end p-8 md:p-16">
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -30,7 +30,7 @@ export default function BuildingPage() {
                             Our Vision
                         </span>
                         <h1 className="text-4xl md:text-7xl font-bold uppercase tracking-tighter text-white mb-4">
-                            Building <br /> His HOUSE
+                            Build a <br /> Church Project
                         </h1>
                         <p className="text-lg md:text-xl text-white/80 max-w-2xl font-light">
                             We are constructing more than just walls; we are building a sanctuary for generations to come. Join us in this historic journey.
